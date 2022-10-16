@@ -1,8 +1,13 @@
-Sulfur is a compiled programming language.
+![elemental-sulfur](https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Sulfur_-_El_Desierto_mine%2C_San_Pablo_de_Napa%2C_Daniel_Campos_Province%2C_Potos%C3%AD%2C_Bolivia.jpg/220px-Sulfur_-_El_Desierto_mine%2C_San_Pablo_de_Napa%2C_Daniel_Campos_Province%2C_Potos%C3%AD%2C_Bolivia.jpg "Elemental Sulfer as seen on Wikipedia. Credit: Iifar")
 
-## Key Positive Characteristics
 
-### Full source deconstruction and extensive multi-pass code removal.
+Sulfur is a programming language.
+
+## Good Things
+
+### (tight code) We remove all the procedures ...
+
+aka *full source deconstruction and extensive multi-pass code removal.*
 
 All functions, procedures, and other abstractions are "flattened" into a serial instruction stream prior to code removal. The flattening
 can include some loops.
@@ -37,7 +42,9 @@ echo "Hello Sally"
 echo "Hi Larry"
 ```
 
-### Algorithmic restatement of procedures.
+### (tight code) ...and then we put them back in
+
+aka *Algorithmic restatement of procedures.*
 
 After code removal, procedures as added back into the source based on the reduced source tree. The grouping of those procedures is determined by reproducable algorithms and the original organization in the source code is ignored.
 
@@ -45,7 +52,7 @@ This, in theory, makes the final object code smaller.
 
 *TBD: create a small-enough example that still survives the code-removal process*
 
-### Multi-lingual source code.
+### (accessable) Multi-lingual source code
 
 Programmers are human. Humans speak different languages.
 
@@ -85,9 +92,9 @@ Later goal of ten core languages:
 * German `de`
 * Japanese `ja`
 
-### Multi-lingual UTF8 string handling.
+### (accessable) Multi-lingual string handling
 
-The users of an app are sometimes human. Humans speak different languages. The support for both compile-time and run-time selection of translation will be supported in the very core and structure of the language.
+The users of an app are sometimes human. Humans speak different languages. The support for both compile-time and run-time translation of UTF8 strings will be supported in the very structure of the language.
 
 Examples:
 
@@ -142,15 +149,7 @@ const day<str> = "Tuesday"
 t.print( "Today is ${day}.\n".$ )
 ```
 
-### Standard protocol support.
-
-The users of an app are sometimes other machines. The *standard* library will support as many intermachine standards has possible to allow consistent communications with other machines.
-
-* serializations/encodings: JSON, YAML, XML, BSON, JPG, PNG, WAV, PDF, etc.
-* transport: UDP, TCP, HTTP/HTTPS, etc.
-* templates/specs: OpenAPI, mustache, Jinja, etc.
-
-### Line-oriented.
+### (accessible) Line-oriented
 
 Specifically, it is optimized for use with GIT for predictable and visible changes for other and future programmers to see.
 
@@ -214,7 +213,26 @@ if true
   var b<byte> = 99
 ```
 
-### Predictable object code contruction and strict library handling.
+### (scalable) Common protocol support
+
+The users of an app are sometimes other machines. The *standard* library will support as many intermachine standards has possible to allow consistent communications with other machines.
+
+* serializations/encodings: JSON, YAML, XML, BSON, JPG, PNG, WAV, PDF, etc.
+* transport: UDP, TCP, HTTP/HTTPS, etc.
+* templates/specs: OpenAPI, mustache, Jinja, etc.
+
+### (scalable) Frameworks for common uses in standard library
+
+Focusing community work on a common framework can have many benefits. As such, an attempt will be made to create "default" frameworks for potentially common uses of the language. Examples:
+
+* Web Server
+* Javascript Client
+* 2D Game
+* State Engine
+
+To truly encourage general-purpose use and involvement, all frameworks should have a reasonable manner of adding "middleware" to expand it.
+
+### (scalable) Predictable object code contruction and strict library handling
 
 Specifically, compiling on another machine with the same source code produces EXACTLY the same native object code. To do this,
 library handling and version dependencies are very strict and reproducable.
@@ -253,7 +271,7 @@ convert `1.0.1` {{
 }}
 ```
 
-### Stateful handling of variables with log wrapping.
+### (dependable) Stateful handling of variables with log wrapping
 
 A variable will one of the following states:
 
@@ -295,7 +313,7 @@ assert ( five + a_error ).log( 1 ).type = log_type.error  # this is the new Cann
 assert ( five + a_error ).log.size == 2
 ```
 
-### In-line error handling
+### (dependable) In-line error handling
 
 Sulfur does not allow the simulated "throwing of exceptions" that many other languages do. Handling errors is considered part of the program's business logic.
 
@@ -317,22 +335,16 @@ assert c == error.DivideByZero
 assert ! c.is_valued()
 ```
 
-### Frameworks for common uses in standard library
-
-Focusing community work on a common framework can have many benefits. As such, an attempt will be made to create "default" frameworks for potentially common uses of the language. Examples:
-
-* Web Server
-* Javascript Client
-* 2D Game
-* State Engine
-
-To truly encourage general-purpose use and involvement, all frameworks should have a reasonable manner of adding "middleware" to expand it.
 
 ## Notable Downsides
 
+Life is about trade-offs. There are definitely a some downside to this language.
+
 ### Somewhat larger vocabulary and learning time.
 
-There are more reserved keywords and structures than most language. Sulfur is attempting to gleam the "intent" of the code being written. The different versions of conditionals and loops helps with this.
+There are more reserved keywords and structures than most language. Sulfur is attempting to gleam the "intent" of the code being written. The different versions of conditionals and loops help with this.
+
+Simply picking up this language and getting to work will be pretty easy if you already know a few other languages. But getting it to work _well_ might take a while.
 
 ### Recursion is forbidden.
 
@@ -346,11 +358,35 @@ Loops, routines, and other structures in the language have a specific beginning,
 
 ## Target Audience
 
-The target audience for this language is skilled computer programmers wishing to write general-purpose applications such as mobile app or websites.
+The target audience for this language is:
 
-It is not designed for embedded systems programming, though that is certainly possible given it's heap management.
+> skilled computer programmers wishing to write large general-purpose applications
 
-It is not designed for new programmers. Sadly, the learning curve of this language is a bit too high for that.
+It is NOT designed for:
 
-It is not designed to be a scripting language. In fact, it's directory/file/line orientation makes it a really poor scripting language. You could use it, however, to make utilities that are called by a scripting language.
+* embedded systems programming
+
+  Though that is certainly possible given it's heap management.
+
+* new programmers
+
+  Sadly, the learning curve of this language is a bit too high for that. I recommend starting with something like Python.
+
+* scripting
+
+ It's directory/file/line orientation makes it a very poor scripting language. You could use it, however, to make utilities that are called by a scripting language such as `bash` or `perl`.
+
+## Development Stages
+
+There are four stages planned for creating the language:
+
+1. 2023.0.n: Bootstrap: Compiler is written in Go and uses LLVM. Only the core of the language and a small number of standard libraries will work. I'm not expecting (or hoping) for help at this stage. Mostly works with small test apps.
+
+2. 2025.0.n: Momentum builds: Rewrite the language compiler in Sulfur itself. Write the first framework (likely "web service"). The first database client library written. Start of the optional 3rd party library system. Support formatting for editors and repository hosting systems.
+
+3. 2027.0.n: Base Building: Write more frameworks and test them together. Start pulling in standards for library writing. Build C and possible Rust interface (*every language* should work with C.) Cross-compile to WASM in addition to LLVM (unless LLVM starts doing that.)
+
+4. 2029.0.n: Larger Adoption: System should be fine-tuned for general production systems and mainstream use. Support cross-compilation to Swift and Kotlin. Add linter and code-suggestion support for editors.
+
+In general, the version follows semantic versioning. But, more specifically, the version are in the form of `<year>.<quarter>.<minorversion>`.
 
