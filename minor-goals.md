@@ -22,21 +22,21 @@ Violating these principles will generate a "warning" rather than an error, howev
 
 #### English
 
-    In English, proper names start with an uppercase letter followed by lower case. Common nouns are all lowercase. Acronyms are all uppercase.
-
-    Since a type is a "commonly shared name", it is a noun. Most variables are lower case unless they happen to contain a proper name or acronym.
-
-    A singleton directly shared between threads would be a proper name since it is systemically unique (and thus start with an upper case letter). In other words, `actor` and `thread` libraries start with an upper case letter. Otherwise libraries are generally all lower case.
-
-    Example variable names:
-
-    ```sulfur
-    var pet_fish = fish( name = "Zippy" )                   # pet_fish is a noun for any pet_fish
-    var fish_belonging_to_Bob = fish( name = "Foo" )        # Bob is a person's name, so that word starts with an uppercase letter.
-    var doc = JSON()                                        # JSON is an acronym for JavaScript Object Notation
-    ```
-
-    The `sulfur` extension (and command-line name) are a known exceptions to this rule as keeping extensions and utilities lowercase is a common convention.
+> In English, proper names start with an uppercase letter followed by lower case. Common nouns are all lowercase. Acronyms are all uppercase.
+> 
+> Since a type is a "commonly shared name", it is a noun. Most variables are lower case unless they happen to contain a proper name or acronym.
+> 
+> A singleton directly shared between threads would be a proper name since it is systemically unique (and thus start with an upper case letter). In other words, `actor` and `thread` libraries start with an upper case letter. Otherwise libraries are generally all lower case.
+> 
+> Example variable names:
+> 
+```sulfur
+var pet_fish = fish( name = "Zippy" )                   # pet_fish is a noun for any pet_fish
+var fish_belonging_to_Bob = fish( name = "Foo" )        # Bob is a person's name, so that word starts with an uppercase letter.
+var doc = JSON()                                        # JSON is an acronym for JavaScript Object Notation
+```
+> 
+> The `sulfur` extension (and command-line name) are a known exceptions to this rule as keeping extensions and utilities lowercase is a common convention.
 
 ## [COMMENTS]
 ### Comments and spacing are code and part of the language.
