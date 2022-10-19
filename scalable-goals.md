@@ -33,14 +33,14 @@ Any `type` library written must handle version differences with past implementat
 For example if:
 
 * the main program uses the `foo` and `bar`
-* the `foo` library uses `Fish` version `1.0.1`
-* the `bar` library uses `Fish` version `1.0.3`
+* the `foo` library uses `fish` type version `1.0.1`
+* the `bar` library uses `fish` type version `1.0.3`
 
 Then any data passed by the main between `foo` and `bar` will be handled in a controlled manner because all libraries *MUST* support the conversion. For example, `fish` version `1.0.3` would be something like:
 
 ```sulfur
 #! sulfur type 2022.0.1 en
-#% type_library Fish 1.0.3
+#% type_library fish 1.0.3
 
 var common_name :str = ""
 var species_name :str = ""
@@ -75,4 +75,4 @@ It is possible that multiple paths may be forbidden; it is a point to discuss.
 
 ----
 
-[return to README.md](README.md]
+[return to README.md](README.md)

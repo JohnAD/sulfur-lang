@@ -67,11 +67,11 @@ Frankly, of the three, the type versioning is the most important in a 100,000+ l
 
 * `STATEFUL-VARS` Stateful handling of variables with log wrapping
 
-  [more](predictable-goals.md#type-versioning)
+  [more](predictable-goals.md#stateful-vars)
 
 * `INLINE-ERR` In-line error handling
 
-  [more](predictable-goals.md#type-versioning)
+  [more](predictable-goals.md#inline-err)
 
 ## Minor Goals
 
@@ -81,9 +81,9 @@ Frankly, of the three, the type versioning is the most important in a 100,000+ l
 
 Life is about trade-offs. There are definitely some downsides to this language.
 
-* Somewhat larger vocabulary and learning time.
+* Larger vocabulary and steeper learning curve.
 
-  There are more reserved keywords and structures than most languages. Sulfur is attempting to gleam the "intent" of the code being written. The different versions of conditionals and loops help with this.
+  There are far more reserved keywords and intent-driven structures than most languages. This, in part, is from the language trying to express "intent" of the algorithm which aids with code removal/optimization.
 
   Simply picking up this language and getting to work will be pretty easy if you already know a few other languages. But getting it to work _well_ might take a while.
 
@@ -91,11 +91,15 @@ Life is about trade-offs. There are definitely some downsides to this language.
 
   The nature of the compilation process does not support recursion. Thus, some algorithms will be less intuitive to the programmer.
 
-  From the beginning, the compiler will detect recursion and will throw an error when detected.
+  From the beginning, the compiler will detect recursion and will throw an error when it is detected.
 
-* Early exit functions are forbidden.
+* Early exit methods are forbidden.
 
   Loops, routines, and other structures in the language have a specific beginning, middle, and end. As such, common statements such as `return`, `continue`, and `break` are now allowed. This will force the programmer to refactor more often to keep code readable.
+
+* Compile-time is longer.
+
+  The very nature of it's intense code removal and multi-pass refactoring means that it will always be somewhat slower than other compilers. There are various way to improve performance I'm sure. But it isn't going to compete with single-pass C compiler in terms of sheer compile-time. A programmer is going to want a powerful computer.
 
 # Target Audience
 
