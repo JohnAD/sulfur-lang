@@ -1,0 +1,243 @@
+thoughts as of 2022-09-27
+updated as of 2022-10-16
+
+===================
+
+GROUPING OPERATORS
+
+general rule of thumb:
+  [] is for "unnamed things"
+  {} is for "named things"
+  () varies in meaning
+  <> is for "declarative things"
+
+when non-suffix:
+
+  [ ] is for un-named data sequences
+  { } is for named data sequences
+
+  [[ ]] is for un-named statement sequences
+  {{ }} is for named statement sequences
+
+  ( ) is for grouping of data
+
+  < > is for greater-than/less-than. It is the only grouping exception.
+
+when the suffix of an identifier or literal:
+
+  ident[ ] is for key references.  
+                  `joe[ 4 ]` get item 4 from joe.
+                  `joe[ "zig" ]` get the "zig" item from the joe dictionary or object.
+  ident{ } is named calling parameters  
+                  `joe{ zig=99, _=4, _=7 }` call the `joe` function with zig=99 and 4 and 7 as unnamed params
+  ident( ) is for un-named calling parameters  
+                  `joe(99, 4)` call the `joe` function with 4 and 7 as unnamed params
+  ident< > is for explicit typing(s) of the identifier  
+                  `joe<int>`  joe is (or must be cast as) an int. 
+                  `"hola"<es>` is a spanish utf8 string.
+
+============
+
+The language will enforce line length. But, internal stuff will be limited to 132 characters.
+
+
+==============
+
+Declarations such as `var`, `let` and `const` do not "create" variables. They are simply declarations and order does not matter.
+
+A variable must maintain uniqueness across the scope of an entire function/procedure/method. Blocks do NOT create
+new scope.
+
+ideal:
+
+  var a :int     # by putting this at the top, there is less confusion for new programmers
+  a = 2
+  a = a + 1
+  a = a * 3
+
+but these are ALSO effectively identical:
+
+  var a :int = 2   # this really is TWO statements; a declaration and an assignment
+  a = a + 1
+  a = a * 3
+
+and
+
+  a = 2
+  a = a + 1
+  var a :int = a * 3
+
+and
+
+  if true [[
+    a = 2
+    var a :int = a + 1
+  ]] else [[
+    a = -1
+  ]]
+  a = a * 3
+
+but this will throw a syntax error for multiple declarations of the same variable:
+
+  if true [[
+    a = 2
+    var a :int = a + 1
+  ]] else [[
+    var a :int = -1
+  ]]
+  a = a * 3
+
+
+===============
+
+TYPE IDENTIFIERS
+
+To help prevent namespace collision and help visuals, types can be "optionally prefixed" with a colon. If
+used to declare a variable it must be space-separated.
+
+So, the following statements are all identical:
+
+  var a :int = 4       # this is prettier, IMO
+  var a<int> = 4
+  var a<:int> = 4
+
+
+============
+
+Switch statement variations:
+
+
+do_first {{
+    when ( case == 14 ) = [[
+        print( "14" )
+    ]]
+    when ( case > 14 ) = [[
+        print( "> 14" )
+    ]]
+    when ( case < 14 ) = [[
+        print( "< 14" )
+    ]]
+    default = [[
+        print( "not a number" )
+    ]]
+}}
+
+case( varName ) {{     # in lang spec, case types are limited to 2^15 cases
+    [ bling, bloom, bam ] = [[
+        print( "big noise" )
+    ]]
+    [ blip, ting ] = [[
+        print( "small noise" )
+    ]]
+    [ null ] = [[
+        print( "noise not defined or known" )
+    ]]
+    [ void ] = [[
+        print( "no noise due to error or non-existense" )
+    ]]
+    default = [[    # "default" is required if `when` does not include ALL scenarios; "default" is forbidden otherwise
+        print( "unsizable noise" )
+    ]]
+}}
+
+================
+
+library types
+
+`type`:
+   A type library is a single object type and it's methods. It is functional and MUST NOT use any actors.
+
+`static`:
+   A traditional library that is simply a list of functions, methods, procedures, etc. It MUST NOT use any actors.
+
+`module`:
+   A module library is a singleton. A single instantiation shared by the app. If app starts a thread, a "copy" of the 
+   module is sent to the thread. It cannot be used to share data between threads.
+
+`thread`:
+   A module library that CAN be used to share data between threads. It acts like a "mini-server". If the app is unthreaded then
+   the thread library could end up unthreaded also. That is determined by the compiler.
+
+`actor`:
+   A module library that has access to the outside world and does have side effects. The outside world includes things like the clock,
+   the OS, the filesystem, and the network. Interactions with actors is never removed from code; so use wisely.
+
+It will be common to pair `type` and `actor` libraries together. For example, a MongoDB client library will be an actor. But to use that
+library, you will need to pair it with the BSON type library.
+
+================
+
+STATEMENTS
+
+statements, in general, are subroutines with no return type. 
+
+If "show_three" takes three arguments, the show_three statement can be run in any of these two forms:
+
+    show_three( a, b, c )
+
+    show_three(
+        a
+        b
+        c
+    )
+
+Notice that a statement must be at the start of a line.
+
+===============
+
+MACRO
+
+A macro, is a statement that is more meta and is capable of embedding blocks of code
+
+If a "show_three" macro takes three arguments, is must be run in the following form:
+
+    show_three a b c
+
+Notice that a macro must be at the start of a line. Notice there are no commas to separate arguments.
+
+If argument "b" was a block, it would require a [[]] code block.
+
+Either:
+
+    show_three a [[ set z = 14 ]] b
+
+or:
+
+    show_three a [[
+        set z = 14
+    ]] b
+
+In fact, "if" is one of two macros in the form of
+
+    if boolean block
+    if boolean block else block
+
+So,
+
+    if ( a == 14 ) [[
+        print( "I see 14" )
+    ]]
+
+    if ( b == 14 ) [[
+        print( "b is 14" )
+    ]] else [[
+        print( "b is not 14" )
+    ]]
+
+(behind the scenes for that first if)
+
+    set temp4444 to a
+    sub temp4444 by 14
+    ___skipnz temp4444 [[
+        call print( "I see 14".en )
+    ]]
+
+(behind the scenes for that second if)
+
+    set temp4445 to b
+    sub temp4445 by 14
+    ___skipnz temp4445 [[
+        call print( "b is 14".en )
+    ]] else [[
+        call print( "b is not 14".en )
+    ]]
