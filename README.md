@@ -46,9 +46,11 @@ Frankly, of the three, the type versioning is the most important in a 100,000+ l
 
 ### Predictable
 
-* `[STATEFUL-VARS]` Stateful handling of variables with log wrapping  [(more)](predictable-goals.md#stateful-vars)
+* `[STATEFUL-VARS]` Stateful handling of variables [(more)](predictable-goals.md#stateful-vars)
 
 * `[INLINE-ERR]` In-line error handling  [(more)](predictable-goals.md#inline-err)
+
+* `[FUNC-LOG]` A windowed functional in-thread logger [(more)](predictable-goals.md#func-log)
 
 ## Minor Goals
 
