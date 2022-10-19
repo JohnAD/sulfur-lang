@@ -36,7 +36,7 @@ var fish_belonging_to_Bob = fish( name = "Foo" )        # Bob is a person's name
 var doc = JSON()                                        # JSON is an acronym for JavaScript Object Notation
 ```
 > 
-> The `sulfur` extension (and command-line name) are a known exceptions to this rule as keeping extensions and utilities lowercase is a common convention.
+> The `sulfur` extension (and command-line name) are known exceptions to this rule as keeping extensions and utilities lowercase is a common convention.
 
 ## [COMMENTS]
 ### Comments and spacing are code and part of the language.
@@ -74,7 +74,7 @@ Basically, the tool will invert the role of the source file (`*.code.sulfur`) an
 
 `code_convert main.code.sulfur js -o=main.js`
 
-This is NOT the same thing as using a language as a compiler target ( see the [next section](#obj-targets) ). The exported code should not do code removal and should reflect the structure and intend of the sulfur code.
+This is NOT the same thing as using a language as a compiler target ( see the [next section](#obj-targets) ). The exported code should not do code removal and should reflect the structure and intent of the Sulfur code.
 
 The primary goal is human readability; so sometimes it might have to resort leaving legacy code in comment blocks.
 

@@ -26,22 +26,88 @@ proc hello(a, b)
   else
     echo "Hi " & a
 
+x = 3
 hello("Joe", true)
+x = x + 1
 n = "Sally"
 hello(n, true)
+x = x + 1
+x = x * random()
 hello("Larry", false)
+echo str(x)
 ```
 
 becomes
 
 ```psuedocode
-echo "Hello Joe"
-echo "Hello Sally"
-echo "Hi Larry"
+x = 3
+
+if (true == true)
+  echo "Hello " & "Joe"
+else
+  echo "Hi " & "Joe"
+
+x = x + 1
+
+n = "Sally"
+if (true == true)
+  echo "Hello " & n
+else
+  echo "Hi " & n
+
+x = x + 1
+x = x * random()
+
+if (false == true)
+  echo "Hello " & "Larry"
+else
+  echo "Hi " & "Larry"
+
+echo str(x)
 ```
 
 ## [CTRUN]
 ### ... run any functions passed constants at compile-time ...
+
+```psuedocode
+x = 3
+
+if (true == true)
+  echo "Hello " & "Joe"
+else
+  echo "Hi " & "Joe"
+
+x = x + 1
+
+n = "Sally"
+if (true == true)
+  echo "Hello " & n
+else
+  echo "Hi " & n
+
+x = x + 1
+x = x * random()
+
+if (false == true)
+  echo "Hello " & "Larry"
+else
+  echo "Hi " & "Larry"
+
+echo str(x)
+```
+
+becomes
+
+```psuedocode
+x = 3
+echo "Hello " & "Joe"
+x = x + 1
+echo "Hello " & "Sally"
+x = x + 1
+x = x * random()
+echo "Hi" & "Larry"
+echo str(x)
+```
 
 ## [ALGO-PROC]
 ### ... and then we put functions back in
@@ -52,7 +118,42 @@ After code removal, procedures as added back into the source based on the reduce
 
 This, in theory, makes the final object code smaller.
 
-*TBD: create a small-enough example that still survives the code-removal process*
+For example, this:
+
+```psuedocode
+x = 3
+echo "Hello " & "Joe"
+x = x + 1
+echo "Hello " & "Sally"
+x = x + 1
+x = x * random()
+echo "Hi" & "Larry"
+echo str(x)
+```
+
+might become:
+
+```psuedocode
+proc routine_1(var_a, var_b, ref var_c)
+  echo var_a & var_b
+  x = x + 1
+
+x = 3
+routine_1("Hello ", "Joe", x)
+routine_1("Hello ", "Sally", x)
+x = x * random()
+echo "Hi" & "Larry"
+echo str(x)
+```
+
+Or with code-recordering against dependency trees in an earlier stage (advanced):
+
+```psuedocode
+echo "Hello Joe"
+echo "Hello Sally"
+echo "Hi Larry"
+echo str( 5 * random() )
+```
 
 
 ----

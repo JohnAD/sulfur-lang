@@ -54,7 +54,7 @@ a file called `main.src.sulfur`:
 
 ```sulfur
 #! sulfur src 2022.0.1 en
-using std::hdti [[ actor terminal as t ]]
+using std::hdti [[ actor Terminal as t ]]
 
 # compile this program with `--lang=es` to get the spanish version of the app
   
@@ -63,7 +63,7 @@ const day<str> = "Tuesday"
 t.print( "Today is {{ day }}.\n"<en> )  # explicit declaration
 ```
 
-a file called `main.tr.sulfur`:
+a directory-wide file called `directory.tr.sulfur`:
 
 ```sulfur
 #! sulfur tr 2022.0.1 en
@@ -96,17 +96,19 @@ a file called `main.tr.sulfur`:
 ]
 ```
 
-a run-time translation version of the `main.src.sulfur`:
+Here is a alternate version of the `main.src.sulfur` that does translation at run-time:
 
 ```sulfur
 #! sulfur src 2022.0.1 en
-using std::hdti [[ actor terminal as t ]]
+using std::hdti [[ actor Terminal as t ]]
 var choice<str> = t.input("enter language code:")
 tglob.lang(choice)
 t.print( "Hello world!\n".$ )
 const day<str> = "Tuesday"
 t.print( "Today is ${day}.\n".$ )
 ```
+
+If translations occur at run-time, the translated strings are stored in the object code by default.
 
 ## `GIT`
 ### Git-oriented 

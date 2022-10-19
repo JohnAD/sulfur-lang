@@ -1,6 +1,5 @@
 ![elemental-sulfur](https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Sulfur_-_El_Desierto_mine%2C_San_Pablo_de_Napa%2C_Daniel_Campos_Province%2C_Potos%C3%AD%2C_Bolivia.jpg/220px-Sulfur_-_El_Desierto_mine%2C_San_Pablo_de_Napa%2C_Daniel_Campos_Province%2C_Potos%C3%AD%2C_Bolivia.jpg "Elemental Sulfer as seen on Wikipedia. Credit: Iifar")
 
-
 Sulfur is a programming language.
 
 # Good Goals
@@ -9,69 +8,47 @@ The following are the major goals for the language. These goals are what set thi
 
 ### Fast and Small Object Code
 
-* `FLATTEN` We remove all the procedures ...
+* `[FLATTEN]` We temporarily remove all the procedures ...  [(more)](compilation-goals.md#flatten)
 
-  aka *full source deconstruction and extensive multi-pass code removal.*
+  *full-source deconstruction for in-depth analysis*
 
-  [more](compilation-goals.md#flatten)
+* `[CTRUN]` ... remove functions with resolved inputs ...   [(more)](compilation-goals.md#ctrun)
 
-* `CTRUN` ... remove functions with resolved inputs ...
+  *upgrade `var` to `let` to `const`*
 
-  aka *upgrade `var` to `let` to `const`*
+  *run crude interpreter on non-variable parameters and structs to remove swaths of code*
 
-  aka *run crude interpreter on non-variable parameters*
+* `[ALGO-PROC]` ... and then we put procedures back in [(more)](compilation-goals.md#algo-proc)
 
-  [more](compilation-goals.md#ctrun)
-
-* `ALGO-PROC` ... and then we put functions back in
-
-  aka *Algorithmic restatement of procedures.*
-
-  [more](compilation-goals.md#algo-proc)
+  *algorithmic restatement of procedures*  
 
 ### Accessible
 
-* `ML-CODE` Multi-lingual source code
+* `[ML-CODE]` Multi-lingual source code  [(more)](accessible-goals.md#ml-code)
 
-  [more](accessible-goals.md#ml-code)
+* `[ML-STR]` Multi-lingual string handling  [(more)](accessible-goals.md#ml-str)
 
-* `ML-STR` Multi-lingual string handling
+  This includes both compile-time translation and run-time translation.  
 
-  This includes both compile-time translation and run-time translation.
+* `[GIT]` Git-oriented  [(more)](accessible-goals.md#git)
 
-  [more](accessible-goals.md#ml-str)
-
-* `GIT` Git-oriented 
-
-  aka line/file/directory oriented
-
-  [more](accessible-goals.md#git)
+  line/file/directory oriented 
 
 ### Scalable
 
-* `PROTOCOL` Common protocol support
+* `[PROTOCOL]` Common protocol support  [(more)](scalable-goals.md#protocol)
 
-  [more](scalable-goals.md#protocol)
+* `[FRAMEWORKS]` Frameworks for common uses inside standard library  [(more)](scalable-goals.md#frameworks)
 
-* `FRAMEWORKS` Frameworks for common uses inside standard library
-
-  [more](scalable-goals.md#frameworks)
-
-* `TYPE-VERSIONING` Predictable and strict type versioning
-
-  [more](scalable-goals.md#type-versioning)
+* `[TYPE-VERSIONING]` Predictable and strict type versioning  [(more)](scalable-goals.md#type-versioning)
 
 Frankly, of the three, the type versioning is the most important in a 100,000+ line ecosystem.
 
 ### Predictable
 
-* `STATEFUL-VARS` Stateful handling of variables with log wrapping
+* `[STATEFUL-VARS]` Stateful handling of variables with log wrapping  [(more)](predictable-goals.md#stateful-vars)
 
-  [more](predictable-goals.md#stateful-vars)
-
-* `INLINE-ERR` In-line error handling
-
-  [more](predictable-goals.md#inline-err)
+* `[INLINE-ERR]` In-line error handling  [(more)](predictable-goals.md#inline-err)
 
 ## Minor Goals
 
