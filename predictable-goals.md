@@ -36,9 +36,9 @@ var five :int = 5
 
 assert ( five + a_filled ) == 6<int>
 assert ( five + a_empty ) == 5<int>
-assert ( five + a_unknown ) == unknown<int>         # 5 plus a mystery number is just a bigger mystery number
-assert ( five + a_none ) == 5<int>                  # 5 was never added to
-assert ( five + a_error ) == error.CannotOperateOnError  # adding an error to five results in a new error
+assert ( five + a_unknown ) == unknown<int>                 # 5 plus a mystery number is just a bigger mystery number
+assert ( five + a_none ) == 5<int>                          # 5 was never added to
+assert ( five + a_error ) == error.cannot_operate_on_error  # adding an error to five results in a new error
 ```
 
 If writing a function and you wish to indicate to the caller that "something didn't work" in a returned value, should you return an error or should you do something else? Ask yourself this: is it not working completely unexpected or a common thing.
@@ -110,25 +110,26 @@ An example:
 #! sulfur src 2022.0.1 en
 using std::hdti [[ actor Terminal as t ]]
 
-bind logger {{
-  {{
-    audience = [[public, user]]  # we will ONLY send messages to public or user to the ...
-  }} = t.log_binder              # ... terminal's `log_binder` function.
+logger {{
+  string_length = 120
+  bindings = [[
+    {{
+      audience = [[public, user]]  # we will ONLY send messages to public or user to the ...
+    }} = t.log_binder              # ... terminal's `log_binder` function.
+  ]]
 }}
-
-var a :byte = 0
-var b :byte = 0
 
 a_str = t.input("enter a: ")
 b_str = t.input("enter b: ")
 
-a = byte(t.input("enter"))
+var a = byte(a_str)
+var b = byte(b_str)
 
-c = a / b
+var c = a / b
 
 log("the division has happened")  # code removal will make this disappear since nothing uses it
 
-if c.is_errored() [[
+if c == error.divide_by_zero [[
   log("b can't be zero", audience = user, nature = danger)
 ]] else [[
   log("a / b = " & str(c), audience = user, nature = success)

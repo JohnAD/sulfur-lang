@@ -87,6 +87,85 @@ This is NOT the same thing as exporting to a language (see the [previous section
 
 At first, JavaScript and C are good targets as they are very cross-platform in affect. Nearly every CPU ever made has support from a C compiler. And JavaScript, of course, is the lingua franca of web browsers.
 
+## [SELF-FILE]
+### Self-contained transparent file contents
+
+If someone where to copy the content of a file and send it to you, without any context, could you interpret it? The answer _should_ be yes. But this is almost never true in the current suite of languages.
+
+Specifically:
+
+* You should be able to see what _kind_ of file it is. Every source file start with a line like `#! sulfur src 2022.0.1 en`. In one short bit of text I know that this is the source code for a Sulfur program version 2022.0.1 written in English. No need to guess.
+
+* Do not allow wild-cards in library versions. Either an explicitly stated version is used or it defaults to match the version of sulfur in the top line. There is no need to lookup some kind of project table or mapping file to determine which library version is going to used. As it happens, this also matches major goal [[TYPE-VERSIONING]](scalable-goals.md#type-versioning).
+
+* Do not allow "wild-card" imports of values. If you see an identifier called `foo` you should know exactly where that identifier was defined from nothing but the contents of the file itself. If `foo` came from a library, it is either explictly named in the `using` statement, or it is referenced by something that is explicitly named.
+
+  For example, if you have a two libraries called 'colors' and 'moods', the following would be a bad thing:
+
+  ```sulfur
+  #! sulfur src 2022.0.1 en
+  using colors [[ type color ]]
+  using moods [[ type mood ]]
+
+  var a = red
+  var h = blue                    # a "blue" mood, or a "blue" color?
+  var z = happy
+  ```
+
+  There are two solutions. First, you could simply pull in all the different words and deal with aliases.
+
+  ```sulfur
+  #! sulfur src 2022.0.1 en
+  using colors [[
+    type color 
+    color red
+    color blue
+    color green
+  ]]
+  using moods [[
+    type mood 
+    mood happy
+    mood blue as feeling_blue    # the alias prevents a name-conflict error
+    mood coasting
+  ]]
+
+  var a = red
+  var h = feeling_blue
+  var z = happy
+  ```
+
+  Or, you could make indirect references:
+
+  ```sulfur
+  #! sulfur src 2022.0.1 en
+  using colors [[ type color ]]
+  using moods [[ type mood ]]
+
+  var a = color.red
+  var h = mood.blue
+  var z = mood.happy
+  ```
+
+  Or, mix and match the method. The key is that the language will not let you do the equivalent of an "import all" from a library.
+
+* A point of discussion: should you also know that you are looking at the whole file? The start of the file is self-evident with the top line declaration. But the bottom is not. Should we allow something like `----` or `#@` to finish the file? Should it be _required_ as the last line?
+
+  An example if done:
+
+  ```sulfur
+  #! sulfur src 2022.0.1 en
+
+  using colors [[ type color ]]
+  using moods [[ type mood ]]
+
+  var a = color.red
+  var h = mood.blue
+  var z = mood.happy
+
+  ----
+  ```
+
+
 ----
 
 [return to README.md](README.md)
