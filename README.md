@@ -3,7 +3,7 @@
 
 Sulfur is a programming language.
 
-## Good Goals
+# Good Goals
 
 The following are the major goals for the language. These goals are what set this language apart from existing ones.
 
@@ -13,7 +13,7 @@ The following are the major goals for the language. These goals are what set thi
 
   aka *full source deconstruction and extensive multi-pass code removal.*
 
-  [more](scalable-goals.md#flatten)
+  [more](compilation-goals.md#flatten)
 
 * `CTRUN` ... remove functions with resolved inputs ...
 
@@ -21,43 +21,63 @@ The following are the major goals for the language. These goals are what set thi
 
   aka *run crude interpreter on non-variable parameters*
 
-  [more](scalable-goals.md#ctrun)
+  [more](compilation-goals.md#ctrun)
 
 * `ALGO-PROC` ... and then we put functions back in
 
   aka *Algorithmic restatement of procedures.*
 
-  [more](scalable-goals.md#flatten)
+  [more](compilation-goals.md#algo-proc)
 
 ### Accessible
 
-* [ML-CODE] Multi-lingual source code
+* `ML-CODE` Multi-lingual source code
 
-* [ML-STR] Multi-lingual string handling
+  [more](accessible-goals.md#ml-code)
+
+* `ML-STR` Multi-lingual string handling
 
   This includes both compile-time translation and run-time translation.
 
-* [GIT] Git-oriented 
+  [more](accessible-goals.md#ml-str)
+
+* `GIT` Git-oriented 
 
   aka line/file/directory oriented
 
+  [more](accessible-goals.md#git)
+
 ### Scalable
 
-* [PROTOCOL] Common protocol support
+* `PROTOCOL` Common protocol support
 
-* [FRAMEWORKS] Frameworks for common uses inside standard library
+  [more](scalable-goals.md#protocol)
 
-* [TYPE-VERSIONING] Predictable and strict type versioning
+* `FRAMEWORKS` Frameworks for common uses inside standard library
 
-Frankly, of the three, the type versioning is the most important on 100,000+ line ecosystems.
+  [more](scalable-goals.md#frameworks)
+
+* `TYPE-VERSIONING` Predictable and strict type versioning
+
+  [more](scalable-goals.md#type-versioning)
+
+Frankly, of the three, the type versioning is the most important in a 100,000+ line ecosystem.
 
 ### Predictable
 
-* [STATEFUL-VARS] Stateful handling of variables with log wrapping
+* `STATEFUL-VARS` Stateful handling of variables with log wrapping
 
-* [INLINE-ERR] In-line error handling
+  [more](predictable-goals.md#type-versioning)
 
-## Notable Downsides
+* `INLINE-ERR` In-line error handling
+
+  [more](predictable-goals.md#type-versioning)
+
+## Minor Goals
+
+[This document](minor-goals.md) also describes some additional minor goals. Any of these might change or be ignored for various practical reasons.
+
+# Notable Downsides
 
 Life is about trade-offs. There are definitely some downsides to this language.
 
@@ -77,7 +97,7 @@ Life is about trade-offs. There are definitely some downsides to this language.
 
   Loops, routines, and other structures in the language have a specific beginning, middle, and end. As such, common statements such as `return`, `continue`, and `break` are now allowed. This will force the programmer to refactor more often to keep code readable.
 
-## Target Audience
+# Target Audience
 
 The target audience for this language is:
 
