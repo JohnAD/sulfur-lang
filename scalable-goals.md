@@ -11,6 +11,8 @@ The users of an app are sometimes other machines. The *standard* library will su
 * transport: UDP, TCP, HTTP/HTTPS, etc.
 * templates/specs: OpenAPI, mustache, Jinja, etc.
 
+This major goal is also supported by the [[PROTOBUF]](minor-goals.md#protobuf) direct compilation, a minor goal.
+
 ## [FRAMEWORKS]
 ### Frameworks for common uses inside standard library
 

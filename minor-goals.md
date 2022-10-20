@@ -90,15 +90,15 @@ At first, JavaScript and C are good targets as they are very cross-platform in a
 ## [SELF-FILE]
 ### Self-contained transparent file contents
 
-If someone where to copy the content of a file and send it to you, without any context, could you interpret it? The answer _should_ be yes. But this is almost never true in the current suite of languages.
+If someone were to copy the content of a file and send it to you, without any context, could you interpret it? The answer _should_ be yes. But this is almost never true in the current suite of languages.
 
 Specifically:
 
-* You should be able to see what _kind_ of file it is. Every source file start with a line like `#! sulfur src 2022.0.1 en`. In one short bit of text I know that this is the source code for a Sulfur program version 2022.0.1 written in English. No need to guess.
+* You should be able to see what _kind_ of file it is. Every source file must start with a line like `#! sulfur src 2022.0.1 en`. In one short bit of text, I know that this is the source code for a Sulfur program version 2022.0.1 written in English. No need to guess.
 
 * Do not allow wild-cards in library versions. Either an explicitly stated version is used or it defaults to match the version of sulfur in the top line. There is no need to lookup some kind of project table or mapping file to determine which library version is going to used. As it happens, this also matches major goal [[TYPE-VERSIONING]](scalable-goals.md#type-versioning).
 
-* Do not allow "wild-card" imports of values. If you see an identifier called `foo` you should know exactly where that identifier was defined from nothing but the contents of the file itself. If `foo` came from a library, it is either explictly named in the `using` statement, or it is referenced by something that is explicitly named.
+* Do not allow "wild-card" imports of identifiers. If you see an identifier called `foo` you should know exactly where that identifier was defined with nothing but the contents of the file itself. If `foo` came from a library, it is either explictly named in the `using` statement, or it is referenced by something that is explicitly named.
 
   For example, if you have a two libraries called 'colors' and 'moods', the following would be a bad thing:
 
@@ -109,6 +109,7 @@ Specifically:
 
   var a = red
   var h = blue                    # a "blue" mood, or a "blue" color?
+  var y = zork                    # I have no idea which library had this.
   var z = happy
   ```
 
@@ -118,19 +119,18 @@ Specifically:
   #! sulfur src 2022.0.1 en
   using colors [[
     type color 
-    color red
-    color blue
-    color green
+    color [ red, blue, zork ]    # I don't know what "zork" is, but I do know it is from the color library.
   ]]
   using moods [[
     type mood 
     mood happy
-    mood blue as feeling_blue    # the alias prevents a name-conflict error
+    mood blue as feeling_blue    # the "as" alias prevents a name-conflict error
     mood coasting
   ]]
 
   var a = red
   var h = feeling_blue
+  var y = zork
   var z = happy
   ```
 
@@ -143,10 +143,11 @@ Specifically:
 
   var a = color.red
   var h = mood.blue
+  var y = color.zork
   var z = mood.happy
   ```
 
-  Or, mix and match the method. The key is that the language will not let you do the equivalent of an "import all" from a library.
+  Or, mix and match the methods. The key is that the language will not let you do the equivalent of an "import all" from a library.
 
 * A point of discussion: should you also know that you are looking at the whole file? The start of the file is self-evident with the top line declaration. But the bottom is not. Should we allow something like `----` or `#@` to finish the file? Should it be _required_ as the last line?
 
@@ -165,6 +166,69 @@ Specifically:
   ----
   ```
 
+## [PROTOBUF]
+### Direct compilation of ProtoBuf files
+
+ProtoBuf is a very conventient way to specify a serialization schema; a very common thing to share in an API specification. The protobuf schema is support by many language and I'm confident this will also. But, it would be nice if it were taken to the next level: allowing the schema to be read directly into code as part of the language.
+
+Essentially, a protobuf file could be used as part of a `type` library.
+
+Example:
+
+First, the type library wrapping:
+
+`person.type.sulfur`
+
+```sulfur
+#! sulfur type 2022.0.1 en
+#% type_library person 1.0.1
+
+protobuf "../models/person.protobuf"
+
+conversions {{
+}}
+
+method `$` = {{
+  description "convert to a readable string"
+  returns = {{
+    final_string :str
+  }}
+  body {{
+    final_string = "Person( "
+    var center_missing = true
+    if self.name.has_value() [[
+      final_string &= self.name.repr & " "
+      center_missing = false
+    ]]
+    if self.id.has_value() [[
+      final_string &= "id=" & self.id & " "
+      center_missing = false
+    ]]
+    if self.email.has_value() [[
+      final_string &= "<" & self.email & "> "
+      center_missing = false
+    ]]
+    if center_missing [[
+      final_string &= "*empty* "
+    ]]
+    final_string &= ")"
+  }}
+}}
+```
+
+And it directly references the file:
+
+`person.protobuf`
+
+```protobuf
+message Person {
+  optional string name = 1;
+  optional int32 id = 2;
+  optional string email = 3;
+}
+```
+
+This minor goal also support the [[PROTOCOL]](scalable-goals.md#protocol) major goal.
 
 ----
 
