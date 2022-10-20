@@ -1,5 +1,6 @@
 thoughts as of 2022-09-27
 updated as of 2022-10-16
+updated as of 2022-10-20
 
 ===================
 
@@ -28,10 +29,9 @@ when the suffix of an identifier or literal:
   ident[ ] is for key references.  
                   `joe[ 4 ]` get item 4 from joe.
                   `joe[ "zig" ]` get the "zig" item from the joe dictionary or object.
-  ident{ } is named calling parameters  
-                  `joe{ zig=99, _=4, _=7 }` call the `joe` function with zig=99 and 4 and 7 as unnamed params
-  ident( ) is for un-named calling parameters  
-                  `joe(99, 4)` call the `joe` function with 4 and 7 as unnamed params
+  ident{ } has no meaning at the moment
+  ident( ) is for un-named AND named calling parameters  
+                  `joe(99, 4, x = 2)` call the `joe` function with 4 and 7 as unnamed params, and param x as 2
   ident< > is for explicit typing(s) of the identifier  
                   `joe<int>`  joe is (or must be cast as) an int. 
                   `"hola"<es>` is a spanish utf8 string.
@@ -39,7 +39,6 @@ when the suffix of an identifier or literal:
 ============
 
 The language will enforce line length. But, internal stuff will be limited to 132 characters.
-
 
 ==============
 
@@ -107,19 +106,26 @@ So, the following statements are all identical:
 Switch statement variations:
 
 
-do_first {{
-    when ( case == 14 ) = [[
+first {{
+    ( case == 14 ) = [[
         print( "14" )
     ]]
-    when ( case > 14 ) = [[
+    ( case > 14 ) = [[
         print( "> 14" )
     ]]
-    when ( case < 14 ) = [[
+    ( case < 14 ) = [[
         print( "< 14" )
     ]]
     default = [[
         print( "not a number" )
     ]]
+}}
+
+let x :str = vfirst {{
+    ( case == 14 ) = "14"
+    ( case > 14 ) = "> 14"
+    ( case < 14 ) = "< 14"
+    default = "not a number"
 }}
 
 case( varName ) {{     # in lang spec, case types are limited to 2^15 cases
@@ -139,6 +145,16 @@ case( varName ) {{     # in lang spec, case types are limited to 2^15 cases
         print( "unsizable noise" )
     ]]
 }}
+
+let x:str = vcase( varName ) {{
+    [ bling, bloom, bam ] = "big noise"
+    [ blip, ting ] = "small noise"
+    [ null ] = "noise not defined or known"
+    [ void ] = "no noise due to error or non-existense"
+    default = "unsizable noise"
+}}
+
+let x:str = vif ( a > b ) then "big a" else "big b"
 
 ================
 
@@ -162,8 +178,14 @@ library types
    A module library that has access to the outside world and does have side effects. The outside world includes things like the clock,
    the OS, the filesystem, and the network. Interactions with actors is never removed from code; so use wisely.
 
+`framework`:
+   A framework library is a special-purpose library that provides support for the environment that an application is running in. A framework library
+   has many of the same characteristics as an `actor` library. Plus, it informs the compiler with structural details such as OS bindings
+   and the nature of the code (imperative vs reactive). Some framworks are cross-platform, which means the library resolves which underlying
+   library will be used at compile-time.
+
 It will be common to pair `type` and `actor` libraries together. For example, a MongoDB client library will be an actor. But to use that
-library, you will need to pair it with the BSON type library.
+library, you will need to use it with the BSON type library.
 
 ================
 
@@ -229,7 +251,7 @@ So,
     set temp4444 to a
     sub temp4444 by 14
     ___skipnz temp4444 [[
-        call print( "I see 14".en )
+        call print( "I see 14"<en> )
     ]]
 
 (behind the scenes for that second if)
@@ -237,7 +259,7 @@ So,
     set temp4445 to b
     sub temp4445 by 14
     ___skipnz temp4445 [[
-        call print( "b is 14".en )
+        call print( "b is 14"<en> )
     ]] else [[
-        call print( "b is not 14".en )
+        call print( "b is not 14"<en> )
     ]]

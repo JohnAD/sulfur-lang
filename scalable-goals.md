@@ -18,12 +18,37 @@ This major goal is also supported by the [[PROTOBUF]](minor-goals.md#protobuf) d
 
 Focusing community work on a common framework can have many benefits. As such, an attempt will be made to create "default" frameworks for potentially common uses of the language. Examples:
 
+* Console/Shell
 * Web Server
 * Javascript Client
 * 2D Game
 * State Engine
 
 To truly encourage general-purpose use and involvement, all frameworks should have a reasonable manner of adding "middleware" to expand it.
+
+Frameworks are also specific to their operating environment. Some of the earliest frameworks are written for a limited half-duplex terminal that will often be used in examples:
+
+* std::**hd_terminal_Linux_bash_x64** : a half-duplex UTF8 terminal that runs in linux from a bash shell
+* std::**hd_terminal_Linux_x11_x64** : a half-duplex UTF8 terminal that runs in linux as a GUI in a X11 shell
+* std::**hd_terminal_web_wasm** : a half-duplex UTF8 terminal that runs in a web browser as a single page WASM app and HTML doc
+* std::**hd_terminal_Win10_x64** : a half-duplex UTF8 terminal that runs in MS Windows 10 64-bit GUI (or compatible)
+
+In this particular case, the hdterminal has the same methods and functions. The 'hdterminal' variations are cross-platform. But not all frameworks are expected to be cross-platform.
+
+For the half-duplex terminal, the cross-platform reference is simply:
+
+* std::**hd_terminal**
+
+The language willl support passing the final cross-platform framework details via command-line to the compiler.
+
+All `src` documents must have a framework chosen. Libraries need it if they are limited to specific frameworks.
+
+## [BOTH-I-R]
+### Supports both imperative and reactive models
+
+Some operating environments are [Reactive](https://en.wikipedia.org/wiki/Reactive_programming) (such as the DOM in web programming written in JS). Some are [Imperative](https://en.wikipedia.org/wiki/Imperative_programming) (such as a Windows App written in C#).
+
+In Sulfur the distinction is determined by the framework chosen. Internally, the compiler will adjust it's behavior based on the two models.
 
 ## [TYPE-VERSIONING]
 ### Predictable and strict type versioning

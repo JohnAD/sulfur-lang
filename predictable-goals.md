@@ -22,6 +22,7 @@ Example:
 
 ```sulfur
 #! sulfur src 2022.0.1 en
+#@ std::hd_terminal
 using std::integers [[ type int32 as :int ]]
 
 vars {{
@@ -108,7 +109,7 @@ An example:
 
 ```sulfur
 #! sulfur src 2022.0.1 en
-using std::hdti [[ actor Terminal as t ]]
+#@ std::hd_terminal as t
 
 logger {{
   string_length = 120
@@ -145,6 +146,7 @@ The benefit, philosophically, is that error handling is dealt with explicitly. A
 
 ```sulfur
 #! sulfur src 2022.0.1 en
+#@ std::hd_terminal
 using std::integers [[
   type int32 as :int
 ]]

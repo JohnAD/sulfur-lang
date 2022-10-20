@@ -3,9 +3,9 @@
 # Fast and Small Object Code
 
 ## [FLATTEN]
-### We remove all the procedures ...
+### We temporarily deconstruct all the procedures ...
 
-aka *full source deconstruction and extensive multi-pass code removal.*
+aka *full source deconstruction*
 
 All functions, procedures, and other abstractions are "flattened" into a serial instruction stream prior to code removal. The flattening
 can include some loops.
@@ -67,7 +67,7 @@ echo str(x)
 ```
 
 ## [CTRUN]
-### ... run any functions passed constants at compile-time ...
+### ... run any functions passed resolved values at compile-time ...
 
 ```psuedocode
 x = 3

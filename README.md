@@ -2,17 +2,17 @@
 
 Sulfur is a programming language.
 
-# Good Goals
+# Major Goals
 
 The following are the major goals for the language. These goals are what set this language apart from existing ones.
 
 ### Fast and Small Object Code
 
-* `[FLATTEN]` We temporarily remove all the procedures ...  [(more)](compilation-goals.md#flatten)
+* `[FLATTEN]` We temporarily deconstruct all the procedures ...  [(more)](compilation-goals.md#flatten)
 
   *full-source deconstruction for in-depth analysis*
 
-* `[CTRUN]` ... remove functions with resolved inputs ...   [(more)](compilation-goals.md#ctrun)
+* `[CTRUN]` ... run functions with resolved inputs ...   [(more)](compilation-goals.md#ctrun)
 
   *upgrade `var` to `let` to `const`*
 
@@ -40,9 +40,11 @@ The following are the major goals for the language. These goals are what set thi
 
 * `[FRAMEWORKS]` Frameworks for common uses inside standard library  [(more)](scalable-goals.md#frameworks)
 
+* `[BOTH-I-R]` Supports both imperative and reactive models [(more)](scalable-goals.md#both-i-r)
+
 * `[TYPE-VERSIONING]` Predictable and strict type versioning  [(more)](scalable-goals.md#type-versioning)
 
-Frankly, of the three, the type versioning is the most important in a 100,000+ line ecosystem.
+Frankly, of the four, the type versioning is the most important in a large application over time.
 
 ### Predictable
 
@@ -52,7 +54,7 @@ Frankly, of the three, the type versioning is the most important in a 100,000+ l
 
 * `[FUNC-LOG]` A windowed functional in-thread logger [(more)](predictable-goals.md#func-log)
 
-## Minor Goals
+# Minor Goals
 
 [This document](minor-goals.md) also describes some additional minor goals. Any of these might change or be ignored for various practical reasons.
 

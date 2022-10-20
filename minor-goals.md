@@ -104,6 +104,8 @@ Specifically:
 
   ```sulfur
   #! sulfur src 2022.0.1 en
+  #@ std::hd_terminal
+  
   using colors [[ type color ]]
   using moods [[ type mood ]]
 
@@ -117,6 +119,8 @@ Specifically:
 
   ```sulfur
   #! sulfur src 2022.0.1 en
+  #@ std::hd_terminal as t
+  
   using colors [[
     type color 
     color [ red, blue, zork ]    # I don't know what "zork" is, but I do know it is from the color library.
@@ -138,6 +142,8 @@ Specifically:
 
   ```sulfur
   #! sulfur src 2022.0.1 en
+  #@ std::hd_terminal as t
+
   using colors [[ type color ]]
   using moods [[ type mood ]]
 
@@ -155,7 +161,8 @@ Specifically:
 
   ```sulfur
   #! sulfur src 2022.0.1 en
-
+  #@ std::hd_terminal as t
+  
   using colors [[ type color ]]
   using moods [[ type mood ]]
 
@@ -191,9 +198,9 @@ conversions {{
 method `$` = {{
   description "convert to a readable string"
   returns = {{
-    final_string :str
+    final_string :str = ""
   }}
-  body {{
+  body = [[
     final_string = "Person( "
     var center_missing = true
     if self.name.has_value() [[
@@ -212,7 +219,7 @@ method `$` = {{
       final_string &= "*empty* "
     ]]
     final_string &= ")"
-  }}
+  ]]
 }}
 ```
 

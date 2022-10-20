@@ -11,13 +11,15 @@ Examples:
 
 ```sulfur
 #! sulfur src 2022.0.1 en
-using std::hdti [[ actor terminal as t ]]
+#@ std::hdterminal as t
+
 t.print( "Hello world!\n" )
 ```
 
 ```sulfur
 #! sulfur src 2022.0.1 zh-CN
-使用模块 水平::hdti [[ 演员 屏幕 叫 屏幕 ]]
+#@ std::hdterminal 叫 屏幕
+
 屏幕.节目( "你好世界\n" )
 ```
 
@@ -54,7 +56,7 @@ a file called `main.src.sulfur`:
 
 ```sulfur
 #! sulfur src 2022.0.1 en
-using std::hdti [[ actor Terminal as t ]]
+#@ std::hd_terminal as t
 
 # compile this program with `--lang=es` to get the spanish version of the app
   
@@ -100,7 +102,8 @@ Here is a alternate version of the `main.src.sulfur` that does translation at ru
 
 ```sulfur
 #! sulfur src 2022.0.1 en
-using std::hdti [[ actor Terminal as t ]]
+#@ std::hd_terminal as t
+
 var choice<str> = t.input("enter language code:")
 tglob.lang(choice)
 t.print( "Hello world!\n".$ )
@@ -125,6 +128,8 @@ good:
 
 ```sulfur
 #! sulfur src 2022.0.1 en
+#@ std::hd_terminal
+
 if true [[
   var a<byte> = 10
   var b<byte> = 99
@@ -135,6 +140,8 @@ good:
 
 ```sulfur
 #! sulfur src 2022.0.1 en
+#@ std::hd_terminal
+
 if true [[ var a<byte> = 10l ; var b<byte> = 99 ]]
 ```
 
@@ -142,6 +149,8 @@ compile-time error:
 
 ```sulfur
 #! sulfur src 2022.0.1 en
+#@ std::hd_terminal
+
 if true 
 [[
   var a<byte> = 10
@@ -153,6 +162,8 @@ compile-time error:
 
 ```sulfur
 #! sulfur src 2022.0.1 en
+#@ std::hd_terminal
+
 if true [[
 var a<byte> = 10
 var b<byte> = 99
@@ -163,6 +174,8 @@ compile-time error:
 
 ```sulfur
 #! sulfur src 2022.0.1 en
+#@ std::hd_terminal
+
 if true [[ var a<byte> = 10
   var b<byte> = 99
 ]]
@@ -172,6 +185,8 @@ compile-time error:
 
 ```sulfur
 #! sulfur src 2022.0.1 en
+#@ std::hd_terminal
+
 if true
   var a<byte> = 10
   var b<byte> = 99
