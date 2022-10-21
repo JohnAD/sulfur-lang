@@ -30,11 +30,10 @@ Frameworks are also specific to their operating environment. Some of the earlies
 
 * std::**hd_terminal_Linux_bash_x64** : a half-duplex UTF8 terminal that runs in linux from a bash shell
 * std::**hd_terminal_Linux_x11_x64** : a half-duplex UTF8 terminal that runs in linux as a GUI in a X11 shell
-* std::**hd_terminal_web_wasm_imp** : a half-duplex UTF8 terminal that runs in a web browser as a single page WASM app and HTML doc (but it attempts to run in an imperitive manner; use only for simple projects.)
-* std::**hd_terminal_Win10_x64** : a half-duplex UTF8 terminal that runs in MS Windows 10 64-bit GUI (or compatible)
+* std::**hd_terminal_Win10_x64** : a half-duplex UTF8 terminal that runs in MS Windows 10 compatible 64-bit GUI
 
 * std::**hd_terminal_web_wasm** : a half-duplex UTF8 terminal that runs in a web browser as a single page WASM app and HTML doc (reactive)
-* std::**hd_terminal_android_kotlin** : a half-duplex UTF8 terminal that runs on the android platform (reactive)
+* std::**hd_terminal_android_arm64** : a half-duplex UTF8 terminal that runs on the android platform (reactive)
 
 In this particular case, the hdterminal has the same methods and functions. The 'hdterminal' variations are cross-platform. But not all frameworks are expected to be cross-platform.
 
@@ -65,10 +64,9 @@ while ( name != "exit" ) [[
   var name = t.input( "Enter your name or say \"exit\":" )
   if ( name != "exit" ) [[
     t.print( "Hello " & name )
-  ]] else [[
-    t.print( "Goodbye" )
   ]]
 ]]
+t.print( "Goodbye" )
 ```
 
 A reactive example that does something similar:
