@@ -30,16 +30,20 @@ Frameworks are also specific to their operating environment. Some of the earlies
 
 * std::**hd_terminal_Linux_bash_x64** : a half-duplex UTF8 terminal that runs in linux from a bash shell
 * std::**hd_terminal_Linux_x11_x64** : a half-duplex UTF8 terminal that runs in linux as a GUI in a X11 shell
-* std::**hd_terminal_web_wasm** : a half-duplex UTF8 terminal that runs in a web browser as a single page WASM app and HTML doc
+* std::**hd_terminal_web_wasm_imp** : a half-duplex UTF8 terminal that runs in a web browser as a single page WASM app and HTML doc (but it attempts to run in an imperitive manner; use only for simple projects.)
 * std::**hd_terminal_Win10_x64** : a half-duplex UTF8 terminal that runs in MS Windows 10 64-bit GUI (or compatible)
+
+* std::**hd_terminal_web_wasm** : a half-duplex UTF8 terminal that runs in a web browser as a single page WASM app and HTML doc (reactive)
+* std::**hd_terminal_android_kotlin** : a half-duplex UTF8 terminal that runs on the android platform (reactive)
 
 In this particular case, the hdterminal has the same methods and functions. The 'hdterminal' variations are cross-platform. But not all frameworks are expected to be cross-platform.
 
-For the half-duplex terminal, the cross-platform reference is simply:
+For the half-duplex terminal, the cross-platform references are simply:
 
-* std::**hd_terminal**
+* std::**hd_terminal** : a universal and simple toolset for terminal i/o with an imperative program
+* std::**hd_terminal_reactive** : a universal and simple toolset for terminal i/o in reactive programs
 
-The language willl support passing the final cross-platform framework details via command-line to the compiler.
+The language will support passing the final cross-platform framework details via command-line to the compiler.
 
 All `src` documents must have a framework chosen. Libraries need it if they are limited to specific frameworks.
 
@@ -49,6 +53,60 @@ All `src` documents must have a framework chosen. Libraries need it if they are 
 Some operating environments are [Reactive](https://en.wikipedia.org/wiki/Reactive_programming) (such as the DOM in web programming written in JS). Some are [Imperative](https://en.wikipedia.org/wiki/Imperative_programming) (such as a Windows App written in C#).
 
 In Sulfur the distinction is determined by the framework chosen. Internally, the compiler will adjust it's behavior based on the two models.
+
+An imperative example:
+
+```sulfur
+#! sulfur type 2022.0.1 en
+#@ std::hd_terminal as t
+
+t.print( "The hello program!" )
+while ( name != "exit" ) [[
+  var name = t.input( "Enter your name or say \"exit\":" )
+  if ( name != "exit" ) [[
+    t.print( "Hello " & name )
+  ]] else [[
+    t.print( "Goodbye" )
+  ]]
+]]
+```
+
+A reactive example that does something similar:
+
+```sulfur
+#! sulfur type 2022.0.1 en
+#@ std::hd_terminal_reactive as t
+
+bind t {{                    # 'bind' is for compile-time binding; 'rebind' is for run-time binding
+  on_load = startup
+  on_input = value_entered
+}}
+
+procedure startup {{
+  body = [[
+    t.print("The hello program!")
+    t.request_input( "Enter your name or say \"exit\":", context="getname" )
+  ]]
+}}
+
+procedure value_entered {{
+  parameters = {{
+    text :str
+    context :str
+  }}
+  body = [[
+    if ( context == "getname" ) [[
+      if ( text != "exit " ) [[
+        t.print( "Hello " & text )
+      ]] else [[
+        t.print( "Goodbye" )
+        t.clear_input()             # this causes the "<input>" element to disable
+        t.exit()                    # in a web browser, the "exit()" statement does nothing other than trigger an "on_exit" event
+      ]]
+    ]]
+  ]]
+}}
+```
 
 ## [TYPE-VERSIONING]
 ### Predictable and strict type versioning

@@ -188,11 +188,15 @@ First, the type library wrapping:
 
 ```sulfur
 #! sulfur type 2022.0.1 en
-#% type_library person 1.0.1
+#% type_library person 1.0.2
 
-protobuf "../models/person.protobuf"
+protobuf {{
+  1.0.2 = "../models/person.protobuf"
+  1.0.1 = "../models/person-1.0.1.protobuf"
+}}
 
 conversions {{
+  [1.0.1, 1.0.2] = void
 }}
 
 method `$` = {{
