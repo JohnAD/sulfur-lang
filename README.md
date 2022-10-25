@@ -76,7 +76,7 @@ Life is about trade-offs. There are definitely some downsides to this language.
 
 * Early exit methods are forbidden.
 
-  Loops, routines, and other structures in the language have a specific beginning, middle, and end. As such, common statements such as `return`, `continue`, and `break` are now allowed. This will force the programmer to refactor more often to keep code readable.
+  Loops, routines, and other structures in the language have a specific beginning, middle, and end. As such, common statements such as `return`, `continue`, and `break` are not allowed. This will force the programmer to refactor more often to keep code readable.
 
 * Compile-time is longer.
 
