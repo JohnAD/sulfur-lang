@@ -155,6 +155,8 @@ Specifically:
 
   Or, mix and match the methods. The key is that the language will not let you do the equivalent of an "import all" from a library.
 
+* There is no equivalent to "insert-file-here" in the language. An example is C's `#include` statement. Sulfur does not allow you to automatically place the text of a source code file into the next of another source code file since that would severely violate this principle.
+
 * A point of discussion: should you also know that you are looking at the whole file? The start of the file is self-evident with the top line declaration. But the bottom is not. Should we allow something like `----` or `#@` to finish the file? Should it be _required_ as the last line?
 
   An example if done:
@@ -190,7 +192,7 @@ First, the type library wrapping:
 #! sulfur type 2022.0.1 en
 #% type_library person 1.0.2
 
-protobuf {{
+proto3 {{
   1.0.2 = "../models/person.protobuf"
   1.0.1 = "../models/person-1.0.1.protobuf"
 }}
@@ -239,7 +241,60 @@ message Person {
 }
 ```
 
-This minor goal also support the [[PROTOCOL]](scalable-goals.md#protocol) major goal.
+This minor goal also supports the [[PROTOCOL]](scalable-goals.md#protocol) major goal.
+However, it violates the the [SELF-FILE](#self-file) minor goal.
+
+In a similar vein, we could consider direct compilation of flatbuffers or SBE.
+
+All systems have downside in terms of this language:
+
+Protobuf: does not implicitly support UTF8. Cannot limit size of strings. Cannot deserialize without alloc'ing more memory.
+Flatbuffer: does not implictly support UTF8. Cannot limit size of strings.
+SBC: XML isn't pretty. Only supports UTF8 on dynamic length strings.
+
+Or we could create "yet another standard". Queue the XKCD comic.
+
+```text
+# another dang standard
+
+version 1.0.1
+
+message Person {
+  utf8[80] name = 1;      # 80 characters can be as large as 80*4 bytes, so pre-allocate 320 bytes in receipt buffer
+  int32 id = 2;
+  int32[-1,150] age = 5;  # numbers can optionally have inclusive min/max
+  ascii[50] email = 3;    # ascii[50] takes up to 50 8-bit bytes
+}
+
+# The binary encoding will be 4242/uint16/uint16/uint16 version #, then a simple
+# uint32:uint32 offset table at the start of the block and in each corresponding
+# struct. All offsets are relative to start of block to avoid math.
+```
+
+## [GIT-PLUS]
+### Direct git support
+
+There is already a primary goal for being oriented toward source control systems such as git. But, that is
+largely about organizing things so that changes are easily tracked on a line / file / directory basis.
+
+However, there is some usefulness to taking it to the next level: direct support for the .git structure as a whole.
+
+For example, allowing reference to common models (or protobuf files) in a shared directory in a monorepo using the git
+structure. Something like a `git::` prefix:
+
+```sulfur
+#! sulfur type 2022.0.1 en
+#% type_library person 1.0.2
+
+proto3 {{
+  1.0.2 = "git::/shared_models/person.protobuf"
+  1.0.1 = "git::/shared_models/person-1.0.1.protobuf"
+}}
+
+# more stuff goes here ...
+```
+
+Or, perhaps, compile-time access to git details, such as `environment.git.branch`
 
 ----
 

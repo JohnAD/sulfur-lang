@@ -20,7 +20,7 @@ when non-suffix:
   [[ ]] is for un-named statement sequences
   {{ }} is for named statement sequences
 
-  ( ) is for grouping of data
+  ( ) is for grouping of ops; resolving to a single value
 
   < > is for greater-than/less-than. It is the only grouping exception.
 
@@ -33,12 +33,11 @@ when the suffix of an identifier or literal:
   ident( ) is for un-named AND named calling parameters  
                   `joe(99, 4, x = 2)` call the `joe` function with 4 and 7 as unnamed params, and param x as 2
   ident< > is for explicit typing(s) of the identifier  
-                  `joe<int>`  joe is (or must be cast as) an int. 
-                  `"hola"<es>` is a spanish utf8 string.
+                  `joe<int>`  joe is (or must be cast as) an int.
 
 ============
 
-The language will enforce line length. But, internal stuff will be limited to 132 characters.
+The language will not enforce line length. But, internal stuff will be limited to 132 characters.
 
 ==============
 
@@ -105,6 +104,7 @@ So, the following statements are all identical:
 
 Switch statement variations:
 
+rust uses "match"
 
 first {{
     ( case == 14 ) = [[

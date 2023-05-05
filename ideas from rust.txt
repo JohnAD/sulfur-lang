@@ -1,0 +1,6 @@
+ideas from rust
+
+Interesting structures learned from rust:
+
+'match'
+   does a first-found mapping

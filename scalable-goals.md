@@ -60,12 +60,10 @@ An imperative example:
 #@ std::hd_terminal as t
 
 t.print( "The hello program!" )
-while ( name != "exit" ) [[
+loop [[
   var name = t.input( "Enter your name or say \"exit\":" )
-  if ( name != "exit" ) [[
-    t.print( "Hello " & name )
-  ]]
-]]
+  t.print( "Hello " & name )
+]] until ( name != "exit" ) 
 t.print( "Goodbye" )
 ```
 
@@ -75,7 +73,7 @@ A reactive example that does something similar:
 #! sulfur type 2022.0.1 en
 #@ std::hd_terminal_reactive as t
 
-bind t {{                    # 'bind' is for compile-time binding; 'rebind' is for run-time binding
+bind t.events {{                    # 'bind' is for compile-time binding; 'rebind' is for run-time binding
   on_load = startup
   on_input = value_entered
 }}
@@ -96,15 +94,17 @@ procedure value_entered {{
     if ( context == "getname" ) [[
       if ( text != "exit " ) [[
         t.print( "Hello " & text )
+        t.request_input( "Enter your name or say \"exit\":", context="getname" )
       ]] else [[
         t.print( "Goodbye" )
-        t.clear_input()             # this causes the "<input>" element to disable
-        t.exit()                    # in a web browser, the "exit()" statement does nothing other than trigger an "on_exit" event
+        t.exit()                  # in a web browser, the "exit()" statement does nothing other than trigger an "on_exit" event
       ]]
     ]]
   ]]
 }}
 ```
+
+open thought: should the found procedures be functions with a "to-do" list returned. In other words, they don't actually change the dom or do i/o, they merely send back a list of things to do to the actor framework. That way full code removal and optimization could be applied.
 
 ## [TYPE-VERSIONING]
 ### Predictable and strict type versioning
