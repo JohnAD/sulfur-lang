@@ -1,12 +1,44 @@
 # punctuation.md
 
+any identifier that _starts_ with punctuation is operator.
 
+In general, punctuation is used in 3 contexts:
+
+a. Stand-alone as an operator. By "stand-alone" I mean "separated by whitespace". So, `2 * ( 5 - 3 )` means five minus three that is then multiplied by two.
+b. As a suffix. So for `bling( )`, the `(` indicates the start of a parameter rolne. There is NO whitespace between 'g' and the parentisis. Notice the closing `)` is separated by whitespace. As it happens, `bling()` also works because `()` is also a single standalone suffix which means "call the function with no parameters".
+c. As a prefix. So, `-2` is a negative two. It never means "subtract 2".
+d. As an escapement, such as for strings. So, `"abc"` is a string.
+
+Because of this, the following are syntax errors:
+- `5-2`  : this is 5 followed by negative 2. But there is no operator between them. It is the equivalent of `5 -2`. You probably wanted `5 - 2`. You can also use prefixes. So, `+5 - +2` and `5 + -2` are both valid equivalents to `5 - 2`.
+
+- `( a + b)` : this is the start of a grouping, the ident `a`, a `+` operator, and a `b` with a parameter suffix of `)` . But you can't use a closer `(` before an opener `)`. You probably wanted `( a + b )`.
+
+The following punctuation are "grouping" punctuation:
+  `(` `)`
+  `[` `]`
+  `{` `}`
+  `<` `>`
+
+The are restricted to the following:
+
+a. OPENERS: Starts with a opening punctuation, other characters must be either neutral or other openers. Examples:
+   `(((`   `{(<[`   `{*&$`
+b. CLOSERS: Must be the EXACT opposite sequence of an OPENER and paired with it. Examples mapping to 'a' above:
+   `)))`   `]>)}`   `$&*}`
+c. EMPTY_INVOKERS: Must be an anagram with all opening punctuation followed by closing punctuation.
+   `()`    `{}`     `{[**&**]}`   `{[**&&**]}`
+
+The following punctuation are "escapements":
+
+TBD
 
 ## latin punctuation Meanings
 
 33  21  !
 
-    !           boolean not
+    !           DONT use ! for not. `!z.b.c.d` is the "not" for z, b, c, or d? `not(z.b.c.d)` or `z.b.c.d.not()` are better.
+    !ident      used to prefix the call to an Actor; which is a procedure with side effects.
 
 34  22  "
 

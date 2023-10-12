@@ -1,52 +1,72 @@
-TLDR
+## TLDR
 
-  Actors have side effects on objects in general
-    uses <-
-  Functions don't have side affects
-    if not modifying UCFS object uses .
-    if modifying UCFS object uses ::
+  Functions only READ the target object. No side affects. Someting is ALWAYS returned.
+    uses `.` for UCFS
+  Method change the target object. No side effects. Nothing is returned.
+    uses `~` for UCFS
+  Actors have side effects. They cannot be used with UCFS.
+    modified calling parameters are prefixed with `*`
+    Actors are prefixed with ! when called.
   Modules are singletons
     uses \
 
 
-----------------
-rather than all the procedure names, make most of it "contextual" in nature a limit it to two types:
+## DETAILS
 
-  function
+### Function
     a procedure with no side effects.
 
-    if prefaced with ( self ) parameter, then it is usable with UCFS
+    It is usable with UCFS
       separation is done with a dot. "."
 
-   functions cannot call actors. Ever.
+   functions can call Methods on member elements, but not on the target object.
 
-   functions are "desist" by default. That is, then it can be code-removed if the compiler does not think it is needed.
+   functions cannot call Actors. Ever.
 
-  actor
+   functions are "desist" by default. That is, it can be code-removed if the compiler does not think it is needed.
+
+### Method
+
+    a procedure with no side effects.
+
+    The procedure modifies the target object.
+
+    It is usable with UCFS
+       separation is done with a `~`
+
+    If specifically marked as "%%ALLOW_BANG"?, they can also be called with a ! prefix.
+
+    methods are "desist" by default. That is, it can be code-removed if the compiler does not think it is needed.
+
+    methods cannot call Actors. They can call Functions.
+
+### Actor
     a procedure with side effects; includes anything with external I/O
 
-    if prefaced with ( self ) parameter, then it is usable with UCFS
+    It is NOT usuable with UCFS.
+
+    calling parameters that are modifiable MUST be prefixed with a `*`
+
+    Actors are preceded with a ! when called, thus calling out the danger.
 
     actors are "insist" by default. That is, the structure of the code is not removable unless it is fully emptied out first.
       unless the actor is functional in nature, this isn't likely to happen.
 
-    the logger module uses desist on most of its methods.
-
-  module
+### module
     a module library is a singleton object with optional variables
 
     if used in a UCFS manner, the separation is backslash '\'
 
     modules are "insist" by default. That is, the structure of the code is not removable unless it is fully emptied out first.
-      However this isn't that rare of an event.
+      However this is a rare of an event if it ever happens.
 
-The insist / desist nature can be overridden with prefixes on the definition.
+The insist / desist nature can be overridden with prefixes on the call.
 
 The call to the procedures can then override everything with a prefix on the statement.
 
 ```sulfur
 #!
-#@ lib::blah as b [[ func bar, type zing, func bam, actor larry, actor moo ]]
+#@ lib::blah as b [[ func bar, type zing, func bam, actor larry, method moo ]]
 
 var x = b\foo()
 var y = bar()
@@ -55,25 +75,26 @@ insist var z = bar()  # both 'z' and the code of `bar` will not be code removed 
 var obj = zing()
 
 var j = obj.b\bing()
-var k = obj.bang()
+var k = obj.bang()   # bang is a function for obj
 
-obj <- larry()   # larry is an actor for zing
-desist obj <- larry()  # this second call _might_ be removed if obj is not used later
+!larry(*obj)          # larry is an actor for zing
+desist !larry(*obj)   # this second call _might_ be removed if obj is not used later
 
-b <- moo()    # moo is an actor for b itself.
+b~moo()              # moo is a method for b (b is likely now changed)
 ```
 
-logger snippets
+## LOGGING
 
-```sulfur
-log <- danger("something happened")   # might get removed if the generic "log" is never output because `danger` actor is overridden with 'desist` in the library.
-insist log <- danger("tada")
+The Logger can, at compile-time, change it's behavior.
 
-var x :byte = 22
+In DEFER mode, a global late-binding "logger class" is passed around. `logger\!log("blah")` causes the string to be added to the narrative collection. But, no actual I/O occurs. At program exit, the logger then "acts" on the logs and send the logs to their destination.
 
-x.log.danger("one")  # will get removed if the "log" of x isn't used anywhere
-insist x.log.danger("two")  # no removal 
+The benefit of this is that the `!log` is NOT a procedures and can then, thus, have it's code removed. The downside: a "hard crash" will cause you to lose the logs.
 
-log <- pull(x)  # the log of x is "added" to the the generic log; if there are any entries
-x.log.clear()
-```
+In IMMEDIATE mode, the `!log("blah")` is a Procedure which triggers I/O all throughout the program. As such, much less code is removed.
+
+## GENERAL NOTES
+
+calling procedures is perfectly normal in a typical app. After all, doing I/O of _some_ kind is the purpose of an app.
+
+libraries, however, should be much more careful about them. It is better to NOT 

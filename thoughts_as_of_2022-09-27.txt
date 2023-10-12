@@ -9,7 +9,7 @@ GROUPING OPERATORS
 general rule of thumb:
   [] is for "unnamed things"
   {} is for "named things"
-  () varies in meaning
+  () is for "grouping together"
   <> is for "declarative things"
 
 when non-suffix:
@@ -28,12 +28,12 @@ when the suffix of an identifier or literal:
 
   ident[ ] is for key references.  
                   `joe[ 4 ]` get item 4 from joe.
-                  `joe[ "zig" ]` get the "zig" item from the joe dictionary or object.
-  ident{ } has no meaning at the moment
+                  `joe[ "zig" ]` get the "zig" item from the joe object.
+  ident{ } means "convert to the type ident". so Dict{ } is an empty dictionary
   ident( ) is for un-named AND named calling parameters  
                   `joe(99, 4, x = 2)` call the `joe` function with 4 and 7 as unnamed params, and param x as 2
   ident< > is for explicit typing(s) of the identifier  
-                  `joe<int>`  joe is (or must be cast as) an int.
+                  `joe<int32>`  joe is of type int32.
 
 ============
 
@@ -41,21 +41,23 @@ The language will not enforce line length. But, internal stuff will be limited t
 
 ==============
 
-Declarations such as `var`, `let` and `const` do not "create" variables. They are simply declarations and order does not matter.
+Declarations such as `var`, `let`, `const`, and `def` do not "create" variables. They are simply declarations and order does not matter.
+
+'let' also allows for reassignment of a "almost" read-only let variable
 
 A variable must maintain uniqueness across the scope of an entire function/procedure/method. Blocks do NOT create
 new scope.
 
 ideal:
 
-  var a :int     # by putting this at the top, there is less confusion for new programmers
+  var a<int32>       # by putting this at the top, there is less confusion for new programmers
   a = 2
   a = a + 1
   a = a * 3
 
 but these are ALSO effectively identical:
 
-  var a :int = 2   # this really is TWO statements; a declaration and an assignment
+  var a<int32> = 2   # this really is TWO statements; a declaration and an assignment
   a = a + 1
   a = a * 3
 
@@ -63,13 +65,13 @@ and
 
   a = 2
   a = a + 1
-  var a :int = a * 3
+  var a<int32> = a * 3
 
 and
 
   if true [[
     a = 2
-    var a :int = a + 1
+    var a :int32 = a + 1
   ]] else [[
     a = -1
   ]]
@@ -79,9 +81,9 @@ but this will throw a syntax error for multiple declarations of the same variabl
 
   if true [[
     a = 2
-    var a :int = a + 1
+    var a :int32 = a + 1
   ]] else [[
-    var a :int = -1
+    var a :int32 = -1
   ]]
   a = a * 3
 
@@ -95,10 +97,15 @@ used to declare a variable it must be space-separated.
 
 So, the following statements are all identical:
 
-  var a :int = 4       # this is prettier, IMO
-  var a<int> = 4
-  var a<:int> = 4
+  var a :int32 = 4       # this is prettier, IMO
+  var a<int32> = 4
+  var a<:int32> = 4
 
+And it prevents conflict, so:
+
+  var int32<:int32>
+
+While this ISN'T recommended, we have have a variable named int32 with a type of int32.
 
 ============
 

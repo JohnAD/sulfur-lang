@@ -109,6 +109,18 @@ echo "Hi" & "Larry"
 echo str(x)
 ```
 
+There are three types of variables:
+
+`var`: a fully mutable variable that can be changed at any time
+`let`: a mostly read-only variable. Can only be mutated with another `let`.
+`const`: a read-only variable that should not change after initial determination of value
+`def`: a read-only variable that MUST be statically determined at compile-time
+
+Any variable can be declared a `var` and, at compile-time, sulfur will do it's
+best to "upgrade" to less mutable forms; both speeding up run-time and reducing
+code size.
+
+
 ## [ALGO-PROC]
 ### ... and then we put functions back in
 

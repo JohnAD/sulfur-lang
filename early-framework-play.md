@@ -87,6 +87,45 @@ r.start()
 
 ----
 
+# Web router example (even simpler?):
+
+var r = router()
+
+invoke route(r, GET, "/index.html") making [
+  request
+  result
+] body [[
+  result.content = "<h1>Hello</h1>"
+]]
+
+r.start()
+
+----
+
+# Web router example (way better from systemic framework):
+
+```sulfur
+#! sulfur type 2022.0.1 en
+#% framework ssr_web 1.0.2
+
+# NOTE: ssr_web is a declarative framework; not an imperative one.
+
+from framework {{
+  GET
+  route
+  myconfig = config  # this is how you do aliasing
+}}
+
+myconfig.port = 8088
+
+route(GET, "/hello/{name}") making [[
+  let name = request.param.name
+  result.content = "<h1>Hello ${name}</h1>".fmt( name = name )
+]]
+```
+
+----
+
 # Web router with middleware
 
 var router = router()
@@ -136,3 +175,78 @@ metaroute [
   # `route` after code
 
 
+----
+
+# Web router with middleware and framework
+
+```sulfur
+#! sulfur type 2022.0.1 en
+#% framework ssr_web 1.0.2
+
+from framework {{ GET, route, chain, redirect }}
+
+from library dblib {{ db }}
+from library weblogin {{ login_handler }}
+from library cookie_messenger {{ cookie_handler }}
+
+db.init()
+
+var login_stuff = login_handler(db, "blah", 14)
+
+chain [
+  ( request, result ) = route(GET, "/index.html")
+  ( logged_in, user ) = login_stuff( request )
+  ( msg ) = cookie_handler( request, result ) as ch
+] do [[
+  if logged_in [[
+    if (user.name == "joe") [[
+      result.redirect = "/logout"
+      result.code = redirect
+      msg = "Joe can't be here."
+      ch.blah("x")
+    ]] else [[
+      result.content = "<h1>Hello {name}</h1>".fmt(name = user.name)
+    ]]
+  ]] else [[
+    result.content = "<h1>Hello</h1>"
+  ]]
+]]
+```
+
+example of cookie handler:
+
+```sulfur
+
+chain_wrapper chookie_handler {{
+  parameters = {
+    request
+    result
+  }
+  returns = {
+    // variable seen by inner functions, if any, goe here
+    msg
+  }
+  local = {
+    // persistent variables between entry and exit go here
+  }
+  entry = [[
+    // stuff goes here, sees request, result, and msg
+  ]]
+  exit = [[
+    // stuff goes here, sees request, result, and msg
+  ]]
+  methods = {{
+    // just like a class, a chain_wrapper can have methods
+    blah = {{
+      parameters = {
+        something
+      }
+      returns = { }
+      body = [[
+        // .... stuff goes here
+        // sees request, result, msg, and something
+      ]]
+    }}
+  }}
+}}
+```
