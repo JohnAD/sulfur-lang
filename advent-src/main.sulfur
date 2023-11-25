@@ -1,0 +1,32 @@
+#! sulfur 0.1 app en
+#@ std\clib as clib
+
+using std\numerics import [[
+  Int32 as Int
+]]
+
+using "command_line" import [[
+  Settings
+  parse_options
+]]
+
+# original source pulled from: https://gitlab.com/esr/open-adventure/
+
+proc main {{
+  parameters {{
+    argc::Int
+    argv::Array::Str
+  }}
+  returns {{
+    exitcode::Int = clib\GOODEXIT
+  }}
+  body {{
+    const settings::Settings = parse_options( argc argv )
+    if settings.hasError( ) [[
+      clib\fprintf( stderr settings.error.message )
+      exitcode = clib\FAILEXIT
+    ]] else [[
+      clib\printf( "starting!" )
+    ]]
+  }}
+}}

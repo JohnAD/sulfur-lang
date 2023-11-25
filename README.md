@@ -14,7 +14,7 @@ The following are the major goals for the language. These goals are what set thi
 
 * `[CTRUN]` ... run functions with resolved inputs ...   [(more)](compilation-goals.md#ctrun)
 
-  *upgrade `var` to `let` to `const`*
+  *upgrade `var` to `let` to `const` to `def`*
 
   *run crude interpreter on non-variable parameters and structs to remove swaths of code*
 
@@ -89,6 +89,10 @@ The target audience for this language is:
 > skilled computer programmers wishing to write large general-purpose applications
 
 It is NOT designed for:
+
+* small programs
+
+  The overhead and learning-curve makes using sulfur for something small kind of pointless. Or even write it in C itself. The performance benefits of this language are not really seen until the program becomes non-trivial.
 
 * embedded systems programming
 

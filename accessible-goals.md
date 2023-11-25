@@ -45,7 +45,7 @@ Later goal of ten core languages:
 * German `de-DE`
 * Japanese `ja-JP`
 
-The if a language is used without a country code specification it defaults to the above list. For example, `es` defaults to be `es-US`.
+The if a language is used without a country code specification it defaults to the above list. For example, `en` defaults to be `en-US`.
 
 ## [ML-STR] 
 ### Multi-lingual string handling
@@ -54,66 +54,69 @@ The users of an app might be human. Humans speak different languages. The suppor
 
 Examples:
 
-a file called `main.src.sulfur`:
+a file called `00_main.sulfur`:
 
 ```sulfur
 #! sulfur src 2022.0.1 en
 #@ std::hd_terminal as t
 
 # compile this program with `--lang=es` to get the spanish version of the app
+
+action say_day {
+  doc = {{
+    """
+      This action prints the day to the terminal.
+    """
+  }}
+  parameters = {
+    day<str> = "unknown"
+  }
+  code = {
+    t.print( "Today is {{ day }}.\n"<en> )  # explicit declaration
+  }
+}
+
   
 t.print( "Hello world!\n" )          # since the declaration line is `en`, this defaults to `en`
-const day<str> = "Tuesday"
-t.print( "Today is {{ day }}.\n"<en> )  # explicit declaration
+const today<str> = "Tuesday"
+say_day(today)
 ```
 
-a directory-wide file called `directory.tr.sulfur`:
+a called `00_main.sulfur.zh.po`:
 
 ```sulfur
-#! sulfur tr 2022.0.1 en
-  
-"Hello world!\n" = {
-  "es" = "Hola Mundo!\n"
-  "zh" = "你好世界\n"
-}
+msgid "Hello world!\n"
+msgstr "你好世界\n"
 
-"Today is {{ day }}.\n" = {
-  "es" = "Hoy es {{ day }}.\n"
-  "zh" = "今天是星期${day}\n"
-  comment = "{{ day }} is the current day of the week"
-}
+# {{ day }} is the current day of the week
+msgid "Today is {{ day }}.\n"
+msgstr "今天是星期${day}\n"
 
-"My name is [[ Bob ]].\n" = {
-  comment = "[[ Bob ]] is a person's name"
-}
+# notice that source code names and docs can be translated also
+msgid "__say_day"
+msgstr "说那一天"
 
-"Tuesday" = {
-  "es" = "martes"
-  "zh" = "二"
-}
+msgid "__say_day.__parameters.__day"
+msgstr "星期几"
 
-# You can include variable names as well, though they will not be part of the final object file
-# use the fake language of "src" to do this.
-"day"<src> = {
-  "es" = "día"
-  "zh" = "星期几"
-}
+msgid "__say_day.__docs.This action prints the day to the terminal."
+msgstr "此操作将日期打印到终端。"
 ```
 
-Here is a alternate version of the `main.src.sulfur` that does translation at run-time:
+Here is a alternate version of the `00_main.sulfur` that does translation at run-time:
 
 ```sulfur
 #! sulfur src 2022.0.1 en
 #@ std::hd_terminal as t
 
 var choice :str = t.input("enter language code:")
-thread.set_language(choice)
-t.print( "Hello world!\n".$ )             # the '.$' means "translate this to whatever the current thread's language is"
+t.set_language(choice)
+t.print( "Hello world!\n".$ )             # the '.$' means "translate this to whatever the language is"
 const day<str> = "Tuesday"
 t.print( "Today is ${day}.\n".$ )
 ```
 
-If translations occur at run-time, the translated strings are stored in the object code by default.
+If translations occur at run-time, the all the translated strings are stored in the object code by default.
 
 ## `GIT`
 ### Git-oriented 
