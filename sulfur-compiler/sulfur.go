@@ -5,16 +5,35 @@ package main
 import (
 	"fmt"
 	"log"
+	"sulfur-compiler/context"
 	"sulfur-compiler/lexer"
 )
 
 func main() {
-	base_dir := "/home/johnd/Projects/sulfur-lang/advent-src"
-	target := "main.sulfur"
-	err, tokens := lexer.LexFile(base_dir, target)
+	cc := context.NewCompilerContext("main")
+	cc.RootDir = "/home/johnd/Projects/sulfur-lang/advent-src"
+	target := "main"
+	err := context.CleanStagingDir(&cc)
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	// round 1: Dynamic Lexing/Parsing
+	err = context.CreateLexParseRoundDir(&cc)
+	if err != nil {
+		log.Fatal(err)
+	}
+	err, tokens := lexer.LexFile(&cc, target)
+	if err != nil {
+		log.Fatal(err)
+	}
+	//if cc.SaveLexedFlag {
+	//	err = context.SaveLex(&cc, tokens)
+	//}
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	fmt.Println("Tokens:")
 	for _, t := range tokens {
 		fmt.Printf("%v ", t)

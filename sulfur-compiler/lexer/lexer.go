@@ -3,7 +3,9 @@ package lexer
 import (
 	"bufio"
 	"fmt"
+	"gopkg.in/yaml.v2"
 	"os"
+	"sulfur-compiler/context"
 )
 
 type Lexer struct {
@@ -14,16 +16,39 @@ type Lexer struct {
 	runeCategory  RuneCategory
 	previousRune  rune
 	tokenList     []Token
+	fileId        int
+}
+
+func NewToken(plex *Lexer, init TokenType) Token {
+	t := Token{
+		TokenType:    init,
+		SourceFile:   plex.fileId,
+		SourceLine:   plex.currentLine,
+		SourceOffset: plex.currentOffset,
+		Content:      "",
+	}
+	return t
+}
+
+func NewTokenWithRune(plex *Lexer, init TokenType, ch rune) Token {
+	t := Token{
+		TokenType:    init,
+		SourceFile:   plex.fileId,
+		SourceLine:   plex.currentLine,
+		SourceOffset: plex.currentOffset,
+		Content:      string(ch),
+	}
+	return t
 }
 
 func lexStandingSymbolBegin(plex *Lexer, ch rune) {
 	plex.state = TT_STANDING_SYMBOL
-	plex.currentToken = NewTokenWithRune(TT_STANDING_SYMBOL, ch)
+	plex.currentToken = NewTokenWithRune(plex, TT_STANDING_SYMBOL, ch)
 }
 func lexStandingSymbol(plex *Lexer, ch rune) {
 	switch plex.runeCategory {
 	case RC_WHITESPACE:
-		if plex.currentToken.content == "#" {
+		if plex.currentToken.Content == "#" {
 			lexCommentBegin(plex, ch)
 			return
 		}
@@ -34,7 +59,7 @@ func lexStandingSymbol(plex *Lexer, ch rune) {
 	case RC_NUMBER:
 		lexSyntaxErrorSwitch(plex, ch, "TBD NUMBER")
 	case RC_PUNCTUATION:
-		plex.currentToken.content = plex.currentToken.content + string(ch)
+		plex.currentToken.Content = plex.currentToken.Content + string(ch)
 	case RC_OPEN_PUNCTUATION:
 		lexSyntaxErrorSwitch(plex, ch, "TBD OPEN P")
 	case RC_CLOSE_PUNCTUATION:
@@ -54,7 +79,7 @@ func lexStandingSymbolEnd(plex *Lexer) {
 
 func lexOpenSymbolBegin(plex *Lexer, ch rune) {
 	plex.state = TT_OPEN_SYMBOL
-	plex.currentToken = NewTokenWithRune(TT_OPEN_SYMBOL, ch)
+	plex.currentToken = NewTokenWithRune(plex, TT_OPEN_SYMBOL, ch)
 }
 func lexOpenSymbol(plex *Lexer, ch rune) {
 	switch plex.runeCategory {
@@ -62,13 +87,13 @@ func lexOpenSymbol(plex *Lexer, ch rune) {
 		lexOpenSymbolEnd(plex)
 		lexWhitespaceBegin(plex, 0)
 	case RC_LETTER:
-		plex.currentToken.content = plex.currentToken.content + string(ch)
+		plex.currentToken.Content = plex.currentToken.Content + string(ch)
 	case RC_NUMBER:
 		lexSyntaxErrorSwitch(plex, ch, "TBD NUMBER")
 	case RC_PUNCTUATION:
-		plex.currentToken.content = plex.currentToken.content + string(ch)
+		plex.currentToken.Content = plex.currentToken.Content + string(ch)
 	case RC_OPEN_PUNCTUATION:
-		plex.currentToken.content = plex.currentToken.content + string(ch)
+		plex.currentToken.Content = plex.currentToken.Content + string(ch)
 	case RC_CLOSE_PUNCTUATION:
 		lexSyntaxErrorSwitch(plex, ch, "TBD CLOSE P")
 	case RC_LINE_END:
@@ -86,7 +111,7 @@ func lexOpenSymbolEnd(plex *Lexer) {
 
 func lexCloseSymbolBegin(plex *Lexer, ch rune) {
 	plex.state = TT_CLOSE_SYMBOL
-	plex.currentToken = NewTokenWithRune(TT_CLOSE_SYMBOL, ch)
+	plex.currentToken = NewTokenWithRune(plex, TT_CLOSE_SYMBOL, ch)
 }
 func lexCloseSymbol(plex *Lexer, ch rune) {
 	switch plex.runeCategory {
@@ -94,15 +119,15 @@ func lexCloseSymbol(plex *Lexer, ch rune) {
 		lexCloseSymbolEnd(plex)
 		lexWhitespaceBegin(plex, 0)
 	case RC_LETTER:
-		plex.currentToken.content = plex.currentToken.content + string(ch)
+		plex.currentToken.Content = plex.currentToken.Content + string(ch)
 	case RC_NUMBER:
 		lexSyntaxErrorSwitch(plex, ch, "TBD NUMBER")
 	case RC_PUNCTUATION:
-		plex.currentToken.content = plex.currentToken.content + string(ch)
+		plex.currentToken.Content = plex.currentToken.Content + string(ch)
 	case RC_OPEN_PUNCTUATION:
 		lexSyntaxErrorSwitch(plex, ch, "TBD OPEN P")
 	case RC_CLOSE_PUNCTUATION:
-		plex.currentToken.content = plex.currentToken.content + string(ch)
+		plex.currentToken.Content = plex.currentToken.Content + string(ch)
 	case RC_LINE_END:
 		lexCloseSymbolEnd(plex)
 		lexIndentLineBegin(plex, ch)
@@ -118,7 +143,7 @@ func lexCloseSymbolEnd(plex *Lexer) {
 
 func lexOpenBindSymbolBegin(plex *Lexer, ch rune) {
 	plex.state = TT_OPEN_BIND_SYMBOL
-	plex.currentToken = NewTokenWithRune(TT_OPEN_BIND_SYMBOL, ch)
+	plex.currentToken = NewTokenWithRune(plex, TT_OPEN_BIND_SYMBOL, ch)
 }
 func lexOpenBindSymbol(plex *Lexer, ch rune) {
 	switch plex.runeCategory {
@@ -130,9 +155,9 @@ func lexOpenBindSymbol(plex *Lexer, ch rune) {
 	case RC_NUMBER:
 		lexSyntaxErrorSwitch(plex, ch, "TBD NUMBER")
 	case RC_PUNCTUATION:
-		plex.currentToken.content = plex.currentToken.content + string(ch)
+		plex.currentToken.Content = plex.currentToken.Content + string(ch)
 	case RC_OPEN_PUNCTUATION:
-		plex.currentToken.content = plex.currentToken.content + string(ch)
+		plex.currentToken.Content = plex.currentToken.Content + string(ch)
 	case RC_CLOSE_PUNCTUATION:
 		lexSyntaxErrorSwitch(plex, ch, "TBD CLOSE P")
 	case RC_LINE_END:
@@ -150,7 +175,7 @@ func lexOpenBindSymbolEnd(plex *Lexer) {
 
 func lexBindingSymbolBegin(plex *Lexer, ch rune) {
 	plex.state = TT_BINDING_SYMBOL
-	plex.currentToken = NewTokenWithRune(TT_BINDING_SYMBOL, ch)
+	plex.currentToken = NewTokenWithRune(plex, TT_BINDING_SYMBOL, ch)
 }
 func lexBindingSymbol(plex *Lexer, ch rune) {
 	switch plex.runeCategory {
@@ -163,7 +188,7 @@ func lexBindingSymbol(plex *Lexer, ch rune) {
 		lexBindingSymbolEnd(plex)
 		lexNumStrBegin(plex, ch)
 	case RC_PUNCTUATION:
-		plex.currentToken.content = plex.currentToken.content + string(ch)
+		plex.currentToken.Content = plex.currentToken.Content + string(ch)
 	case RC_OPEN_PUNCTUATION:
 		lexSyntaxErrorSwitch(plex, ch, "a plain binding symbol cannot contain opening punctuation")
 	case RC_CLOSE_PUNCTUATION:
@@ -182,7 +207,7 @@ func lexBindingSymbolEnd(plex *Lexer) {
 
 func lexIdentBegin(plex *Lexer, ch rune) {
 	plex.state = TT_IDENT
-	plex.currentToken = NewTokenWithRune(TT_IDENT, ch)
+	plex.currentToken = NewTokenWithRune(plex, TT_IDENT, ch)
 }
 func lexIdent(plex *Lexer, ch rune) {
 	switch plex.runeCategory {
@@ -190,9 +215,9 @@ func lexIdent(plex *Lexer, ch rune) {
 		lexIdentEnd(plex)
 		lexWhitespaceBegin(plex, 0)
 	case RC_LETTER:
-		plex.currentToken.content = plex.currentToken.content + string(ch)
+		plex.currentToken.Content = plex.currentToken.Content + string(ch)
 	case RC_NUMBER:
-		plex.currentToken.content = plex.currentToken.content + string(ch)
+		plex.currentToken.Content = plex.currentToken.Content + string(ch)
 	case RC_PUNCTUATION:
 		lexIdentEnd(plex)
 		lexBindingSymbolBegin(plex, ch)
@@ -216,29 +241,29 @@ func lexIdentEnd(plex *Lexer) {
 
 func lexStrLitBegin(plex *Lexer, ch rune) {
 	plex.state = TT_STR_LIT
-	plex.currentToken = NewToken(TT_STR_LIT)
+	plex.currentToken = NewToken(plex, TT_STR_LIT)
 }
 func lexStrLit(plex *Lexer, ch rune) {
 	switch plex.runeCategory {
 	case RC_WHITESPACE:
-		plex.currentToken.content = plex.currentToken.content + string(ch)
+		plex.currentToken.Content = plex.currentToken.Content + string(ch)
 	case RC_LETTER:
-		plex.currentToken.content = plex.currentToken.content + string(ch)
+		plex.currentToken.Content = plex.currentToken.Content + string(ch)
 	case RC_NUMBER:
-		plex.currentToken.content = plex.currentToken.content + string(ch)
+		plex.currentToken.Content = plex.currentToken.Content + string(ch)
 	case RC_PUNCTUATION:
-		plex.currentToken.content = plex.currentToken.content + string(ch)
+		plex.currentToken.Content = plex.currentToken.Content + string(ch)
 	case RC_OPEN_PUNCTUATION:
-		plex.currentToken.content = plex.currentToken.content + string(ch)
+		plex.currentToken.Content = plex.currentToken.Content + string(ch)
 	case RC_CLOSE_PUNCTUATION:
-		plex.currentToken.content = plex.currentToken.content + string(ch)
+		plex.currentToken.Content = plex.currentToken.Content + string(ch)
 	case RC_LINE_END:
 		lexSyntaxErrorSwitch(plex, ch, "small string did not finish on same line")
 	case RC_QUOTE:
 		lexStrLitEnd(plex)
 		lexWhitespaceBegin(plex, ch) // TODO: this is wrong, but I leave it as a hack for now
 	case RC_FORBIDDEN:
-		plex.currentToken.content = plex.currentToken.content + string(ch)
+		plex.currentToken.Content = plex.currentToken.Content + string(ch)
 	}
 }
 func lexStrLitEnd(plex *Lexer) {
@@ -247,7 +272,7 @@ func lexStrLitEnd(plex *Lexer) {
 
 func lexNumStrBegin(plex *Lexer, ch rune) {
 	plex.state = TT_NUMSTR_LIT
-	plex.currentToken = NewTokenWithRune(TT_NUMSTR_LIT, ch)
+	plex.currentToken = NewTokenWithRune(plex, TT_NUMSTR_LIT, ch)
 }
 func lexNumStr(plex *Lexer, ch rune) {
 	switch plex.runeCategory {
@@ -255,11 +280,11 @@ func lexNumStr(plex *Lexer, ch rune) {
 		lexNumStrEnd(plex)
 		lexWhitespaceBegin(plex, 0)
 	case RC_LETTER:
-		plex.currentToken.content = plex.currentToken.content + string(ch)
+		plex.currentToken.Content = plex.currentToken.Content + string(ch)
 	case RC_NUMBER:
-		plex.currentToken.content = plex.currentToken.content + string(ch)
+		plex.currentToken.Content = plex.currentToken.Content + string(ch)
 	case RC_PUNCTUATION:
-		plex.currentToken.content = plex.currentToken.content + string(ch)
+		plex.currentToken.Content = plex.currentToken.Content + string(ch)
 	case RC_OPEN_PUNCTUATION:
 		lexSyntaxErrorSwitch(plex, ch, "TBD OPEN P")
 	case RC_CLOSE_PUNCTUATION:
@@ -278,16 +303,16 @@ func lexNumStrEnd(plex *Lexer) {
 }
 
 func lexSyntaxErrorSwitch(plex *Lexer, ch rune, msg string) {
-	errToken := NewToken(TT_SYNTAX_ERROR)
-	errToken.content = fmt.Sprintf(
+	errToken := NewToken(plex, TT_SYNTAX_ERROR)
+	errToken.Content = fmt.Sprintf(
 		"while parsing rune '%s'(%d) for '%v' on line %d col %d found error: %s. characters lexed so far: %s",
 		string(ch),
 		int(ch),
-		plex.currentToken.tokenType,
+		plex.currentToken.TokenType,
 		plex.currentLine,
 		plex.currentOffset,
 		msg,
-		plex.currentToken.content,
+		plex.currentToken.Content,
 	)
 	plex.state = TT_SYNTAX_ERROR
 	plex.currentToken = errToken
@@ -300,7 +325,7 @@ func lexSyntaxErrorSwitch(plex *Lexer, ch rune, msg string) {
 
 func lexCommentBegin(plex *Lexer, ch rune) {
 	plex.state = TT_COMMENT
-	plex.currentToken = NewToken(TT_COMMENT)
+	plex.currentToken = NewToken(plex, TT_COMMENT)
 }
 func lexComment(plex *Lexer, ch rune) {
 	switch plex.runeCategory {
@@ -325,7 +350,7 @@ func lexWhiteSpaceSwitch(plex *Lexer, ch rune) {
 }
 func lexWhitespaceBegin(plex *Lexer, ch rune) {
 	plex.state = TT_WHITESPACE
-	plex.currentToken = NewToken(TT_WHITESPACE)
+	plex.currentToken = NewToken(plex, TT_WHITESPACE)
 }
 func lexWhitespace(plex *Lexer, ch rune) {
 	switch plex.runeCategory {
@@ -354,12 +379,12 @@ func lexWhitespace(plex *Lexer, ch rune) {
 
 func lexIndentLineBegin(plex *Lexer, ch rune) {
 	plex.state = TT_INDENT_LINE
-	plex.currentToken = NewToken(TT_INDENT_LINE)
+	plex.currentToken = NewToken(plex, TT_INDENT_LINE)
 }
 func lexIndentLine(plex *Lexer, ch rune) {
 	switch plex.runeCategory {
 	case RC_WHITESPACE:
-		plex.currentToken.content = plex.currentToken.content + string(ch)
+		plex.currentToken.Content = plex.currentToken.Content + string(ch)
 	case RC_LETTER:
 		lexIndentLineEnd(plex)
 		lexWhiteSpaceSwitch(plex, ch)
@@ -376,7 +401,7 @@ func lexIndentLine(plex *Lexer, ch rune) {
 		lexIndentLineEnd(plex)
 		lexWhiteSpaceSwitch(plex, ch)
 	case RC_LINE_END:
-		plex.currentToken.content = ""
+		plex.currentToken.Content = ""
 	case RC_QUOTE:
 		lexIndentLineEnd(plex)
 		lexWhiteSpaceSwitch(plex, ch)
@@ -386,11 +411,11 @@ func lexIndentLine(plex *Lexer, ch rune) {
 	}
 }
 func lexIndentLineEnd(plex *Lexer) {
-	plex.currentToken.indent = len(plex.currentToken.content) / 2
-	plex.currentToken.content = ""
+	plex.currentToken.Indent = len(plex.currentToken.Content) / 2
+	plex.currentToken.Content = ""
 	lastIndex := len(plex.tokenList) - 1
 	if lastIndex >= 0 {
-		if plex.tokenList[lastIndex].tokenType == TT_INDENT_LINE {
+		if plex.tokenList[lastIndex].TokenType == TT_INDENT_LINE {
 			plex.tokenList[lastIndex] = plex.currentToken
 			return
 		}
@@ -439,23 +464,26 @@ func lex(plex *Lexer, ch rune) error {
 	return nil
 }
 
-func LexFile(base_dir string, target_file string) (error, []Token) {
+func LexFile(cc *context.CompilerContext, target string) (error, []Token) {
 
-	fileName := base_dir + "/" + target_file
+	fileName := cc.RootDir + "/" + target + ".sulfur"
 	fileHandle, err := os.Open(fileName)
 	if err != nil {
 		return err, nil
 	}
 	defer fileHandle.Close()
 
+	fileId := context.SetNewFile(cc, target)
+
 	plex := Lexer{
 		state:         TT_WHITESPACE,
-		currentToken:  NewToken(TT_WHITESPACE),
 		currentLine:   1,
 		currentOffset: 1,
 		tokenList:     []Token{},
 		previousRune:  0,
+		fileId:        fileId,
 	}
+	plex.currentToken = NewToken(&plex, TT_INDENT_LINE)
 
 	reader := bufio.NewReader(fileHandle)
 	for {
@@ -466,6 +494,19 @@ func LexFile(base_dir string, target_file string) (error, []Token) {
 		err = lex(&plex, ch)
 		if err != nil {
 			break
+		}
+	}
+	if cc.SaveLexedFlag {
+		listCopy := plex.tokenList
+		yamlData, err := yaml.Marshal(&listCopy)
+		if err != nil {
+			return err, nil
+		}
+		outPath := context.GetLexParseRoundPath(cc)
+		yamlFilePath := outPath + "/" + fmt.Sprintf("file-%04d.token.yaml", fileId)
+		err = os.WriteFile(yamlFilePath, yamlData, 0644)
+		if err != nil {
+			return err, nil
 		}
 	}
 	return nil, plex.tokenList

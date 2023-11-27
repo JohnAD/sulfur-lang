@@ -1,6 +1,8 @@
 package lexer
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type TokenType int
 
@@ -50,28 +52,15 @@ func (tt TokenType) String() string {
 	}
 }
 
+func (tt TokenType) MarshalYAML() (interface{}, error) {
+	return tt.String(), nil
+}
+
 type Token struct {
-	tokenType TokenType
-	//sourceFile string TODO: later this needs to be encoded
-	//sourceLine int
-	//sourceOffset int
-	content string
-	indent  int
-}
-
-func NewToken(init TokenType) Token {
-	t := Token{tokenType: init, content: ""}
-	return t
-}
-
-func NewTokenWithRune(init TokenType, ch rune) Token {
-	t := Token{tokenType: init, content: string(ch)}
-	return t
-}
-
-func (t Token) String() string {
-	if t.tokenType == TT_INDENT_LINE {
-		return fmt.Sprintf("{ %v==%d }", t.tokenType, t.indent)
-	}
-	return fmt.Sprintf("{ %v \"%s\" }", t.tokenType, t.content)
+	TokenType    TokenType `yaml:"token-type"`
+	SourceFile   int       `yaml:"source-file-id"`
+	SourceLine   int       `yaml:"source-line"`
+	SourceOffset int       `yaml:"source-column"`
+	Content      string    `yaml:"Content"`
+	Indent       int       `yaml:"ident"`
 }

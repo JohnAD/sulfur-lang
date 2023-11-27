@@ -4,46 +4,33 @@
 # pulled from: https://gitlab.com/esr/open-adventure/-/blob/master/main.c?ref_type=heads
 
 struct Settings {
-    logfile::Str = "advent.log"
     oldstyle::Boolean = false
-    prompt::Boolean = false
-    # argv::Array(Str)
-    # argc::Int
-    optind::Int
-    scriptfp::FILE
     debug::Boolean = false
 }
 
 function parse_options {{
   params {{
     argc::Int
-    argv::Array(Str)
+    argv::Array::Str
   }}
   returns {{
     settings::Settings
   }}
   body [[
-    const usage::str = "Usage: %s [-l logfilename] [-o] [script...]\n".fmt( argv[0] )
-    for_each( ch in clib\getopt( argc, argv, "dl:o" ) ) [[
-      first_match(ch) {{
-        "d" = [[
+    const usage::Str = "Usage: %s [-o] [-d]\n".fmt( argv[0] )
+    for_each param in argv [[
+      first_match(param) {{
+        "-d" = [[
           settings.debug = true
         ]]
-        "l" = [[
-          if ch<-peek_next().hasValue [[
-            settings.logfile = ch<-peek_next()
-          ]]
-        ]]
-        "o" = [[
+        "-o" = [[
           settings.oldstyle = true
-          settings.prompt = true
+        ]]
+        "--help" = [[
+          settings = Error(usage)
         ]]
         else = [[
-          settings = Error("""
-            {usage}
-                    -l create a log file of your game named as specified;
-                    -o 'oldstyle' (no prompt, no command editing, displays 'Initialising...')
-          """.fmt( usage = usage ) )
+          settings = Error("invalid parameter %s, %s".fmt( param usage ) )
         ]]
       }}
     ]]
