@@ -5,16 +5,15 @@ import (
 	"sulfur-compiler/lexer"
 )
 
-func parseAstRoot(cursor *parseCursor, token lexer.Token) error {
+func parseAstOrderedBinding(cursor *parseCursor, token lexer.Token) error {
 	switch token.TokenType {
-	case lexer.TT_STANDING_SYMBOL:
-		return parseAstStatementStartChild(cursor, token)
+	//case lexer.TT_STANDING_SYMBOL:
 	//case lexer.TT_OPEN_SYMBOL:
 	//case lexer.TT_CLOSE_SYMBOL:
 	//case lexer.TT_OPEN_BIND_SYMBOL:
 	//case lexer.TT_BINDING_SYMBOL:
 	case lexer.TT_IDENT:
-		return parseAstStatementStartChild(cursor, token)
+		return bindSecondHalfAndFinish(cursor, token)
 		//case lexer.TT_STR_LIT:
 		//case lexer.TT_NUMSTR_LIT:
 		//case lexer.TT_SYNTAX_ERROR:
@@ -22,5 +21,10 @@ func parseAstRoot(cursor *parseCursor, token lexer.Token) error {
 		//case lexer.TT_WHITESPACE:
 		//case lexer.TT_INDENT_LINE:
 	}
-	return fmt.Errorf("unhandled AST_ROOT parse of %v", token)
+	return fmt.Errorf("unhandled AST_BINDING parse of %v", token)
+}
+
+func bindSecondHalfAndFinish(cursor *parseCursor, token lexer.Token) error {
+	addChild(cursor, AST_IDENTIFIER, ASTN_IDENTIFIER, token.Content)
+	return finishAstNode(cursor)
 }

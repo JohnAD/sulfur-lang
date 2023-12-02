@@ -61,6 +61,7 @@ type Token struct {
 	SourceFile   int       `yaml:"source-file-id"`
 	SourceLine   int       `yaml:"source-line"`
 	SourceOffset int       `yaml:"source-column"`
-	Content      string    `yaml:"Content"`
-	Indent       int       `yaml:"ident"`
+	Content      string    `yaml:"content"`
+	PostBound    bool      `yaml:"post-bound"`
+	Indent       int       `yaml:"indent-depth"`
 }

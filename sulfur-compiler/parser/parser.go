@@ -13,17 +13,47 @@ type parseCursor struct {
 	pointerPath []*AstNode
 }
 
-func createAndBecomeChild(cursor *parseCursor, ant AstNodeType, nature AstNodeNature, name string) {
-	newNode := AstNode{kind: ant, nature: nature, name: name}
-	cursor.currentNode.children = append(cursor.currentNode.children, &newNode)
-	cursor.pointerPath = append(cursor.pointerPath, cursor.currentNode)
-	cursor.currentNode = &newNode
-	cursor.depth += 1
+func addChildAstPointer(cursor *parseCursor, ast *AstNode) {
+	cursor.currentNode.children = append(cursor.currentNode.children, ast)
 }
 
 func addChild(cursor *parseCursor, ant AstNodeType, nature AstNodeNature, name string) {
 	newNode := AstNode{kind: ant, nature: nature, name: name}
-	cursor.currentNode.children = append(cursor.currentNode.children, &newNode)
+	addChildAstPointer(cursor, &newNode)
+}
+
+func moveToLastChild(cursor *parseCursor) error {
+	var err error
+	childLen := len(cursor.currentNode.children)
+	if childLen == 0 {
+		err = fmt.Errorf("[PARSER VTLC} attempting access a child node when array is empty")
+	} else {
+		ast := cursor.currentNode.children[childLen-1]
+		cursor.pointerPath = append(cursor.pointerPath, cursor.currentNode)
+		cursor.currentNode = ast
+		cursor.depth += 1
+	}
+	return err
+}
+
+func createAndBecomeChild(cursor *parseCursor, ant AstNodeType, nature AstNodeNature, name string) {
+	newNode := AstNode{kind: ant, nature: nature, name: name}
+	addChildAstPointer(cursor, &newNode)
+	_ = moveToLastChild(cursor) // cannot error out because we just added a child
+}
+
+func popChild(cursor *parseCursor) (error, *AstNode) {
+	// remove last child and return it
+	var err error
+	var ast *AstNode
+	childLen := len(cursor.currentNode.children)
+	if childLen == 0 {
+		err = fmt.Errorf("[PARSER PC} attempting to remove a child node when array is empty")
+	} else {
+		ast = cursor.currentNode.children[childLen-1]
+		cursor.currentNode.children = cursor.currentNode.children[:childLen-1]
+	}
+	return err, ast
 }
 
 func finishAstNode(cursor *parseCursor) error {
@@ -38,6 +68,22 @@ func finishAstNode(cursor *parseCursor) error {
 	return nil
 }
 
+func becomeLastChildMakePreviousChildAChildThenBecomeChild(cursor *parseCursor, ant AstNodeType, nature AstNodeNature, name string) error {
+	// before:
+	//            a[ b[ d, e, f ] ]            where "b" is the current location
+	// after calling with g:
+	//            a[ b[ d, e, g[ f ] ] ]       where "g" is the current location
+	//
+	// used for infix style things. So that a\b becomes `\`[a, b]
+	err, previousLastChild := popChild(cursor)
+	if err == nil {
+		addChild(cursor, ant, nature, name)
+		_ = moveToLastChild(cursor) // cannot error out because we just added a child
+		addChildAstPointer(cursor, previousLastChild)
+	}
+	return err
+}
+
 func parse(cursor *parseCursor, token lexer.Token) error {
 	switch cursor.currentNode.kind {
 	case AST_ROOT:
@@ -45,6 +91,8 @@ func parse(cursor *parseCursor, token lexer.Token) error {
 	case AST_ROUTINE:
 	case AST_STATEMENT:
 		return parseAstStatement(cursor, token)
+	case AST_ORDERED_BINDING:
+		return parseAstOrderedBinding(cursor, token)
 	case AST_EXPRESSION:
 	case AST_LITERAL:
 	case AST_IDENTIFIER:

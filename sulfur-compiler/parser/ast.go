@@ -11,6 +11,7 @@ const (
 	AST_ROUTINE
 	AST_STATEMENT
 	AST_STATEMENT_ITEM
+	AST_ORDERED_BINDING
 	AST_EXPRESSION
 	AST_LITERAL
 	AST_IDENTIFIER
@@ -27,6 +28,8 @@ func (ant AstNodeType) String() string {
 		return "STATEMENT"
 	case AST_STATEMENT_ITEM:
 		return "S-ITEM"
+	case AST_ORDERED_BINDING:
+		return "BINDING"
 	case AST_EXPRESSION:
 		return "EXPRESSION"
 	case AST_LITERAL:
@@ -51,6 +54,7 @@ const (
 	ASTN_STR
 	ASTN_NUMSTR
 	ASTN_INFIX_OPERATOR
+	ASTN_META_BINDING
 )
 
 func (ann AstNodeNature) String() string {
@@ -71,6 +75,8 @@ func (ann AstNodeNature) String() string {
 		return "NUMSTR"
 	case ASTN_INFIX_OPERATOR:
 		return "INFIX-OP"
+	case ASTN_META_BINDING:
+		return "BINDING"
 	default:
 		return fmt.Sprintf("%d", int(ann))
 	}
@@ -85,5 +91,8 @@ type AstNode struct {
 }
 
 func (an AstNode) String() string {
-	return fmt.Sprintf("AST(%s, %s, `%s`, %v)", an.kind, an.nature, an.name, an.children)
+	if len(an.children) > 0 {
+		return fmt.Sprintf("AST(%s.%s.`%s` %v)", an.kind, an.nature, an.name, an.children)
+	}
+	return fmt.Sprintf("AST(%s.%s.`%s`)", an.kind, an.nature, an.name)
 }

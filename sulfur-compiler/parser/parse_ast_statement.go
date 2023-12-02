@@ -12,7 +12,8 @@ func parseAstStatement(cursor *parseCursor, token lexer.Token) error {
 	//case lexer.TT_OPEN_SYMBOL:
 	//case lexer.TT_CLOSE_SYMBOL:
 	//case lexer.TT_OPEN_BIND_SYMBOL:
-	//case lexer.TT_BINDING_SYMBOL:
+	case lexer.TT_BINDING_SYMBOL:
+		return bindBelowDuringStatement(cursor, token)
 	case lexer.TT_IDENT:
 		return interpretInlineTokenDuringStatement(cursor, token)
 	case lexer.TT_STR_LIT:
@@ -47,6 +48,10 @@ func interpretTokenAtStartOfStatement(token lexer.Token) (error, AstNodeNature, 
 			return nil, ASTN_STATEMENT_ROOT_FRAMEWORK, token.Content
 		}
 	}
+	switch token.TokenType {
+	case lexer.TT_IDENT:
+		return nil, ASTN_IDENTIFIER, token.Content
+	}
 	return fmt.Errorf("unable to determine what '%s' is on line %d column %d", token.Content, token.SourceLine, token.SourceOffset), 0, ""
 }
 
@@ -70,6 +75,9 @@ func interpretInlineTokenDuringStatement(cursor *parseCursor, token lexer.Token)
 }
 
 func finishStatement(cursor *parseCursor, token lexer.Token) error {
-	finishAstNode(cursor)
-	return nil
+	return finishAstNode(cursor)
+}
+
+func bindBelowDuringStatement(cursor *parseCursor, token lexer.Token) error {
+	return becomeLastChildMakePreviousChildAChildThenBecomeChild(cursor, AST_ORDERED_BINDING, ASTN_META_BINDING, token.Content)
 }
