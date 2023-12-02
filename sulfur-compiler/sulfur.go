@@ -7,6 +7,7 @@ import (
 	"log"
 	"sulfur-compiler/context"
 	"sulfur-compiler/lexer"
+	"sulfur-compiler/parser"
 )
 
 func main() {
@@ -27,9 +28,6 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	//if cc.SaveLexedFlag {
-	//	err = context.SaveLex(&cc, tokens)
-	//}
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -41,4 +39,11 @@ func main() {
 	fmt.Println("\n\nRebuild:\n")
 	rebuild := lexer.RebuildFromTokens(tokens)
 	fmt.Println(rebuild)
+
+	err, ast := parser.ParseTokensToAst(&cc, tokens)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("AST:")
+	fmt.Printf("%v ", ast)
 }
