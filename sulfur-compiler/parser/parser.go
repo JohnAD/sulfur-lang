@@ -2,8 +2,6 @@ package parser
 
 import (
 	"fmt"
-	"gopkg.in/yaml.v3"
-	"log"
 	"sulfur-compiler/context"
 	"sulfur-compiler/lexer"
 )
@@ -57,6 +55,18 @@ func popChild(cursor *parseCursor) (error, *AstNode) {
 	return err, ast
 }
 
+func gotoChild(cursor *parseCursor, index int) error {
+	// start pointing to one of the already-existing children
+	lastIndex := len(cursor.currentNode.Children) - 1
+	if index > lastIndex {
+		return fmt.Errorf("[PARSER GC} moving to a child (%d) that does not exist", index)
+	}
+	cursor.pointerPath = append(cursor.pointerPath, cursor.currentNode)
+	cursor.depth += 1
+	cursor.currentNode = cursor.currentNode.Children[index]
+	return nil
+}
+
 func finishAstNode(cursor *parseCursor) error {
 	size := len(cursor.pointerPath)
 	if size > 0 {
@@ -67,6 +77,16 @@ func finishAstNode(cursor *parseCursor) error {
 		return fmt.Errorf("finishAstNode attempt to finish empty path (pointer list)")
 	}
 	return nil
+}
+
+func openSymbolHandling(cursor *parseCursor, token lexer.Token) error {
+	if token.Content == "{" {
+		return parseAstRolneStartChild(cursor, token)
+	}
+	if token.Content == "{{" {
+		return parseAstMapBlockStart(cursor, token)
+	}
+	return fmt.Errorf("[PARSE_GENERIC_OSH] unable to determine what '%s' is on line %d column %d", token.Content, token.SourceLine, token.SourceOffset)
 }
 
 func becomeLastChildMakePreviousChildAChildThenBecomeChild(cursor *parseCursor, ant AstNodeType, nature AstNodeNature, name string) error {
@@ -85,6 +105,21 @@ func becomeLastChildMakePreviousChildAChildThenBecomeChild(cursor *parseCursor, 
 	return err
 }
 
+func swapSelfMakingPreviousAChild(cursor *parseCursor, ant AstNodeType, nature AstNodeNature, name string) error {
+	// before:
+	//            a[ b[] ]            where "b" is the current location
+	// after calling with g
+	//            a[ g[ b ] ]         where "g" is the current location
+	currentKind := cursor.currentNode.Kind
+	currentNature := cursor.currentNode.Nature
+	currentName := cursor.currentNode.Name
+	addChild(cursor, currentKind, currentNature, currentName)
+	cursor.currentNode.Kind = ant
+	cursor.currentNode.Nature = nature
+	cursor.currentNode.Name = name
+	return nil
+}
+
 func parse(cursor *parseCursor, token lexer.Token) error {
 	switch cursor.currentNode.Kind {
 	case AST_ROOT:
@@ -101,6 +136,11 @@ func parse(cursor *parseCursor, token lexer.Token) error {
 		return parseAstRolne(cursor, token)
 	case AST_ROLNE_ITEM:
 		return parseAstRolneItem(cursor, token)
+	case AST_BLOCK:
+	case AST_MAPBLOCK:
+		return parseAstMapBlock(cursor, token)
+	case AST_MAPBLOCK_ITEM:
+		return parseAstMapBlockItem(cursor, token)
 	case AST_ERROR:
 	default:
 		return fmt.Errorf("unhandled parse of %v", cursor.currentNode.Kind)
@@ -121,13 +161,6 @@ func ParseTokensToAst(cc *context.CompilerContext, tokens []lexer.Token) (error,
 		if err != nil {
 			//fmt.Println("CURSOR BEFORE ERROR: ")
 			//fmt.Printf("%v\n", cursor)
-			fmt.Println("ROOT BEFORE ERROR: ")
-			rootYamlBytes, merr := yaml.Marshal(root)
-			if merr != nil {
-				fmt.Println("could not marshal root")
-			}
-			fmt.Println(string(rootYamlBytes))
-			log.Fatalln(err)
 			return err, root
 		}
 	}

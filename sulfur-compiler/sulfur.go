@@ -4,6 +4,7 @@ package main
 
 import (
 	"fmt"
+	"gopkg.in/yaml.v3"
 	"log"
 	"sulfur-compiler/context"
 	"sulfur-compiler/lexer"
@@ -40,10 +41,16 @@ func main() {
 	rebuild := lexer.RebuildFromTokens(tokens)
 	fmt.Println(rebuild)
 
-	err, _ = parser.ParseTokensToAst(&cc, tokens)
+	err, ast := parser.ParseTokensToAst(&cc, tokens)
+
+	fmt.Println("AST: ")
+	rootYamlBytes, _ := yaml.Marshal(ast)
+	fmt.Println(string(rootYamlBytes))
+
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	//fmt.Println("AST:")
 	//fmt.Printf("%v ", ast)
 }

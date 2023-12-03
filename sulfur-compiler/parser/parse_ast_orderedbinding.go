@@ -28,3 +28,11 @@ func bindSecondHalfAndFinish(cursor *parseCursor, token lexer.Token) error {
 	addChild(cursor, AST_IDENTIFIER, ASTN_IDENTIFIER, token.Content)
 	return finishAstNode(cursor)
 }
+
+func binderHandling(cursor *parseCursor, token lexer.Token) error {
+	return becomeLastChildMakePreviousChildAChildThenBecomeChild(cursor, AST_ORDERED_BINDING, ASTN_META_BINDING, token.Content)
+}
+
+func binderHandlingInPlace(cursor *parseCursor, token lexer.Token) error {
+	return swapSelfMakingPreviousAChild(cursor, AST_ORDERED_BINDING, ASTN_META_BINDING, token.Content)
+}

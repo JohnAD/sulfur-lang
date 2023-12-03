@@ -10,11 +10,11 @@ func parseAstStatement(cursor *parseCursor, token lexer.Token) error {
 	case lexer.TT_STANDING_SYMBOL:
 		return interpretInlineTokenDuringStatement(cursor, token)
 	case lexer.TT_OPEN_SYMBOL:
-		return openSymbolDuringStatement(cursor, token)
+		return openSymbolHandling(cursor, token)
 	//case lexer.TT_CLOSE_SYMBOL:
 	//case lexer.TT_OPEN_BIND_SYMBOL:
 	case lexer.TT_BINDING_SYMBOL:
-		return bindBelowDuringStatement(cursor, token)
+		return binderHandling(cursor, token)
 	case lexer.TT_IDENT:
 		return interpretInlineTokenDuringStatement(cursor, token)
 	case lexer.TT_STR_LIT:
@@ -77,15 +77,4 @@ func interpretInlineTokenDuringStatement(cursor *parseCursor, token lexer.Token)
 
 func finishStatement(cursor *parseCursor, token lexer.Token) error {
 	return finishAstNode(cursor)
-}
-
-func bindBelowDuringStatement(cursor *parseCursor, token lexer.Token) error {
-	return becomeLastChildMakePreviousChildAChildThenBecomeChild(cursor, AST_ORDERED_BINDING, ASTN_META_BINDING, token.Content)
-}
-
-func openSymbolDuringStatement(cursor *parseCursor, token lexer.Token) error {
-	if token.Content == "{" {
-		return parseAstRolneStartChild(cursor, token)
-	}
-	return fmt.Errorf("[PARSE_STMT_OSDS] unable to determine what '%s' is on line %d column %d", token.Content, token.SourceLine, token.SourceOffset)
 }
