@@ -96,6 +96,10 @@ func parse(cursor *parseCursor, token lexer.Token) error {
 	case AST_EXPRESSION:
 	case AST_LITERAL:
 	case AST_IDENTIFIER:
+	case AST_ROLNE:
+		return parseAstRolne(cursor, token)
+	case AST_ROLNE_ITEM:
+		return parseAstRolneItem(cursor, token)
 	case AST_ERROR:
 	default:
 		return fmt.Errorf("unhandled parse of %v", cursor.currentNode.kind)

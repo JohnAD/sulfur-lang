@@ -29,6 +29,9 @@ func GetRuneCategory(ch rune) RuneCategory {
 	if ch == ')' || ch == ']' || ch == '}' {
 		return RC_CLOSE_PUNCTUATION
 	}
+	if ch == '_' {
+		return RC_LETTER
+	}
 	if unicode.IsSpace(ch) {
 		return RC_WHITESPACE
 	}

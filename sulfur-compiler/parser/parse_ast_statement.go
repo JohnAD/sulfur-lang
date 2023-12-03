@@ -9,7 +9,8 @@ func parseAstStatement(cursor *parseCursor, token lexer.Token) error {
 	switch token.TokenType {
 	case lexer.TT_STANDING_SYMBOL:
 		return interpretInlineTokenDuringStatement(cursor, token)
-	//case lexer.TT_OPEN_SYMBOL:
+	case lexer.TT_OPEN_SYMBOL:
+		return openSymbolDuringStatement(cursor, token)
 	//case lexer.TT_CLOSE_SYMBOL:
 	//case lexer.TT_OPEN_BIND_SYMBOL:
 	case lexer.TT_BINDING_SYMBOL:
@@ -52,7 +53,7 @@ func interpretTokenAtStartOfStatement(token lexer.Token) (error, AstNodeNature, 
 	case lexer.TT_IDENT:
 		return nil, ASTN_IDENTIFIER, token.Content
 	}
-	return fmt.Errorf("unable to determine what '%s' is on line %d column %d", token.Content, token.SourceLine, token.SourceOffset), 0, ""
+	return fmt.Errorf("[PARSE_STMT_ITASOS] unable to determine what '%s' is on line %d column %d", token.Content, token.SourceLine, token.SourceOffset), 0, ""
 }
 
 func interpretInlineTokenDuringStatement(cursor *parseCursor, token lexer.Token) error {
@@ -68,7 +69,7 @@ func interpretInlineTokenDuringStatement(cursor *parseCursor, token lexer.Token)
 	case lexer.TT_NUMSTR_LIT:
 		nature = ASTN_NUMSTR
 	default:
-		return fmt.Errorf("[PARSE_STMT_IITDS]unable to determine what '%s' is on line %d column %d", token.Content, token.SourceLine, token.SourceOffset)
+		return fmt.Errorf("[PARSE_STMT_IITDS] unable to determine what '%s' is on line %d column %d", token.Content, token.SourceLine, token.SourceOffset)
 	}
 	addChild(cursor, AST_STATEMENT_ITEM, nature, name)
 	return nil
@@ -80,4 +81,11 @@ func finishStatement(cursor *parseCursor, token lexer.Token) error {
 
 func bindBelowDuringStatement(cursor *parseCursor, token lexer.Token) error {
 	return becomeLastChildMakePreviousChildAChildThenBecomeChild(cursor, AST_ORDERED_BINDING, ASTN_META_BINDING, token.Content)
+}
+
+func openSymbolDuringStatement(cursor *parseCursor, token lexer.Token) error {
+	if token.Content == "{" {
+		return parseAstRolneStartChild(cursor, token)
+	}
+	return fmt.Errorf("[PARSE_STMT_OSDS] unable to determine what '%s' is on line %d column %d", token.Content, token.SourceLine, token.SourceOffset)
 }

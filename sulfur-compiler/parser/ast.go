@@ -15,6 +15,9 @@ const (
 	AST_EXPRESSION
 	AST_LITERAL
 	AST_IDENTIFIER
+	AST_ROLNE
+	AST_ROLNE_ITEM
+	AST_INFIX
 	AST_ERROR
 )
 
@@ -36,6 +39,12 @@ func (ant AstNodeType) String() string {
 		return "LITERAL"
 	case AST_IDENTIFIER:
 		return "IDENTIFIER"
+	case AST_ROLNE:
+		return "ROLNE"
+	case AST_ROLNE_ITEM:
+		return "R-ITEM"
+	case AST_INFIX:
+		return "INFIX"
 	case AST_ERROR:
 		return "ERROR"
 	default:
