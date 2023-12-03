@@ -52,6 +52,10 @@ func (ant AstNodeType) String() string {
 	}
 }
 
+func (ant AstNodeType) MarshalYAML() (interface{}, error) {
+	return ant.String(), nil
+}
+
 type AstNodeNature int
 
 const (
@@ -91,17 +95,20 @@ func (ann AstNodeNature) String() string {
 	}
 }
 
+func (ann AstNodeNature) MarshalYAML() (interface{}, error) {
+	return ann.String(), nil
+}
+
 type AstNode struct {
-	kind     AstNodeType
-	nature   AstNodeNature
-	name     string
-	children []*AstNode
-	// items    map[string]AstNode
+	Kind     AstNodeType   `yaml:"type"`
+	Nature   AstNodeNature `yaml:"nature"`
+	Name     string        `yaml:"name"`
+	Children []*AstNode    `yaml:"children"`
 }
 
 func (an AstNode) String() string {
-	if len(an.children) > 0 {
-		return fmt.Sprintf("AST(%s.%s.`%s` %v)", an.kind, an.nature, an.name, an.children)
+	if len(an.Children) > 0 {
+		return fmt.Sprintf("AST(%s.%s.`%s` %v)", an.Kind, an.Nature, an.Name, an.Children)
 	}
-	return fmt.Sprintf("AST(%s.%s.`%s`)", an.kind, an.nature, an.name)
+	return fmt.Sprintf("AST(%s.%s.`%s`)", an.Kind, an.Nature, an.Name)
 }

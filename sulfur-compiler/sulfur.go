@@ -40,10 +40,10 @@ func main() {
 	rebuild := lexer.RebuildFromTokens(tokens)
 	fmt.Println(rebuild)
 
-	err, ast := parser.ParseTokensToAst(&cc, tokens)
+	err, _ = parser.ParseTokensToAst(&cc, tokens)
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println("AST:")
-	fmt.Printf("%v ", ast)
+	//fmt.Println("AST:")
+	//fmt.Printf("%v ", ast)
 }
