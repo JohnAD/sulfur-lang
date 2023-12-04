@@ -20,7 +20,7 @@ func parseAstRoot(cursor *parseCursor, token lexer.Token) error {
 		//case lexer.TT_SYNTAX_ERROR:
 		//case lexer.TT_COMMENT:
 		//case lexer.TT_WHITESPACE:
-		//case lexer.TT_INDENT_LINE:
+		//case lexer.TT_LINE:
 	}
 	return fmt.Errorf("unhandled AST_ROOT parse of %v", token)
 }

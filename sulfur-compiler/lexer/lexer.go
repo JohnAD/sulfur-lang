@@ -370,7 +370,9 @@ func lexWhitespace(plex *Lexer, ch rune) {
 	case RC_CLOSE_PUNCTUATION:
 		lexCloseSymbolBegin(plex, ch)
 	case RC_LINE_END:
-		// ignore ch
+		if plex.tokenList[len(plex.tokenList)-1].TokenType != TT_LINE { // this prevents too many duplicates
+			lexIndentLineBegin(plex, ch)
+		}
 	case RC_QUOTE:
 		lexStrLitBegin(plex, ch)
 	case RC_FORBIDDEN:
@@ -381,8 +383,8 @@ func lexWhitespace(plex *Lexer, ch rune) {
 // no need for lexWhitespaceEnd
 
 func lexIndentLineBegin(plex *Lexer, ch rune) {
-	plex.state = TT_INDENT_LINE
-	plex.currentToken = NewToken(plex, TT_INDENT_LINE)
+	plex.state = TT_LINE
+	plex.currentToken = NewToken(plex, TT_LINE)
 }
 func lexIndentLine(plex *Lexer, ch rune) {
 	switch plex.runeCategory {
@@ -418,7 +420,7 @@ func lexIndentLineEnd(plex *Lexer) {
 	plex.currentToken.Content = ""
 	lastIndex := len(plex.tokenList) - 1
 	if lastIndex >= 0 {
-		if plex.tokenList[lastIndex].TokenType == TT_INDENT_LINE {
+		if plex.tokenList[lastIndex].TokenType == TT_LINE {
 			plex.tokenList[lastIndex] = plex.currentToken
 			return
 		}
@@ -451,7 +453,7 @@ func lex(plex *Lexer, ch rune) error {
 		lexComment(plex, ch)
 	case TT_WHITESPACE:
 		lexWhitespace(plex, ch)
-	case TT_INDENT_LINE:
+	case TT_LINE:
 		lexIndentLine(plex, ch)
 	}
 	if plex.state == TT_SYNTAX_ERROR {
@@ -486,7 +488,7 @@ func LexFile(cc *context.CompilerContext, target string) (error, []Token) {
 		previousRune:  0,
 		fileId:        fileId,
 	}
-	plex.currentToken = NewToken(&plex, TT_INDENT_LINE)
+	plex.currentToken = NewToken(&plex, TT_LINE)
 
 	reader := bufio.NewReader(fileHandle)
 	for {

@@ -10,7 +10,7 @@ func parseAstStatement(cursor *parseCursor, token lexer.Token) error {
 	case lexer.TT_STANDING_SYMBOL:
 		return interpretInlineTokenDuringStatement(cursor, token)
 	case lexer.TT_OPEN_SYMBOL:
-		return openSymbolHandling(cursor, token)
+		return openSymbolHandlingForNewChild(cursor, token)
 	//case lexer.TT_CLOSE_SYMBOL:
 	//case lexer.TT_OPEN_BIND_SYMBOL:
 	case lexer.TT_BINDING_SYMBOL:
@@ -24,7 +24,7 @@ func parseAstStatement(cursor *parseCursor, token lexer.Token) error {
 	//case lexer.TT_SYNTAX_ERROR:
 	//case lexer.TT_COMMENT:
 	//case lexer.TT_WHITESPACE:
-	case lexer.TT_INDENT_LINE:
+	case lexer.TT_LINE:
 		return finishStatement(cursor, token)
 	}
 	return fmt.Errorf("unhandled AST_STATEMENT parse of %v", token)

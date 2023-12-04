@@ -19,6 +19,7 @@ const (
 	AST_ROLNE_ITEM
 	AST_TYPE
 	AST_VALUE
+	AST_TARGET
 	AST_BLOCK
 	AST_MAPBLOCK
 	AST_MAPBLOCK_ITEM
@@ -52,6 +53,8 @@ func (ant AstNodeType) String() string {
 		return "TYPE"
 	case AST_VALUE:
 		return "VALUE"
+	case AST_TARGET:
+		return "TARGET"
 	case AST_INFIX:
 		return "INFIX"
 	case AST_BLOCK:

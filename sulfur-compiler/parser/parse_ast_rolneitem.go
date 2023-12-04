@@ -39,7 +39,7 @@ func parseAstRolneItem(cursor *parseCursor, token lexer.Token) error {
 	//case lexer.TT_COMMENT:
 	//case lexer.TT_WHITESPACE: TODO: remove whitespace TT
 	//	return nil
-	case lexer.TT_INDENT_LINE:
+	case lexer.TT_LINE:
 		return finishAstRolneItem(cursor)
 	}
 	return fmt.Errorf("unhandled AST_ROLNE_ITEM parse of %v", token)
@@ -47,7 +47,6 @@ func parseAstRolneItem(cursor *parseCursor, token lexer.Token) error {
 
 func parseAstRolneItemNewPart(cursor *parseCursor, token lexer.Token, nature AstNodeNature) error {
 	ris := getRolneItemState(cursor)
-	fmt.Printf("%v %v\n", ris, token)
 	switch ris {
 	case RIS_TYPE:
 		typeAst := rolneItemPointAtType(cursor)
@@ -80,10 +79,13 @@ func parseAstRolneItemOtherBinding(cursor *parseCursor, token lexer.Token) error
 }
 
 func finishAstRolneItem(cursor *parseCursor) error {
+	//fmt.Printf("PING at %v\n", cursor.currentNode)
 	if getRolneItemState(cursor) != RIS_VALUE {
 		parseAstRolneItemHandleNoName(cursor) // this does a swap of name and value
 	}
-	return finishAstNode(cursor)
+	err := finishAstNode(cursor)
+	//fmt.Printf("   now at %v\n", cursor.currentNode)
+	return err
 }
 
 func parseAstRolneItemStart(cursor *parseCursor, token lexer.Token, nature AstNodeNature) error {

@@ -9,7 +9,7 @@ func parseAstMapBlock(cursor *parseCursor, token lexer.Token) error {
 	switch token.TokenType {
 	//case lexer.TT_STANDING_SYMBOL:
 	//case lexer.TT_OPEN_SYMBOL:
-	//	return openSymbolHandling(cursor, token)
+	//	return openSymbolHandlingForNewChild(cursor, token)
 	case lexer.TT_CLOSE_SYMBOL:
 		return finishAstMapBlock(cursor, token)
 	//case lexer.TT_OPEN_BIND_SYMBOL:
@@ -23,7 +23,7 @@ func parseAstMapBlock(cursor *parseCursor, token lexer.Token) error {
 	//case lexer.TT_COMMENT:
 	//case lexer.TT_WHITESPACE: TODO: remove whitespace TT
 	//	return nil // just ignore when in a ROLNE (but not inside a ROLNE ITEM)
-	case lexer.TT_INDENT_LINE:
+	case lexer.TT_LINE:
 		return nil
 	}
 	return fmt.Errorf("unhandled AST_MAPBLOCK parse of %v", token)

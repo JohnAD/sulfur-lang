@@ -10,9 +10,9 @@ using "command_line" import {
   parse_options
 }
 
-# original source pulled from: https://gitlab.com/esr/open-adventure/
 
 proc main {{
+  doc "original source pulled from: https://gitlab.com/esr/open-adventure/" 
   parameters {
     argc::Int
     argv::Array::Str

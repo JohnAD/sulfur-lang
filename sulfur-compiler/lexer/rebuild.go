@@ -58,11 +58,11 @@ func RebuildFromTokens(tokens []Token) string {
 			// should not happen
 		case TT_WHITESPACE:
 			// should not happen
-		case TT_INDENT_LINE:
+		case TT_LINE:
 			orig += "\n" + strings.Repeat("  ", t.Indent)
 			binding = false
 		}
-		if t.TokenType != TT_INDENT_LINE {
+		if t.TokenType != TT_LINE {
 			startOfLine = false
 		} else {
 			startOfLine = true

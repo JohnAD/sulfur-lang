@@ -67,6 +67,18 @@ func gotoChild(cursor *parseCursor, index int) error {
 	return nil
 }
 
+func setChild(cursor *parseCursor, index int, ant AstNodeType, nature AstNodeNature, name string) error {
+	lastIndex := len(cursor.currentNode.Children) - 1
+	if index > lastIndex {
+		return fmt.Errorf("[PARSER SC} setting a child (%d) that does not exist", index)
+	}
+	childPtr := cursor.currentNode.Children[index]
+	childPtr.Kind = ant
+	childPtr.Nature = nature
+	childPtr.Name = name
+	return nil
+}
+
 func finishAstNode(cursor *parseCursor) error {
 	size := len(cursor.pointerPath)
 	if size > 0 {
@@ -79,14 +91,23 @@ func finishAstNode(cursor *parseCursor) error {
 	return nil
 }
 
-func openSymbolHandling(cursor *parseCursor, token lexer.Token) error {
+func openSymbolHandlingForNewChild(cursor *parseCursor, token lexer.Token) error {
 	if token.Content == "{" {
 		return parseAstRolneStartChild(cursor, token)
 	}
 	if token.Content == "{{" {
 		return parseAstMapBlockStart(cursor, token)
 	}
-	return fmt.Errorf("[PARSE_GENERIC_OSH] unable to determine what '%s' is on line %d column %d", token.Content, token.SourceLine, token.SourceOffset)
+	return fmt.Errorf("[PARSE_GENERIC_OSHFNC] unable to determine what '%s' is on line %d column %d", token.Content, token.SourceLine, token.SourceOffset)
+}
+func openSymbolHandlingInPlace(cursor *parseCursor, token lexer.Token, nature AstNodeNature) error {
+	if token.Content == "{" {
+		return parseAstRolneStart(cursor, token, nature)
+	}
+	//if token.Content == "{{" {
+	//	return parseAstMapBlockStart(cursor, token)
+	//}
+	return fmt.Errorf("[PARSE_GENERIC_OSHIP] unable to determine what '%s' is on line %d column %d", token.Content, token.SourceLine, token.SourceOffset)
 }
 
 func becomeLastChildMakePreviousChildAChildThenBecomeChild(cursor *parseCursor, ant AstNodeType, nature AstNodeNature, name string) error {
@@ -143,7 +164,7 @@ func parse(cursor *parseCursor, token lexer.Token) error {
 		return parseAstMapBlockItem(cursor, token)
 	case AST_ERROR:
 	default:
-		return fmt.Errorf("unhandled parse of %v", cursor.currentNode.Kind)
+		return fmt.Errorf("unhandled parse of %v on token %v", cursor.currentNode.Kind, token)
 	}
 	return nil
 }

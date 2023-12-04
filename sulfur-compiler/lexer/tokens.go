@@ -18,7 +18,7 @@ const (
 	TT_SYNTAX_ERROR
 	TT_COMMENT
 	TT_WHITESPACE
-	TT_INDENT_LINE
+	TT_LINE
 )
 
 func (tt TokenType) String() string {
@@ -45,8 +45,8 @@ func (tt TokenType) String() string {
 		return "COMMENT"
 	case TT_WHITESPACE:
 		return "WHITESPACE"
-	case TT_INDENT_LINE:
-		return "INDENT_LINE"
+	case TT_LINE:
+		return "LINE"
 	default:
 		return fmt.Sprintf("%d", int(tt))
 	}

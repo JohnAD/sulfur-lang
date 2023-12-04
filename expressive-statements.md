@@ -166,3 +166,12 @@ alter( color in colors ) [[
   ]]
 ]]
 ```
+
+
+2023-12-03 idea
+
+match up functional languages for for-loop name:
+  map
+  reduce
+  filter
+

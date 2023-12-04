@@ -25,7 +25,7 @@ func parseAstRolne(cursor *parseCursor, token lexer.Token) error {
 	//	return nil
 	//case lexer.TT_WHITESPACE: TODO: remove whitespace TT
 	//	return nil // just ignore when in a ROLNE (but not inside a ROLNE ITEM)
-	case lexer.TT_INDENT_LINE:
+	case lexer.TT_LINE:
 		return nil // just ignore EOL when in a ROLNE (but not inside a ROLNE ITEM)
 	}
 	return fmt.Errorf("unhandled AST_ROLNE parse of %v", token)
@@ -43,14 +43,25 @@ func parseAstRolne(cursor *parseCursor, token lexer.Token) error {
 //	return fmt.Errorf("[PARSE_ROLNE_PARPA] unable to determine what '%s' is on line %d column %d", token.Content, token.SourceLine, token.SourceOffset)
 //}
 
+func parseAstRolneStart(cursor *parseCursor, token lexer.Token, nature AstNodeNature) error {
+	selfPtr := cursor.currentNode
+	selfPtr.Kind = AST_ROLNE
+	selfPtr.Nature = nature
+	selfPtr.Name = token.Content
+	return nil
+}
+
 func parseAstRolneStartChild(cursor *parseCursor, token lexer.Token) error {
 	createAndBecomeChild(cursor, AST_ROLNE, ASTN_META_BINDING, token.Content)
 	return nil
 }
 
 func finishAstRolne(cursor *parseCursor, token lexer.Token) error {
+	fmt.Printf("PING2 at %v\n", cursor.currentNode)
 	if token.Content == "}" {
-		return finishAstNode(cursor)
+		err := finishAstNode(cursor)
+		fmt.Printf("    then %v\n", cursor.currentNode)
+		return err
 	}
 	return fmt.Errorf("[PARSE_ROLNE_FAR] unable to determine what '%s' is on line %d column %d", token.Content, token.SourceLine, token.SourceOffset)
 }
