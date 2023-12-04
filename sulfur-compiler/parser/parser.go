@@ -98,16 +98,37 @@ func openSymbolHandlingForNewChild(cursor *parseCursor, token lexer.Token) error
 	if token.Content == "{{" {
 		return parseAstMapBlockStart(cursor, token)
 	}
+	if token.Content == "[[" {
+		return parseAstBlockStartChild(cursor, token, ASTN_GROUPING)
+	}
 	return fmt.Errorf("[PARSE_GENERIC_OSHFNC] unable to determine what '%s' is on line %d column %d", token.Content, token.SourceLine, token.SourceOffset)
 }
 func openSymbolHandlingInPlace(cursor *parseCursor, token lexer.Token, nature AstNodeNature) error {
 	if token.Content == "{" {
 		return parseAstRolneStart(cursor, token, nature)
 	}
+	if token.Content == "[[" {
+		return parseAstBlockStart(cursor, token, nature)
+	}
 	//if token.Content == "{{" {
 	//	return parseAstMapBlockStart(cursor, token)
 	//}
 	return fmt.Errorf("[PARSE_GENERIC_OSHIP] unable to determine what '%s' is on line %d column %d", token.Content, token.SourceLine, token.SourceOffset)
+}
+
+func openSymbolHandlingForLastChild(cursor *parseCursor, token lexer.Token) error {
+	lastIndex := len(cursor.currentNode.Children) - 1
+	if lastIndex == -1 {
+		return fmt.Errorf("[PARSER_GENERIC_OSHFLC} using a child when the list is empty")
+	}
+	err := gotoChild(cursor, lastIndex)
+	if err != nil {
+		return fmt.Errorf("[PARSE_GENERIC_OSHFLC] error: %v", err)
+	}
+	if token.Content == "(" {
+		return parseAstArgumentsStartChild(cursor, token, ASTN_GROUPING)
+	}
+	return fmt.Errorf("[PARSE_GENERIC_OSHFLC] unable to determine what '%s' is on line %d column %d", token.Content, token.SourceLine, token.SourceOffset)
 }
 
 func becomeLastChildMakePreviousChildAChildThenBecomeChild(cursor *parseCursor, ant AstNodeType, nature AstNodeNature, name string) error {
@@ -158,10 +179,13 @@ func parse(cursor *parseCursor, token lexer.Token) error {
 	case AST_ROLNE_ITEM:
 		return parseAstRolneItem(cursor, token)
 	case AST_BLOCK:
+		return parseAstBlock(cursor, token)
 	case AST_MAPBLOCK:
 		return parseAstMapBlock(cursor, token)
 	case AST_MAPBLOCK_ITEM:
 		return parseAstMapBlockItem(cursor, token)
+	case AST_ARGUMENTS:
+		return parseAstArguments(cursor, token)
 	case AST_ERROR:
 	default:
 		return fmt.Errorf("unhandled parse of %v on token %v", cursor.currentNode.Kind, token)

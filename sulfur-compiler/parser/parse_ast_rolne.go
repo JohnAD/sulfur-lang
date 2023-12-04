@@ -31,18 +31,6 @@ func parseAstRolne(cursor *parseCursor, token lexer.Token) error {
 	return fmt.Errorf("unhandled AST_ROLNE parse of %v", token)
 }
 
-//func parseAstRolneItemSimple(cursor *parseCursor, token lexer.Token) error {
-//	addChild(cursor, AST_ROLNE_ITEM, ASTN_IDENTIFIER, token.Content)
-//	return nil
-//}
-
-//func parseAstRolnePossibleAssignment(cursor *parseCursor, token lexer.Token) error {
-//	if token.Content == "=" {
-//		return parseAstRolneItemStartAssignment(cursor, token)
-//	}
-//	return fmt.Errorf("[PARSE_ROLNE_PARPA] unable to determine what '%s' is on line %d column %d", token.Content, token.SourceLine, token.SourceOffset)
-//}
-
 func parseAstRolneStart(cursor *parseCursor, token lexer.Token, nature AstNodeNature) error {
 	selfPtr := cursor.currentNode
 	selfPtr.Kind = AST_ROLNE
@@ -57,10 +45,8 @@ func parseAstRolneStartChild(cursor *parseCursor, token lexer.Token) error {
 }
 
 func finishAstRolne(cursor *parseCursor, token lexer.Token) error {
-	fmt.Printf("PING2 at %v\n", cursor.currentNode)
 	if token.Content == "}" {
 		err := finishAstNode(cursor)
-		fmt.Printf("    then %v\n", cursor.currentNode)
 		return err
 	}
 	return fmt.Errorf("[PARSE_ROLNE_FAR] unable to determine what '%s' is on line %d column %d", token.Content, token.SourceLine, token.SourceOffset)

@@ -12,7 +12,8 @@ func parseAstStatement(cursor *parseCursor, token lexer.Token) error {
 	case lexer.TT_OPEN_SYMBOL:
 		return openSymbolHandlingForNewChild(cursor, token)
 	//case lexer.TT_CLOSE_SYMBOL:
-	//case lexer.TT_OPEN_BIND_SYMBOL:
+	case lexer.TT_OPEN_BIND_SYMBOL:
+		return openSymbolHandlingForLastChild(cursor, token)
 	case lexer.TT_BINDING_SYMBOL:
 		return binderHandling(cursor, token)
 	case lexer.TT_IDENT:

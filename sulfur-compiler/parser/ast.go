@@ -23,6 +23,8 @@ const (
 	AST_BLOCK
 	AST_MAPBLOCK
 	AST_MAPBLOCK_ITEM
+	AST_ARGUMENTS
+	AST_ARGUMENT_ITEM
 	AST_INFIX
 	AST_ERROR
 )
@@ -63,6 +65,10 @@ func (ant AstNodeType) String() string {
 		return "MBLOCK"
 	case AST_MAPBLOCK_ITEM:
 		return "MB-ITEM"
+	case AST_ARGUMENTS:
+		return "ARGS"
+	case AST_ARGUMENT_ITEM:
+		return "A-ITEM"
 	case AST_ERROR:
 		return "ERROR"
 	default:
