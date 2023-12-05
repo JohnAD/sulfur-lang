@@ -1,4 +1,4 @@
-package parser
+package sparser
 
 import (
 	"fmt"
@@ -52,5 +52,5 @@ func finishAstRolne(cursor *parseCursor, token lexer.Token) error {
 		err := finishAstNode(cursor)
 		return err
 	}
-	return fmt.Errorf("[PARSE_ROLNE_FAR] unable to match '%' with '%s' on line %d column %d", starting, ending, token.SourceLine, token.SourceOffset)
+	return fmt.Errorf("[PARSE_ROLNE_FAR] unable to match '%s' with '%s' on line %d column %d", starting, ending, token.SourceLine, token.SourceOffset)
 }

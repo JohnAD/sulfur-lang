@@ -8,7 +8,7 @@ import (
 	"log"
 	"sulfur-compiler/context"
 	"sulfur-compiler/lexer"
-	"sulfur-compiler/parser"
+	"sulfur-compiler/sparser"
 )
 
 func main() {
@@ -41,7 +41,7 @@ func main() {
 	rebuild := lexer.RebuildFromTokens(tokens)
 	fmt.Println(rebuild)
 
-	err, ast := parser.ParseTokensToAst(&cc, tokens)
+	err, ast := sparser.ParseTokensToAst(&cc, tokens)
 
 	fmt.Println("AST: ")
 	rootYamlBytes, _ := yaml.Marshal(ast)

@@ -1,4 +1,4 @@
-package parser
+package sparser
 
 import (
 	"fmt"
@@ -112,7 +112,7 @@ func parseAstRolneItemStart(cursor *parseCursor, token lexer.Token, nature AstNo
 }
 
 func parseAstRolneItemAssignment(cursor *parseCursor, token lexer.Token) error {
-	rolneItemPointAtValue(cursor).Nature = ASTN_NOTHING // by changing from null(unknown) to nothing, this parser now knows we are working on the value not the name
+	rolneItemPointAtValue(cursor).Nature = ASTN_NOTHING // by changing from null(unknown) to nothing, this sparser now knows we are working on the value not the name
 	return nil
 }
 

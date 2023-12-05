@@ -370,7 +370,7 @@ func lexWhitespace(plex *Lexer, ch rune) {
 	case RC_CLOSE_PUNCTUATION:
 		lexCloseSymbolBegin(plex, ch)
 	case RC_LINE_END:
-		if plex.tokenList[len(plex.tokenList)-1].TokenType != TT_LINE { // this prevents too many duplicates
+		if len(plex.tokenList) > 0 && plex.tokenList[len(plex.tokenList)-1].TokenType != TT_LINE { // this prevents too many duplicates
 			lexIndentLineBegin(plex, ch)
 		}
 	case RC_QUOTE:
@@ -467,6 +467,26 @@ func lex(plex *Lexer, ch rune) error {
 	}
 	plex.previousRune = ch
 	return nil
+}
+
+func LexString(source string) (error, []Token) {
+	var err error
+	plex := Lexer{
+		state:         TT_WHITESPACE,
+		currentLine:   1,
+		currentOffset: 1,
+		tokenList:     []Token{},
+		previousRune:  0,
+		fileId:        0,
+	}
+	plex.currentToken = NewToken(&plex, TT_LINE)
+	for _, ch := range []rune(source) {
+		err = lex(&plex, ch)
+		if err != nil {
+			break
+		}
+	}
+	return err, plex.tokenList
 }
 
 func LexFile(cc *context.CompilerContext, target string) (error, []Token) {
