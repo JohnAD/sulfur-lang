@@ -30,7 +30,7 @@ func parseAstMapBlock(cursor *parseCursor, token lexer.Token) error {
 }
 
 func parseAstMapBlockStart(cursor *parseCursor, token lexer.Token) error {
-	createAndBecomeChild(cursor, AST_MAPBLOCK, ASTN_GROUPING, token.Content)
+	createAndBecomeChild(cursor, AST_MAPBLOCK, ASTN_GROUPING, token.Content, false)
 	return nil
 }
 

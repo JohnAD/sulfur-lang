@@ -23,8 +23,6 @@ const (
 	AST_BLOCK
 	AST_MAPBLOCK
 	AST_MAPBLOCK_ITEM
-	AST_ARGUMENTS
-	AST_ARGUMENT_ITEM
 	AST_INFIX
 	AST_ERROR
 )
@@ -65,10 +63,6 @@ func (ant AstNodeType) String() string {
 		return "MBLOCK"
 	case AST_MAPBLOCK_ITEM:
 		return "MB-ITEM"
-	case AST_ARGUMENTS:
-		return "ARGS"
-	case AST_ARGUMENT_ITEM:
-		return "A-ITEM"
 	case AST_ERROR:
 		return "ERROR"
 	default:
@@ -95,6 +89,7 @@ const (
 	ASTN_META_BINDING
 	ASTN_GROUPING
 	ASTN_KEYWORD
+	ASTN_ROLNE_ARGUMENTS
 )
 
 func (ann AstNodeNature) String() string {
@@ -123,6 +118,8 @@ func (ann AstNodeNature) String() string {
 		return "GROUP"
 	case ASTN_KEYWORD:
 		return "KEYWORD"
+	case ASTN_ROLNE_ARGUMENTS:
+		return "ARGS"
 	default:
 		return fmt.Sprintf("%d", int(ann))
 	}
@@ -134,6 +131,7 @@ func (ann AstNodeNature) MarshalYAML() (interface{}, error) {
 
 type AstNode struct {
 	Kind     AstNodeType   `yaml:"type"`
+	bound    bool          `yaml:"bound"`
 	Nature   AstNodeNature `yaml:"nature"`
 	Name     string        `yaml:"name"`
 	Children []*AstNode    `yaml:"children"`

@@ -17,7 +17,7 @@ func parseAstMapBlockItem(cursor *parseCursor, token lexer.Token) error {
 		if err != nil {
 			return fmt.Errorf("[PARSE_MAPBLOCKITEM_OPENSYMBOL] %v", err)
 		}
-		return openSymbolHandlingInPlace(cursor, token, ASTN_META_BINDING)
+		return openSymbolHandlingInPlace(cursor, token)
 	//case lexer.TT_CLOSE_SYMBOL:
 	//case lexer.TT_OPEN_BIND_SYMBOL:
 	//case lexer.TT_BINDING_SYMBOL:
@@ -37,8 +37,8 @@ func parseAstMapBlockItem(cursor *parseCursor, token lexer.Token) error {
 }
 
 func parseAstMapBlockItemStart(cursor *parseCursor, token lexer.Token) error {
-	createAndBecomeChild(cursor, AST_MAPBLOCK_ITEM, ASTN_IDENTIFIER, token.Content)
-	addChild(cursor, AST_TARGET, ASTN_NULL, "")
+	createAndBecomeChild(cursor, AST_MAPBLOCK_ITEM, ASTN_IDENTIFIER, token.Content, false)
+	addChild(cursor, AST_TARGET, ASTN_NULL, "", false)
 	return nil
 }
 

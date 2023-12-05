@@ -2,6 +2,7 @@ package parser
 
 import (
 	"fmt"
+	"sulfur-compiler/helpers"
 	"sulfur-compiler/lexer"
 )
 
@@ -17,7 +18,7 @@ func parseAstRolne(cursor *parseCursor, token lexer.Token) error {
 	//case lexer.TT_BINDING_SYMBOL:
 	//	return binderHandling(cursor, token)
 	case lexer.TT_IDENT:
-		return parseAstRolneItemStart(cursor, token, ASTN_IDENTIFIER)
+		return parseAstRolneItemStart(cursor, token, ASTN_IDENTIFIER, false)
 	//case lexer.TT_STR_LIT:
 	//case lexer.TT_NUMSTR_LIT:
 	//case lexer.TT_SYNTAX_ERROR:
@@ -39,15 +40,17 @@ func parseAstRolneStart(cursor *parseCursor, token lexer.Token, nature AstNodeNa
 	return nil
 }
 
-func parseAstRolneStartChild(cursor *parseCursor, token lexer.Token) error {
-	createAndBecomeChild(cursor, AST_ROLNE, ASTN_META_BINDING, token.Content)
+func parseAstRolneStartChild(cursor *parseCursor, token lexer.Token, nature AstNodeNature, bound bool) error {
+	createAndBecomeChild(cursor, AST_ROLNE, nature, token.Content, bound)
 	return nil
 }
 
 func finishAstRolne(cursor *parseCursor, token lexer.Token) error {
-	if token.Content == "}" {
+	starting := cursor.currentNode.Name
+	ending := token.Content
+	if helpers.OperatorsMatch(starting, ending) {
 		err := finishAstNode(cursor)
 		return err
 	}
-	return fmt.Errorf("[PARSE_ROLNE_FAR] unable to determine what '%s' is on line %d column %d", token.Content, token.SourceLine, token.SourceOffset)
+	return fmt.Errorf("[PARSE_ROLNE_FAR] unable to match '%' with '%s' on line %d column %d", starting, ending, token.SourceLine, token.SourceOffset)
 }

@@ -25,12 +25,19 @@ func parseAstOrderedBinding(cursor *parseCursor, token lexer.Token) error {
 }
 
 func bindSecondHalfAndFinish(cursor *parseCursor, token lexer.Token) error {
-	addChild(cursor, AST_IDENTIFIER, ASTN_IDENTIFIER, token.Content)
+	addChild(cursor, AST_IDENTIFIER, ASTN_IDENTIFIER, token.Content, false)
+	//if cursor.currentNode.bound {
+	//	err := finishAstNode(cursor)
+	//	if err != nil {
+	//		return err
+	//	}
+	//	return finishAstNode(cursor)
+	//}
 	return finishAstNode(cursor)
 }
 
 func binderHandling(cursor *parseCursor, token lexer.Token) error {
-	return becomeLastChildMakePreviousChildAChildThenBecomeChild(cursor, AST_ORDERED_BINDING, ASTN_META_BINDING, token.Content)
+	return becomeLastChildMakePreviousChildAChildThenBecomeChild(cursor, AST_ORDERED_BINDING, ASTN_META_BINDING, token.Content, true)
 }
 
 func binderHandlingInPlace(cursor *parseCursor, token lexer.Token) error {

@@ -2,8 +2,12 @@ package parser
 
 import (
 	"fmt"
+	"sulfur-compiler/helpers"
 	"sulfur-compiler/lexer"
 )
+
+// A STATEMENT is a node with no Name and a default nature of null by default.
+// All the content of a statement is in the children.
 
 func parseAstStatement(cursor *parseCursor, token lexer.Token) error {
 	switch token.TokenType {
@@ -13,7 +17,7 @@ func parseAstStatement(cursor *parseCursor, token lexer.Token) error {
 		return openSymbolHandlingForNewChild(cursor, token)
 	//case lexer.TT_CLOSE_SYMBOL:
 	case lexer.TT_OPEN_BIND_SYMBOL:
-		return openSymbolHandlingForLastChild(cursor, token)
+		return openSymbolHandlingForLastChild(cursor, token, true)
 	case lexer.TT_BINDING_SYMBOL:
 		return binderHandling(cursor, token)
 	case lexer.TT_IDENT:
@@ -32,29 +36,24 @@ func parseAstStatement(cursor *parseCursor, token lexer.Token) error {
 }
 
 func parseAstStatementStartChild(cursor *parseCursor, token lexer.Token) error {
-	err, nature, name := interpretTokenAtStartOfStatement(token)
-	createAndBecomeChild(cursor, AST_STATEMENT, nature, name)
-	return err
+	nature := interpretInitialStatementNature(token)
+	createAndBecomeChild(cursor, AST_STATEMENT, nature, "", false)
+	// make one call to main proc to interpret the first child
+	return parseAstStatement(cursor, token)
 }
 
-func interpretTokenAtStartOfStatement(token lexer.Token) (error, AstNodeNature, string) {
+func interpretInitialStatementNature(token lexer.Token) AstNodeNature {
 	if token.SourceLine == 1 {
 		if token.Content == "#!" {
-			return nil, ASTN_STATEMENT_ROOT_DECLARATION, token.Content
-		} else {
-			return fmt.Errorf("root declaration ('#!') missing on line %d", token.SourceLine), 0, ""
+			return ASTN_STATEMENT_ROOT_DECLARATION
 		}
 	}
 	if token.SourceLine == 2 {
 		if token.Content == "#@" {
-			return nil, ASTN_STATEMENT_ROOT_FRAMEWORK, token.Content
+			return ASTN_STATEMENT_ROOT_FRAMEWORK
 		}
 	}
-	switch token.TokenType {
-	case lexer.TT_IDENT:
-		return nil, ASTN_IDENTIFIER, token.Content
-	}
-	return fmt.Errorf("[PARSE_STMT_ITASOS] unable to determine what '%s' is on line %d column %d", token.Content, token.SourceLine, token.SourceOffset), 0, ""
+	return ASTN_NULL
 }
 
 func interpretInlineTokenDuringStatement(cursor *parseCursor, token lexer.Token) error {
@@ -62,7 +61,11 @@ func interpretInlineTokenDuringStatement(cursor *parseCursor, token lexer.Token)
 	name := token.Content
 	switch token.TokenType {
 	case lexer.TT_STANDING_SYMBOL:
-		nature = ASTN_INFIX_OPERATOR
+		if helpers.Contains([]string{"#!", "#@"}, token.Content) {
+			nature = ASTN_KEYWORD
+		} else {
+			nature = ASTN_INFIX_OPERATOR
+		}
 	case lexer.TT_IDENT:
 		nature = ASTN_IDENTIFIER
 	case lexer.TT_STR_LIT:
@@ -72,7 +75,7 @@ func interpretInlineTokenDuringStatement(cursor *parseCursor, token lexer.Token)
 	default:
 		return fmt.Errorf("[PARSE_STMT_IITDS] unable to determine what '%s' is on line %d column %d", token.Content, token.SourceLine, token.SourceOffset)
 	}
-	addChild(cursor, AST_STATEMENT_ITEM, nature, name)
+	addChild(cursor, AST_STATEMENT_ITEM, nature, name, false)
 	return nil
 }
 

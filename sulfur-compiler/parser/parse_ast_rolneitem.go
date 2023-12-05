@@ -24,7 +24,8 @@ func parseAstRolneItem(cursor *parseCursor, token lexer.Token) error {
 			return parseAstRolneItemAssignment(cursor, token)
 		}
 	//case lexer.TT_OPEN_SYMBOL:
-	//case lexer.TT_CLOSE_SYMBOL:
+	case lexer.TT_CLOSE_SYMBOL:
+		return finishAstRolneViaLineItem(cursor, token)
 	//case lexer.TT_OPEN_BIND_SYMBOL:
 	case lexer.TT_BINDING_SYMBOL:
 		if token.Content == "::" {
@@ -48,6 +49,13 @@ func parseAstRolneItem(cursor *parseCursor, token lexer.Token) error {
 func parseAstRolneItemNewPart(cursor *parseCursor, token lexer.Token, nature AstNodeNature) error {
 	ris := getRolneItemState(cursor)
 	switch ris {
+	case RIS_NAME:
+		// being in the name stage and getting a new item means the old item is finished and a new one starts. { a b } is two R-ITEM
+		err := finishAstRolneItem(cursor)
+		if err != nil {
+			return err
+		}
+		return parseAstRolneItemStart(cursor, token, nature, false)
 	case RIS_TYPE:
 		typeAst := rolneItemPointAtType(cursor)
 		typeAst.Nature = nature
@@ -59,7 +67,7 @@ func parseAstRolneItemNewPart(cursor *parseCursor, token lexer.Token, nature Ast
 		valueAst.Name = token.Content
 		return nil
 	}
-	return fmt.Errorf("[PARSE_ROLNEITEM_PARINV] unable to determine what '%s' is on line %d column %d", token.Content, token.SourceLine, token.SourceOffset)
+	return fmt.Errorf("[PARSE_ROLNEITEM_PARINP] unable to determine what '%s' is on line %d column %d", token.Content, token.SourceLine, token.SourceOffset)
 }
 
 func parseAstRolneItemOtherBinding(cursor *parseCursor, token lexer.Token) error {
@@ -88,10 +96,18 @@ func finishAstRolneItem(cursor *parseCursor) error {
 	return err
 }
 
-func parseAstRolneItemStart(cursor *parseCursor, token lexer.Token, nature AstNodeNature) error {
-	createAndBecomeChild(cursor, AST_ROLNE_ITEM, nature, token.Content) // create/become R-ITEM
-	addChild(cursor, AST_TYPE, ASTN_NULL, "")                           // add yet-unknown type
-	addChild(cursor, AST_VALUE, ASTN_NULL, "")                          // add yet-unknown value
+func finishAstRolneViaLineItem(cursor *parseCursor, token lexer.Token) error {
+	err := finishAstRolneItem(cursor)
+	if err != nil {
+		return err
+	}
+	return finishAstRolne(cursor, token)
+}
+
+func parseAstRolneItemStart(cursor *parseCursor, token lexer.Token, nature AstNodeNature, bound bool) error {
+	createAndBecomeChild(cursor, AST_ROLNE_ITEM, nature, token.Content, bound) // create/become R-ITEM
+	addChild(cursor, AST_TYPE, ASTN_NULL, "", false)                           // add yet-unknown type
+	addChild(cursor, AST_VALUE, ASTN_NULL, "", false)                          // add yet-unknown value
 	return nil
 }
 
