@@ -69,7 +69,7 @@ func interpretInlineTokenDuringStatement(cursor *parseCursor, token lexer.Token)
 	case lexer.TT_IDENT:
 		nature = ASTN_IDENTIFIER
 	case lexer.TT_STR_LIT:
-		nature = ASTN_STR
+		nature = ASTN_STRLIT
 	case lexer.TT_NUMSTR_LIT:
 		nature = ASTN_NUMSTR
 	default:

@@ -92,7 +92,11 @@ func finishAstNode(cursor *parseCursor) error {
 }
 
 func openSymbolHandlingForNewChild(cursor *parseCursor, token lexer.Token) error {
+	debug("OSHFNC", cursor)
 	if token.Content == "{" {
+		return parseAstRolneStartChild(cursor, token, ASTN_NULL, true)
+	}
+	if token.Content == "(" {
 		return parseAstRolneStartChild(cursor, token, ASTN_NULL, true)
 	}
 	if token.Content == "{{" {
@@ -104,11 +108,15 @@ func openSymbolHandlingForNewChild(cursor *parseCursor, token lexer.Token) error
 	return fmt.Errorf("[PARSE_GENERIC_OSHFNC] unable to determine what '%s' is on line %d column %d", token.Content, token.SourceLine, token.SourceOffset)
 }
 func openSymbolHandlingInPlace(cursor *parseCursor, token lexer.Token) error {
+	debug("OSHIP", cursor)
 	if token.Content == "{" {
 		return parseAstRolneStart(cursor, token, ASTN_NULL)
 	}
 	if token.Content == "[[" {
 		return parseAstBlockStart(cursor, token, ASTN_NULL)
+	}
+	if token.Content == "(" {
+		return parseAstRolneStart(cursor, token, ASTN_NULL)
 	}
 	//if token.Content == "{{" {
 	//	return parseAstMapBlockStart(cursor, token)
@@ -163,6 +171,7 @@ func swapSelfMakingPreviousAChild(cursor *parseCursor, ant AstNodeType, nature A
 }
 
 func parse(cursor *parseCursor, token lexer.Token) error {
+	debugNext(cursor, token)
 	switch cursor.currentNode.Kind {
 	case AST_ROOT:
 		return parseAstRoot(cursor, token)
@@ -180,6 +189,11 @@ func parse(cursor *parseCursor, token lexer.Token) error {
 		return parseAstRolne(cursor, token)
 	case AST_ROLNE_ITEM:
 		return parseAstRolneItem(cursor, token)
+	case AST_ROLNE_NAME:
+		return parseAstRolneItemName(cursor, token)
+	//case AST_ROLNE_TYPE:
+	case AST_ROLNE_VALUE:
+		return parseAstRolneItemValue(cursor, token)
 	case AST_BLOCK:
 		return parseAstBlock(cursor, token)
 	case AST_MAPBLOCK:
@@ -209,7 +223,7 @@ func ParseTokensToAst(cc *context.CompilerContext, tokens []lexer.Token) (error,
 			return err, root
 		}
 	}
-	fmt.Println("CURSOR: ")
-	fmt.Printf("%v", cursor)
+	//fmt.Println("CURSOR: ")
+	//fmt.Printf("%v", cursor)
 	return err, root
 }

@@ -5,159 +5,67 @@ import (
 	"sulfur-compiler/lexer"
 )
 
-type RoleItemState int // for answer the question: where are we?
-const (
-	RIS_NAME RoleItemState = iota
-	RIS_TYPE
-	RIS_VALUE
-)
-
-const ROLEITEM_TYPECHILD = 0
-const ROLEITEM_VALUECHILD = 1
+// type RoleItemState int // for answer the question: where are we?
+// const (
+//
+//	RIS_NAME RoleItemState = iota
+//	RIS_TYPE
+//	RIS_VALUE
+//
+// )
+const ROLEITEM_NAMECHILD = 0
+const ROLEITEM_TYPECHILD = 1
+const ROLEITEM_VALUECHILD = 2
 
 // every AST_ROLNE_ITEM should have EXACTLY THREE ITEMS: name type value
+//   the ROLNE_ITEM itself holds the name as it's name; a name is either an identifier or a string
+//   on creation, the NAME, TYPE and VALUE children are created pre-emptively and the current pointer moves to the name.
 
 func parseAstRolneItem(cursor *parseCursor, token lexer.Token) error {
-	switch token.TokenType {
-	case lexer.TT_STANDING_SYMBOL:
-		if token.Content == "=" {
-			return parseAstRolneItemAssignment(cursor, token)
-		}
-	//case lexer.TT_OPEN_SYMBOL:
-	case lexer.TT_CLOSE_SYMBOL:
-		return finishAstRolneViaLineItem(cursor, token)
-	//case lexer.TT_OPEN_BIND_SYMBOL:
-	case lexer.TT_BINDING_SYMBOL:
-		if token.Content == "::" {
-			return parseAstRolneItemTypeStart(cursor, token)
-		}
-		return parseAstRolneItemOtherBinding(cursor, token)
-	case lexer.TT_IDENT:
-		return parseAstRolneItemNewPart(cursor, token, ASTN_IDENTIFIER)
-	//case lexer.TT_STR_LIT:
-	//case lexer.TT_NUMSTR_LIT:
-	//case lexer.TT_SYNTAX_ERROR:
-	//case lexer.TT_COMMENT:
-	//case lexer.TT_WHITESPACE: TODO: remove whitespace TT
-	//	return nil
-	case lexer.TT_LINE:
-		return finishAstRolneItem(cursor)
-	}
+	// if we somehow manage to be in this state, then we are "between" rolne items
+	//   on entry we add children and point to the AST_ROLNE_NAME child
+	//   on exit we should pop back up to parent AST_ROLNE
 	return fmt.Errorf("unhandled AST_ROLNE_ITEM parse of %v", token)
 }
 
-func parseAstRolneItemNewPart(cursor *parseCursor, token lexer.Token, nature AstNodeNature) error {
-	ris := getRolneItemState(cursor)
-	switch ris {
-	case RIS_NAME:
-		// being in the name stage and getting a new item means the old item is finished and a new one starts. { a b } is two R-ITEM
-		err := finishAstRolneItem(cursor)
-		if err != nil {
-			return err
-		}
-		return parseAstRolneItemStart(cursor, token, nature, false)
-	case RIS_TYPE:
-		typeAst := rolneItemPointAtType(cursor)
-		typeAst.Nature = nature
-		typeAst.Name = token.Content
-		return nil
-	case RIS_VALUE:
-		valueAst := rolneItemPointAtValue(cursor)
-		valueAst.Nature = nature
-		valueAst.Name = token.Content
-		return nil
-	}
-	return fmt.Errorf("[PARSE_ROLNEITEM_PARINP] unable to determine what '%s' is on line %d column %d", token.Content, token.SourceLine, token.SourceOffset)
+func parseAstRolneItemStart(cursor *parseCursor, token lexer.Token) error {
+	debug("PARIS-start", cursor)
+	createAndBecomeChild(cursor, AST_ROLNE_ITEM, ASTN_NOTHING, "", false) // create/become R-ITEM
+	addChild(cursor, AST_ROLNE_NAME, ASTN_NULL, "", false)                // add yet-unknown name
+	addChild(cursor, AST_ROLNE_TYPE, ASTN_NULL, "", false)                // add yet-unknown type
+	addChild(cursor, AST_ROLNE_VALUE, ASTN_NULL, "", false)               // add yet-unknown value
+	_ = gotoChild(cursor, ROLEITEM_NAMECHILD)                             // become name
+	debug("PARIS-end", cursor)
+	return parseAstRolneItemNameStart(cursor, token)
 }
 
-func parseAstRolneItemOtherBinding(cursor *parseCursor, token lexer.Token) error {
-	ris := getRolneItemState(cursor)
-	switch ris {
-	case RIS_VALUE:
-		valueAst := rolneItemPointAtValue(cursor)
-		if valueAst.Nature != ASTN_NOTHING { // you can't do <nothing>::Int (not a valid value)
-			err := gotoChild(cursor, ROLEITEM_VALUECHILD)
-			if err != nil {
-				return err
-			}
-			return binderHandlingInPlace(cursor, token) // changes AST state to AST_ORDERED_BINDING
-		}
-	}
-	return fmt.Errorf("[PARSE_ROLNEITEM_PARIOB] unable to determine what '%s' is on line %d column %d", token.Content, token.SourceLine, token.SourceOffset)
-}
-
-func finishAstRolneItem(cursor *parseCursor) error {
-	//fmt.Printf("PING at %v\n", cursor.currentNode)
-	if getRolneItemState(cursor) != RIS_VALUE {
-		parseAstRolneItemHandleNoName(cursor) // this does a swap of name and value
-	}
-	err := finishAstNode(cursor)
-	//fmt.Printf("   now at %v\n", cursor.currentNode)
-	return err
-}
-
-func finishAstRolneViaLineItem(cursor *parseCursor, token lexer.Token) error {
-	err := finishAstRolneItem(cursor)
-	if err != nil {
-		return err
-	}
-	return finishAstRolne(cursor, token)
-}
-
-func parseAstRolneItemStart(cursor *parseCursor, token lexer.Token, nature AstNodeNature, bound bool) error {
-	createAndBecomeChild(cursor, AST_ROLNE_ITEM, nature, token.Content, bound) // create/become R-ITEM
-	addChild(cursor, AST_TYPE, ASTN_NULL, "", false)                           // add yet-unknown type
-	addChild(cursor, AST_VALUE, ASTN_NULL, "", false)                          // add yet-unknown value
-	return nil
-}
-
-func parseAstRolneItemAssignment(cursor *parseCursor, token lexer.Token) error {
-	rolneItemPointAtValue(cursor).Nature = ASTN_NOTHING // by changing from null(unknown) to nothing, this sparser now knows we are working on the value not the name
-	return nil
-}
-
-func parseAstRolneItemTypeStart(cursor *parseCursor, token lexer.Token) error {
-	ris := getRolneItemState(cursor)
-	switch ris {
-	case RIS_NAME:
-		rolneItemPointAtType(cursor).Nature = ASTN_NOTHING // changing from null(unknown) to nothing
-		return nil
-	case RIS_TYPE:
-		// already working on the type, so bind it like normal
-		typeAst := rolneItemPointAtType(cursor)
-		if typeAst.Nature != ASTN_NOTHING { // you can't do <nothing>::Int (not a valid type)
-			err := gotoChild(cursor, ROLEITEM_TYPECHILD)
-			if err != nil {
-				return err
-			}
-			return binderHandlingInPlace(cursor, token) // changes AST state to AST_ORDERED_BINDING
-		}
-	}
-	return fmt.Errorf("[PARSE_ROLNEITEM_PARITS] unable to determine what '%s' is on line %d column %d", token.Content, token.SourceLine, token.SourceOffset)
-}
-
-func parseAstRolneItemHandleNoName(cursor *parseCursor) {
+func childCloseRolneItemWithJustValue(cursor *parseCursor) {
+	// a unnamed value is found, so the rolne item is now done.
+	// ^ I cannot believe you made such a simple spelling mistake. You call yourself a software developer? Shame.
+	// this should only be called from AST_ROLNE_NAME
+	debug("CCRIWJV-start", cursor)
 	formerName := cursor.currentNode.Name
+	formerNature := cursor.currentNode.Nature
+	formerChildren := cursor.currentNode.Children
 	cursor.currentNode.Nature = ASTN_NOTHING
 	cursor.currentNode.Name = ""
-	rolneItemPointAtValue(cursor).Nature = ASTN_IDENTIFIER
-	rolneItemPointAtValue(cursor).Name = formerName
+	cursor.currentNode.Children = []*AstNode{}
+	_ = finishAstNode(cursor) // close child and point to here
+	cursor.currentNode.Children[ROLEITEM_VALUECHILD].Name = formerName
+	cursor.currentNode.Children[ROLEITEM_VALUECHILD].Nature = formerNature
+	cursor.currentNode.Children[ROLEITEM_VALUECHILD].Children = formerChildren
+	debug("CCRIWJV-end", cursor)
 }
 
-func rolneItemPointAtType(cursor *parseCursor) *AstNode {
-	return cursor.currentNode.Children[ROLEITEM_TYPECHILD]
-}
+func childParseAstRolneItemFinish(cursor *parseCursor, token lexer.Token) error {
+	// only be called from AST_ROLNE_NAME, AST_ROLNE_TYPE, or AST_ROLNE_VALUE
+	debug("CPARIF-start", cursor)
 
-func rolneItemPointAtValue(cursor *parseCursor) *AstNode {
-	return cursor.currentNode.Children[ROLEITEM_VALUECHILD]
-}
-
-func getRolneItemState(cursor *parseCursor) RoleItemState {
-	if rolneItemPointAtValue(cursor).Nature != ASTN_NULL {
-		return RIS_VALUE
+	if cursor.currentNode.Kind == AST_ROLNE_NAME {
+		childCloseRolneItemWithJustValue(cursor) // re-arrange and point to here
 	}
-	if rolneItemPointAtType(cursor).Nature != ASTN_NULL {
-		return RIS_TYPE
-	}
-	return RIS_NAME
+	debug("CPARIF-end1", cursor)
+	_ = finishAstNode(cursor) // point to parent AST_ROLNE
+	debug("CPARIF-end2", cursor)
+	return parseAstRolne(cursor, token) // have the parent handle the new token
 }

@@ -17,8 +17,9 @@ const (
 	AST_IDENTIFIER
 	AST_ROLNE
 	AST_ROLNE_ITEM
-	AST_TYPE
-	AST_VALUE
+	AST_ROLNE_NAME
+	AST_ROLNE_TYPE
+	AST_ROLNE_VALUE
 	AST_TARGET
 	AST_BLOCK
 	AST_MAPBLOCK
@@ -49,10 +50,12 @@ func (ant AstNodeType) String() string {
 		return "ROLNE"
 	case AST_ROLNE_ITEM:
 		return "R-ITEM"
-	case AST_TYPE:
-		return "TYPE"
-	case AST_VALUE:
-		return "VALUE"
+	case AST_ROLNE_NAME:
+		return "R-I-NAME"
+	case AST_ROLNE_TYPE:
+		return "R-I-TYPE"
+	case AST_ROLNE_VALUE:
+		return "R-I-VALUE"
 	case AST_TARGET:
 		return "TARGET"
 	case AST_INFIX:
@@ -83,7 +86,7 @@ const (
 	ASTN_STATEMENT_ROOT_FRAMEWORK
 	ASTN_STATEMENT_ASSIGN
 	ASTN_IDENTIFIER
-	ASTN_STR
+	ASTN_STRLIT
 	ASTN_NUMSTR
 	ASTN_INFIX_OPERATOR
 	ASTN_META_BINDING
@@ -106,8 +109,8 @@ func (ann AstNodeNature) String() string {
 		return "ASSIGN"
 	case ASTN_IDENTIFIER:
 		return "IDENT"
-	case ASTN_STR:
-		return "STR"
+	case ASTN_STRLIT:
+		return "STR-LIT"
 	case ASTN_NUMSTR:
 		return "NUMSTR"
 	case ASTN_INFIX_OPERATOR:

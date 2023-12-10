@@ -24,7 +24,7 @@ func parseAstMapBlockItem(cursor *parseCursor, token lexer.Token) error {
 	//case lexer.TT_IDENT:
 	//	return parseAstMapBlockItemValue(cursor, token)
 	case lexer.TT_STR_LIT:
-		return setChild(cursor, 0, AST_LITERAL, ASTN_STR, token.Content)
+		return setChild(cursor, 0, AST_LITERAL, ASTN_STRLIT, token.Content)
 	//case lexer.TT_NUMSTR_LIT:
 	//case lexer.TT_SYNTAX_ERROR:
 	//case lexer.TT_COMMENT:

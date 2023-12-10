@@ -113,7 +113,7 @@ func TestStatementParsing(t *testing.T) {
 			t.Errorf("on test %s, error %v", test.desc, err)
 		}
 		if rootYaml != test.expectedYaml {
-			t.Errorf("on test %s, GOT:\n%s<<<EOL\n\nEXPECTED: \n%s<<<EOL", test.desc, rootYaml, test.expectedYaml)
+			t.Errorf("on test %s, GOT:\n%s<<<EOF\n\nEXPECTED:\n%s<<<EOF", test.desc, rootYaml, test.expectedYaml)
 		}
 	}
 }
