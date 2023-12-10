@@ -92,7 +92,7 @@ func finishAstNode(cursor *parseCursor) error {
 }
 
 func openSymbolHandlingForNewChild(cursor *parseCursor, token lexer.Token) error {
-	debug("OSHFNC", cursor)
+	debug(AST_ROOT, "OSHFNC", cursor)
 	if token.Content == "{" {
 		return parseAstRolneStartChild(cursor, token, ASTN_NULL, true)
 	}
@@ -108,7 +108,7 @@ func openSymbolHandlingForNewChild(cursor *parseCursor, token lexer.Token) error
 	return fmt.Errorf("[PARSE_GENERIC_OSHFNC] unable to determine what '%s' is on line %d column %d", token.Content, token.SourceLine, token.SourceOffset)
 }
 func openSymbolHandlingInPlace(cursor *parseCursor, token lexer.Token) error {
-	debug("OSHIP", cursor)
+	debug(AST_ROOT, "OSHIP", cursor)
 	if token.Content == "{" {
 		return parseAstRolneStart(cursor, token, ASTN_NULL)
 	}
@@ -189,10 +189,11 @@ func parse(cursor *parseCursor, token lexer.Token) error {
 		return parseAstRolne(cursor, token)
 	case AST_ROLNE_ITEM:
 		return parseAstRolneItem(cursor, token)
-	case AST_ROLNE_NAME:
+	case AST_ROLNE_ITEM_NAME:
 		return parseAstRolneItemName(cursor, token)
-	//case AST_ROLNE_TYPE:
-	case AST_ROLNE_VALUE:
+	case AST_ROLNE_ITEM_TYPE:
+		return parseAstRolneItemType(cursor, token)
+	case AST_ROLNE_ITEM_VALUE:
 		return parseAstRolneItemValue(cursor, token)
 	case AST_BLOCK:
 		return parseAstBlock(cursor, token)

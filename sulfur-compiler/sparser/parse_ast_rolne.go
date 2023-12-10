@@ -8,7 +8,7 @@ import (
 
 // In this language, a ROLNE can hold multiple roles:
 //   As a collection holding data. A stand-alone pair of single curly braces:  { }
-//   As the initial content of a class instance. A pair of parens "bound" to an identifier:  Abc(  )
+//   ?? As the initial content of a class instance. A pair of parens "bound" to an identifier:  Abc(  )
 //   As a parameter definition for a method. A pair of single curly braces as consumed by map-block: parameters {  }
 //     When used as a parameter definition, a type is required for each item and the default is the value.
 //   As the arguments for a method call. A pair of parens "bound" to an identifier. abc( )
@@ -23,7 +23,7 @@ import (
 //    #}
 
 func parseAstRolne(cursor *parseCursor, token lexer.Token) error {
-	debug("PAR", cursor)
+	debug(AST_ROLNE, "MAIN", cursor)
 	switch token.TokenType {
 	case lexer.TT_STANDING_SYMBOL:
 		if token.Content == "," {
@@ -32,21 +32,10 @@ func parseAstRolne(cursor *parseCursor, token lexer.Token) error {
 	//case lexer.TT_OPEN_SYMBOL:
 	case lexer.TT_CLOSE_SYMBOL:
 		return finishAstRolne(cursor, token)
-	//case lexer.TT_OPEN_BIND_SYMBOL:
-	//case lexer.TT_BINDING_SYMBOL:
-	//case lexer.TT_BINDING_SYMBOL:
-	//	return binderHandling(cursor, token)
 	case lexer.TT_IDENT:
 		return parseAstRolneItemStart(cursor, token)
 	case lexer.TT_STR_LIT:
 		return parseAstRolneItemStart(cursor, token)
-	//case lexer.TT_STR_LIT:
-	//case lexer.TT_NUMSTR_LIT:
-	//case lexer.TT_SYNTAX_ERROR:
-	//case lexer.TT_COMMENT:
-	//	return nil
-	//case lexer.TT_WHITESPACE: TODO: remove whitespace TT
-	//	return nil // just ignore when in a ROLNE (but not inside a ROLNE ITEM)
 	case lexer.TT_LINE:
 		return nil // just ignore EOL when in a ROLNE (but not inside a ROLNE ITEM)
 	}
@@ -54,7 +43,7 @@ func parseAstRolne(cursor *parseCursor, token lexer.Token) error {
 }
 
 func parseAstRolneStart(cursor *parseCursor, token lexer.Token, nature AstNodeNature) error {
-	debug("PARS", cursor)
+	debug(AST_ROLNE, "PARS", cursor)
 	selfPtr := cursor.currentNode
 	selfPtr.Kind = AST_ROLNE
 	selfPtr.Nature = nature
@@ -63,18 +52,23 @@ func parseAstRolneStart(cursor *parseCursor, token lexer.Token, nature AstNodeNa
 }
 
 func parseAstRolneStartChild(cursor *parseCursor, token lexer.Token, nature AstNodeNature, bound bool) error {
-	debug("PARSC", cursor)
+	debug(AST_ROLNE, "PARSC", cursor)
 	createAndBecomeChild(cursor, AST_ROLNE, nature, token.Content, bound)
 	return nil
 }
 
+func childRolneItemDoneReadyForNextItem(cursor *parseCursor, token lexer.Token) error {
+	debug(AST_ROLNE, "CDRFNI", cursor)
+	return parseAstRolne(cursor, token)
+}
+
 func finishAstRolne(cursor *parseCursor, token lexer.Token) error {
-	debug("FAR", cursor)
+	debug(AST_ROLNE, "FAR", cursor)
 	starting := cursor.currentNode.Name
 	ending := token.Content
 	if helpers.OperatorsMatch(starting, ending) {
 		err := finishAstNode(cursor)
-		debug("FAR-end", cursor)
+		debug(AST_ROLNE, "FAR-end", cursor)
 		return err
 	}
 	return fmt.Errorf("[PARSE_ROLNE_FAR] unable to match '%s' with '%s' on line %d column %d", starting, ending, token.SourceLine, token.SourceOffset)

@@ -6,6 +6,7 @@ import (
 )
 
 func parseAstRolneItemName(cursor *parseCursor, token lexer.Token) error {
+	debug(AST_ROLNE_ITEM_NAME, "MAIN", cursor)
 	switch token.TokenType {
 	case lexer.TT_STANDING_SYMBOL:
 		if token.Content == "=" {
@@ -15,6 +16,10 @@ func parseAstRolneItemName(cursor *parseCursor, token lexer.Token) error {
 		}
 	case lexer.TT_OPEN_BIND_SYMBOL:
 		return openSymbolHandlingForNewChild(cursor, token)
+	case lexer.TT_BINDING_SYMBOL:
+		if token.Content == "::" {
+			return parseAstRolneItemTypeStart(cursor)
+		}
 	case lexer.TT_CLOSE_SYMBOL:
 		return childParseAstRolneItemFinish(cursor, token) // a closing "}" etc found
 	case lexer.TT_IDENT:
@@ -24,12 +29,12 @@ func parseAstRolneItemName(cursor *parseCursor, token lexer.Token) error {
 	case lexer.TT_LINE:
 		return childParseAstRolneItemFinish(cursor, token)
 	}
-	return fmt.Errorf("unhandled AST_ROLNE_NAME parse of %v", token)
+	return fmt.Errorf("unhandled AST_ROLNE_ITEM_NAME parse of %v", token)
 }
 
 func parseAstRolneItemNameStart(cursor *parseCursor, token lexer.Token) error {
 	// when this is called, we should ALREADY be pointing to the name node
-	debug("PARINS", cursor)
+	debug(AST_ROLNE_ITEM_NAME, "PARINS", cursor)
 	return parseAstRolneItemName(cursor, token)
 }
 

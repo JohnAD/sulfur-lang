@@ -7,9 +7,9 @@ import (
 
 const debugParse = false
 
-func debug(location string, cursor *parseCursor) {
+func debug(file AstNodeType, location string, cursor *parseCursor) {
 	if debugParse {
-		fmt.Printf("[PARSE %s] %s\n", location, cursor.currentNode.Kind)
+		fmt.Printf("[PARSE %s.%s] %s\n", file, location, cursor.currentNode.Kind)
 	}
 }
 

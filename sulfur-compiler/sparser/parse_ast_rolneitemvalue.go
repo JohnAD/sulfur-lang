@@ -6,6 +6,7 @@ import (
 )
 
 func parseAstRolneItemValue(cursor *parseCursor, token lexer.Token) error {
+	debug(AST_ROLNE_ITEM_VALUE, "MAIN", cursor)
 	switch token.TokenType {
 	case lexer.TT_STANDING_SYMBOL:
 		if token.Content == "," {
@@ -20,17 +21,18 @@ func parseAstRolneItemValue(cursor *parseCursor, token lexer.Token) error {
 	case lexer.TT_LINE:
 		return childParseAstRolneItemFinish(cursor, token)
 	}
-	return fmt.Errorf("unhandled AST_ROLNE_VALUE parse of %v", token)
+	return fmt.Errorf("unhandled AST_ROLNE_ITEM_VALUE parse of %v", token)
 }
 
 func parseAstRolneItemValueStartViaEqualSign(cursor *parseCursor) error {
-	// when this is called, we should be currently pointing to the AST_ROLNE_NAME or AST_ROLNE_TYPE
+	// when this is called, we should be currently pointing to the AST_ROLNE_ITEM_NAME or AST_ROLNE_ITEM_TYPE
+	debug(AST_ROLNE_ITEM_VALUE, "PARIVSVES", cursor)
 	_ = finishAstNode(cursor) // finish pointing to AST_ROLNE_ITEM
 	return gotoChild(cursor, ROLEITEM_VALUECHILD)
 }
 
 func parseAstRolneItemNameAssignValue(cursor *parseCursor, token lexer.Token, nature AstNodeNature) error {
-	debug("PARINAV-start", cursor)
+	debug(AST_ROLNE_ITEM_VALUE, "PARINAV-start", cursor)
 	if cursor.currentNode.Nature != ASTN_NULL {
 		return childParseAstRolneItemFinish(cursor, token)
 	}

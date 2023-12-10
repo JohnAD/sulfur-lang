@@ -23,27 +23,27 @@ const ROLEITEM_VALUECHILD = 2
 
 func parseAstRolneItem(cursor *parseCursor, token lexer.Token) error {
 	// if we somehow manage to be in this state, then we are "between" rolne items
-	//   on entry we add children and point to the AST_ROLNE_NAME child
+	//   on entry we add children and point to the AST_ROLNE_ITEM_NAME child
 	//   on exit we should pop back up to parent AST_ROLNE
 	return fmt.Errorf("unhandled AST_ROLNE_ITEM parse of %v", token)
 }
 
 func parseAstRolneItemStart(cursor *parseCursor, token lexer.Token) error {
-	debug("PARIS-start", cursor)
+	debug(AST_ROLNE_ITEM, "PARIS-start", cursor)
 	createAndBecomeChild(cursor, AST_ROLNE_ITEM, ASTN_NOTHING, "", false) // create/become R-ITEM
-	addChild(cursor, AST_ROLNE_NAME, ASTN_NULL, "", false)                // add yet-unknown name
-	addChild(cursor, AST_ROLNE_TYPE, ASTN_NULL, "", false)                // add yet-unknown type
-	addChild(cursor, AST_ROLNE_VALUE, ASTN_NULL, "", false)               // add yet-unknown value
+	addChild(cursor, AST_ROLNE_ITEM_NAME, ASTN_NULL, "", false)           // add yet-unknown name
+	addChild(cursor, AST_ROLNE_ITEM_TYPE, ASTN_NULL, "", false)           // add yet-unknown type
+	addChild(cursor, AST_ROLNE_ITEM_VALUE, ASTN_NULL, "", false)          // add yet-unknown value
 	_ = gotoChild(cursor, ROLEITEM_NAMECHILD)                             // become name
-	debug("PARIS-end", cursor)
+	debug(AST_ROLNE_ITEM, "PARIS-end", cursor)
 	return parseAstRolneItemNameStart(cursor, token)
 }
 
 func childCloseRolneItemWithJustValue(cursor *parseCursor) {
 	// a unnamed value is found, so the rolne item is now done.
 	// ^ I cannot believe you made such a simple spelling mistake. You call yourself a software developer? Shame.
-	// this should only be called from AST_ROLNE_NAME
-	debug("CCRIWJV-start", cursor)
+	// this should only be called from AST_ROLNE_ITEM_NAME
+	debug(AST_ROLNE_ITEM, "CCRIWJV-start", cursor)
 	formerName := cursor.currentNode.Name
 	formerNature := cursor.currentNode.Nature
 	formerChildren := cursor.currentNode.Children
@@ -54,18 +54,20 @@ func childCloseRolneItemWithJustValue(cursor *parseCursor) {
 	cursor.currentNode.Children[ROLEITEM_VALUECHILD].Name = formerName
 	cursor.currentNode.Children[ROLEITEM_VALUECHILD].Nature = formerNature
 	cursor.currentNode.Children[ROLEITEM_VALUECHILD].Children = formerChildren
-	debug("CCRIWJV-end", cursor)
+	debug(AST_ROLNE_ITEM, "CCRIWJV-end", cursor)
 }
 
 func childParseAstRolneItemFinish(cursor *parseCursor, token lexer.Token) error {
-	// only be called from AST_ROLNE_NAME, AST_ROLNE_TYPE, or AST_ROLNE_VALUE
-	debug("CPARIF-start", cursor)
+	// only be called from AST_ROLNE_ITEM_NAME, AST_ROLNE_ITEM_TYPE, or AST_ROLNE_ITEM_VALUE
+	debug(AST_ROLNE_ITEM, "CPARIF-start", cursor)
 
-	if cursor.currentNode.Kind == AST_ROLNE_NAME {
+	if cursor.currentNode.Kind == AST_ROLNE_ITEM_NAME {
 		childCloseRolneItemWithJustValue(cursor) // re-arrange and point to here
+	} else {
+		_ = finishAstNode(cursor) // just point to here
 	}
-	debug("CPARIF-end1", cursor)
+	debug(AST_ROLNE_ITEM, "CPARIF-end1", cursor)
 	_ = finishAstNode(cursor) // point to parent AST_ROLNE
-	debug("CPARIF-end2", cursor)
-	return parseAstRolne(cursor, token) // have the parent handle the new token
+	debug(AST_ROLNE_ITEM, "CPARIF-end2", cursor)
+	return childRolneItemDoneReadyForNextItem(cursor, token) // have the parent handle the new token
 }
