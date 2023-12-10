@@ -5,7 +5,7 @@ import (
 	"sulfur-compiler/lexer"
 )
 
-const debugParse = true
+const debugParse = false
 
 func debug(file AstNodeType, location string, cursor *parseCursor) {
 	if debugParse {

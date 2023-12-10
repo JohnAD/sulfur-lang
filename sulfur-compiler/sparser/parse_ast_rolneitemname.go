@@ -17,8 +17,11 @@ func parseAstRolneItemName(cursor *parseCursor, token lexer.Token) error {
 	case lexer.TT_OPEN_BIND_SYMBOL:
 		return openSymbolHandlingForNewChild(cursor, token)
 	case lexer.TT_BINDING_SYMBOL:
+		// any form of binding says "this isn't a name" since names CANNOT be non-simple per language rules
 		if token.Content == "::" {
 			return parseAstRolneItemTypeStart(cursor)
+		} else {
+			return parseAstRolneItemValueStartViaBinding(cursor, token)
 		}
 	case lexer.TT_CLOSE_SYMBOL:
 		return childParseAstRolneItemFinish(cursor, token) // a closing "}" etc found

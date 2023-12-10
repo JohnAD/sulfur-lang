@@ -297,6 +297,64 @@ var parseRolneArgumentTests = []parseTest{
 									  name: x
 									  children: []
 			`),
+	}, {
+		"bound argument", helpers.Dedent(`
+				let t = abc( bling.zen )
+			`),
+		helpers.Dedent(`
+			type: ROOT
+			nature: _
+			name: ""
+			children:
+				- type: STATEMENT
+				  nature: '?'
+				  name: ""
+				  children:
+					- type: S-ITEM
+					  nature: IDENT
+					  name: let
+					  children: []
+					- type: S-ITEM
+					  nature: IDENT
+					  name: t
+					  children: []
+					- type: S-ITEM
+					  nature: INFIX-OP
+					  name: =
+					  children: []
+					- type: S-ITEM
+					  nature: IDENT
+					  name: abc
+					  children:
+						- type: ROLNE
+						  nature: ARGS
+						  name: (
+						  children:
+							- type: R-ITEM
+							  nature: _
+							  name: ""
+							  children:
+								- type: R-I-NAME
+								  nature: _
+								  name: ""
+								  children: []
+								- type: R-I-TYPE
+								  nature: '?'
+								  name: ""
+								  children: []
+								- type: R-I-VALUE
+								  nature: BINDING
+								  name: .
+								  children:
+									- type: BINDING-CHILD
+									  nature: IDENT
+									  name: bling
+									  children: []
+									- type: BINDING-CHILD
+									  nature: IDENT
+									  name: zen
+									  children: []
+		`),
 	},
 }
 

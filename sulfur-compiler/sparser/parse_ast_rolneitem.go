@@ -40,7 +40,7 @@ func parseAstRolneItemStart(cursor *parseCursor, token lexer.Token) error {
 }
 
 func childCloseRolneItemWithJustValue(cursor *parseCursor) {
-	// a unnamed value is found, so the rolne item is now done.
+	// bling unnamed value is found, so the rolne item is now done.
 	// ^ I cannot believe you made such a simple spelling mistake. You call yourself a software developer? Shame.
 	// this should only be called from AST_ROLNE_ITEM_NAME
 	debug(AST_ROLNE_ITEM, "CCRIWJV-start", cursor)
@@ -70,4 +70,17 @@ func childParseAstRolneItemFinish(cursor *parseCursor, token lexer.Token) error 
 	_ = finishAstNode(cursor) // point to parent AST_ROLNE
 	debug(AST_ROLNE_ITEM, "CPARIF-end2", cursor)
 	return childRolneItemDoneReadyForNextItem(cursor, token) // have the parent handle the new token
+}
+
+func parseAstRolneItemMoveNameToChild(cursor *parseCursor) {
+	debug(AST_ROLNE_ITEM, "PARIMNTC", cursor)
+	formerName := cursor.currentNode.Children[ROLEITEM_NAMECHILD].Name
+	formerNature := cursor.currentNode.Children[ROLEITEM_NAMECHILD].Nature
+	formerChildren := cursor.currentNode.Children[ROLEITEM_NAMECHILD].Children
+	cursor.currentNode.Children[ROLEITEM_VALUECHILD].Name = formerName
+	cursor.currentNode.Children[ROLEITEM_VALUECHILD].Nature = formerNature
+	cursor.currentNode.Children[ROLEITEM_VALUECHILD].Children = formerChildren
+	cursor.currentNode.Children[ROLEITEM_NAMECHILD].Name = ""
+	cursor.currentNode.Children[ROLEITEM_NAMECHILD].Nature = ASTN_NOTHING
+	cursor.currentNode.Children[ROLEITEM_NAMECHILD].Children = []*AstNode{}
 }

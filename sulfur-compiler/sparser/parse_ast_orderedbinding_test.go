@@ -39,6 +39,36 @@ var parseOrderedBindingTests = []parseTest{
 					  name: next
 					  children: []
 			`),
+	}, {
+		"deeper bind", // TODO: next
+		helpers.Dedent(`
+			foo.bar.a.b
+		`), helpers.Dedent(`
+			type: ROOT
+			nature: _
+			name: ""
+			children:
+				- type: STATEMENT
+				  nature: '?'
+				  name: ""
+				  children:
+					- type: S-ITEM
+					  nature: BINDING
+					  name: .
+					  children:
+						- type: BINDING-CHILD
+						  nature: IDENT
+						  name: foo
+						  children: []
+						- type: BINDING-CHILD
+						  nature: IDENT
+						  name: bar
+						  children: []
+					- type: S-ITEM
+					  nature: IDENT
+					  name: next
+					  children: []
+			`),
 	},
 }
 

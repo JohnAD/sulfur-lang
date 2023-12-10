@@ -29,12 +29,21 @@ func parseAstRolneItemValue(cursor *parseCursor, token lexer.Token) error {
 func parseAstRolneItemValueStartViaEqualSign(cursor *parseCursor) error {
 	// when this is called, we should be currently pointing to the AST_ROLNE_ITEM_NAME or AST_ROLNE_ITEM_TYPE
 	debug(AST_ROLNE_ITEM_VALUE, "PARIVSVES", cursor)
-	_ = finishAstNode(cursor) // finish pointing to AST_ROLNE_ITEM
+	_ = finishAstNode(cursor) // finish pointing to AST_ROLNE_ITEM_*
 	return gotoChild(cursor, ROLEITEM_VALUECHILD)
 }
 
+func parseAstRolneItemValueStartViaBinding(cursor *parseCursor, token lexer.Token) error {
+	// this should only be called from AST_ROLNE_ITEM_NAME
+	debug(AST_ROLNE_ITEM_VALUE, "PARIVSVB", cursor)
+	_ = finishAstNode(cursor) // finish pointing to AST_ROLNE_ITEM_*
+	parseAstRolneItemMoveNameToChild(cursor)
+	_ = gotoChild(cursor, ROLEITEM_VALUECHILD) // point to AST_ROLNE_ITEM_VALUE
+	return binderHandlingInPlace(cursor, token)
+}
+
 func parseAstRolneItemNameAssignValue(cursor *parseCursor, token lexer.Token, nature AstNodeNature) error {
-	debug(AST_ROLNE_ITEM_VALUE, "PARINAV-start", cursor)
+	debug(AST_ROLNE_ITEM_VALUE, "PARINAV", cursor)
 	if cursor.currentNode.Nature != ASTN_NULL {
 		return childParseAstRolneItemFinish(cursor, token)
 	}
