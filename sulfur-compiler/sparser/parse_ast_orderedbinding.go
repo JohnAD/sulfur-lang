@@ -6,40 +6,27 @@ import (
 )
 
 func parseAstOrderedBinding(cursor *parseCursor, token lexer.Token) error {
-	switch token.TokenType {
-	//case lexer.TT_STANDING_SYMBOL:
-	//case lexer.TT_OPEN_SYMBOL:
-	//case lexer.TT_CLOSE_SYMBOL:
-	//case lexer.TT_OPEN_BIND_SYMBOL:
-	//case lexer.TT_BINDING_SYMBOL:
-	case lexer.TT_IDENT:
-		return bindSecondHalfAndFinish(cursor, token)
-		//case lexer.TT_STR_LIT:
-		//case lexer.TT_NUMSTR_LIT:
-		//case lexer.TT_SYNTAX_ERROR:
-		//case lexer.TT_COMMENT:
-		//case lexer.TT_WHITESPACE:
-		//case lexer.TT_LINE:
+	debug(AST_ORDERED_BINDING, "MAIN", cursor)
+	// this state should NEVER be called. If it is called, something has gone very wrong.
+	return fmt.Errorf("unhandled AST_ORDERED_BINDING parse of %v", token)
+}
+
+func binderHandlingForLastChild(cursor *parseCursor, token lexer.Token) error {
+	debug(AST_ORDERED_BINDING, "BHFLC", cursor)
+	err := moveToLastChild(cursor)
+	if err != nil {
+		return err
 	}
-	return fmt.Errorf("unhandled AST_BINDING parse of %v", token)
-}
-
-func bindSecondHalfAndFinish(cursor *parseCursor, token lexer.Token) error {
-	addChild(cursor, AST_IDENTIFIER, ASTN_IDENTIFIER, token.Content, false)
-	//if cursor.currentNode.bound {
-	//	err := finishAstNode(cursor)
-	//	if err != nil {
-	//		return err
-	//	}
-	//	return finishAstNode(cursor)
-	//}
-	return finishAstNode(cursor)
-}
-
-func binderHandling(cursor *parseCursor, token lexer.Token) error {
-	return becomeLastChildMakePreviousChildAChildThenBecomeChild(cursor, AST_ORDERED_BINDING, ASTN_META_BINDING, token.Content, true)
+	return binderHandlingInPlace(cursor, token)
 }
 
 func binderHandlingInPlace(cursor *parseCursor, token lexer.Token) error {
-	return swapSelfMakingPreviousAChild(cursor, AST_ORDERED_BINDING, ASTN_META_BINDING, token.Content)
+	debug(AST_ORDERED_BINDING, "BHIP", cursor)
+	s := cursor.currentNode
+	addChild(cursor, AST_ORDERED_BINDING_CHILD, s.Nature, s.Name, false)
+	// "keep" the Kind as AST_ORDERED_BINDING (the parent) is never actually invoked
+	cursor.currentNode.Nature = ASTN_META_BINDING
+	cursor.currentNode.Name = token.Content
+	addChild(cursor, AST_ORDERED_BINDING_CHILD, ASTN_NULL, "", false)
+	return gotoChild(cursor, 1)
 }

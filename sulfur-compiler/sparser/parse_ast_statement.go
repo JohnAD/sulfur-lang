@@ -10,6 +10,7 @@ import (
 // All the content of a statement is in the children.
 
 func parseAstStatement(cursor *parseCursor, token lexer.Token) error {
+	debug(AST_STATEMENT, "PAS", cursor)
 	switch token.TokenType {
 	case lexer.TT_STANDING_SYMBOL:
 		return interpretInlineTokenDuringStatement(cursor, token)
@@ -19,7 +20,7 @@ func parseAstStatement(cursor *parseCursor, token lexer.Token) error {
 	case lexer.TT_OPEN_BIND_SYMBOL:
 		return openSymbolHandlingForLastChild(cursor, token, true)
 	case lexer.TT_BINDING_SYMBOL:
-		return binderHandling(cursor, token)
+		return binderHandlingForLastChild(cursor, token)
 	case lexer.TT_IDENT:
 		return interpretInlineTokenDuringStatement(cursor, token)
 	case lexer.TT_STR_LIT:
@@ -57,6 +58,7 @@ func interpretInitialStatementNature(token lexer.Token) AstNodeNature {
 }
 
 func interpretInlineTokenDuringStatement(cursor *parseCursor, token lexer.Token) error {
+	debug(AST_STATEMENT, "IITDS", cursor)
 	nature := ASTN_IDENTIFIER
 	name := token.Content
 	switch token.TokenType {

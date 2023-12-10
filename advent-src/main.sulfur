@@ -15,7 +15,7 @@ proc main {{
   doc "original source pulled from: https://gitlab.com/esr/open-adventure/" 
   parameters {
     argc::Int
-    argv::Array::Str
+    argv::StringArray
   }
   returns {
     exitcode::Int = clib\GOODEXIT

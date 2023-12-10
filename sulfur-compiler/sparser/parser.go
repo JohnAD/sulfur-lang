@@ -41,6 +41,12 @@ func createAndBecomeChild(cursor *parseCursor, ant AstNodeType, nature AstNodeNa
 	_ = moveToLastChild(cursor) // cannot error out because we just added a child
 }
 
+func createIndependentChildAndPoint(cursor *parseCursor, nature AstNodeNature, name string, bound bool) {
+	newNode := AstNode{Kind: cursor.currentNode.Kind, bound: bound, Nature: nature, Name: name}
+	addChildAstPointer(cursor, &newNode)
+	_ = moveToLastChild(cursor) // cannot error out because we just added a child
+}
+
 func popChild(cursor *parseCursor) (error, *AstNode) {
 	// remove last child and return it
 	var err error
@@ -92,7 +98,7 @@ func finishAstNode(cursor *parseCursor) error {
 }
 
 func openSymbolHandlingForNewChild(cursor *parseCursor, token lexer.Token) error {
-	debug(AST_ROOT, "OSHFNC", cursor)
+	debugGeneric("OSHFNC", cursor)
 	if token.Content == "{" {
 		return parseAstRolneStartChild(cursor, token, ASTN_NULL, true)
 	}
@@ -108,7 +114,7 @@ func openSymbolHandlingForNewChild(cursor *parseCursor, token lexer.Token) error
 	return fmt.Errorf("[PARSE_GENERIC_OSHFNC] unable to determine what '%s' is on line %d column %d", token.Content, token.SourceLine, token.SourceOffset)
 }
 func openSymbolHandlingInPlace(cursor *parseCursor, token lexer.Token) error {
-	debug(AST_ROOT, "OSHIP", cursor)
+	debugGeneric("OSHIP", cursor)
 	if token.Content == "{" {
 		return parseAstRolneStart(cursor, token, ASTN_NULL)
 	}
@@ -139,16 +145,17 @@ func openSymbolHandlingForLastChild(cursor *parseCursor, token lexer.Token, boun
 	return fmt.Errorf("[PARSE_GENERIC_OSHFLC] unable to determine what '%s' is on line %d column %d", token.Content, token.SourceLine, token.SourceOffset)
 }
 
-func becomeLastChildMakePreviousChildAChildThenBecomeChild(cursor *parseCursor, ant AstNodeType, nature AstNodeNature, name string, bound bool) error {
+func becomeLastChildMakePreviousChildAChildThenBecomeChild(cursor *parseCursor, nature AstNodeNature, name string, bound bool) error {
 	// before:
 	//            a[ b[ d, e, f ] ]            where "b" is the current location
 	// after calling with g:
 	//            a[ b[ d, e, g[ f ] ] ]       where "g" is the current location
 	//
 	// used for infix style things. So that a\b becomes `\`[a, b]
+	debugGeneric("BLCMPCACTBC", cursor)
 	err, previousLastChild := popChild(cursor)
 	if err == nil {
-		addChild(cursor, ant, nature, name, bound)
+		addChild(cursor, previousLastChild.Kind, nature, name, bound)
 		_ = moveToLastChild(cursor) // cannot error out because we just added a child
 		addChildAstPointer(cursor, previousLastChild)
 	}
@@ -182,6 +189,8 @@ func parse(cursor *parseCursor, token lexer.Token) error {
 		return parseAstStatementItem(cursor, token)
 	case AST_ORDERED_BINDING:
 		return parseAstOrderedBinding(cursor, token)
+	case AST_ORDERED_BINDING_CHILD:
+		return parseAstOrderedBindingChild(cursor, token)
 	case AST_EXPRESSION:
 	case AST_LITERAL:
 	case AST_IDENTIFIER:

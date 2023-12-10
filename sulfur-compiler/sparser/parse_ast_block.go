@@ -16,7 +16,7 @@ func parseAstBlock(cursor *parseCursor, token lexer.Token) error {
 		return finishAstBlock(cursor, token)
 	//case lexer.TT_OPEN_BIND_SYMBOL:
 	//case lexer.TT_BINDING_SYMBOL:
-	//	return binderHandling(cursor, token)
+	//	return binderHandlingForLastChild(cursor, token)
 	case lexer.TT_IDENT:
 		return parseAstStatementStartChild(cursor, token)
 	//case lexer.TT_STR_LIT:

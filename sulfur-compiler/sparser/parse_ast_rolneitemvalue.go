@@ -12,6 +12,8 @@ func parseAstRolneItemValue(cursor *parseCursor, token lexer.Token) error {
 		if token.Content == "," {
 			return childParseAstRolneItemFinish(cursor, token)
 		}
+	case lexer.TT_BINDING_SYMBOL:
+		return binderHandlingInPlace(cursor, token)
 	case lexer.TT_CLOSE_SYMBOL:
 		return childParseAstRolneItemFinish(cursor, token) // a closing "}" etc found
 	case lexer.TT_IDENT:
