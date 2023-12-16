@@ -1,0 +1,33 @@
+#! sulfur 0.1 app en
+#@ std\clib as clib
+
+using std\numerics import {
+  Int = Int32
+}
+using std\arrays import {
+  range_inclusive
+}
+
+
+proc main {{
+  doc "the traditional fizz buzz example app" 
+  parameters {
+    argv::StringArray
+  }
+  returns {
+    exit_code::Int = clib\GOODEXIT
+  }
+  body [[
+    for_each i in range_inclusive::Int( 1, 20 ) [[
+      if ( i % 15 == 0 ) [[
+        clib\printf( "FizzBuzz" )
+      ]] elif ( i % 3 == 0 ) [[
+        clib\printf( "Fizz" )
+      ]] elif ( i % 5 == 0 ) [[
+        clib\printf( "Buzz" )
+      ]] else [[
+        clib\printf( i )
+      ]]
+    ]]
+  ]]
+}}

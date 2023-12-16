@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-const LEX_PARSE_PREFIX_EN = "00_LexParse"
+const LEXING_PREFIX_EN = "00_Lexing"
 
 func CleanStagingDir(cc *CompilerContext) error {
 	stagingPath := buildStagePath(cc, "")
@@ -22,7 +22,7 @@ func CreateLexParseRoundDir(cc *CompilerContext) error {
 	return err
 }
 func GetLexParseRoundPath(cc *CompilerContext) string {
-	lexParseRoundPath := buildStagePath(cc, LEX_PARSE_PREFIX_EN)
+	lexParseRoundPath := buildStagePath(cc, LEXING_PREFIX_EN)
 	return lexParseRoundPath
 }
 

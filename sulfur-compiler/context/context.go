@@ -10,6 +10,7 @@ type CompilerContext struct {
 	Target        string
 	StagingDir    string
 	Files         []FileDetail
+	StopPoint     string
 	SaveLexedFlag bool
 }
 
@@ -19,6 +20,7 @@ func NewCompilerContext(mainTarget string) CompilerContext {
 		Target:        mainTarget,
 		StagingDir:    "_build",
 		Files:         []FileDetail{},
+		StopPoint:     "",
 		SaveLexedFlag: true,
 	}
 	return cc
