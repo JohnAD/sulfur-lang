@@ -10,7 +10,7 @@ import (
 // All the content of a statement is in the children.
 
 func parseAstStatement(cursor *parseCursor) error {
-	debug(AST_STATEMENT, "PAS", cursor)
+	debug(cursor, "MAIN")
 	switch cursor.src.TokenType {
 	case lexer.TT_STANDING_SYMBOL:
 		return interpretInlineTokenDuringStatement(cursor)
@@ -58,7 +58,7 @@ func interpretInitialStatementNature(token lexer.Token) AstNodeNature {
 }
 
 func interpretInlineTokenDuringStatement(cursor *parseCursor) error {
-	debug(AST_STATEMENT, "IITDS", cursor)
+	debug(cursor, "IITDS")
 	nature := ASTN_IDENTIFIER
 	name := cursor.src.Content
 	switch cursor.src.TokenType {

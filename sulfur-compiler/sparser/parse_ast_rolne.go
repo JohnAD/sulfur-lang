@@ -23,7 +23,7 @@ import (
 //    #}
 
 func parseAstRolne(cursor *parseCursor) error {
-	debug(AST_ROLNE, "MAIN", cursor)
+	debug(cursor, "MAIN")
 	switch cursor.src.TokenType {
 	case lexer.TT_STANDING_SYMBOL:
 		if cursor.src.Content == "," {
@@ -43,7 +43,7 @@ func parseAstRolne(cursor *parseCursor) error {
 }
 
 func parseAstRolneStart(cursor *parseCursor, nature AstNodeNature) error {
-	debug(AST_ROLNE, "PARS", cursor)
+	debug(cursor, "PARS")
 	selfPtr := cursor.currentNode
 	selfPtr.Kind = AST_ROLNE
 	selfPtr.Nature = nature
@@ -53,24 +53,24 @@ func parseAstRolneStart(cursor *parseCursor, nature AstNodeNature) error {
 }
 
 func parseAstRolneStartChild(cursor *parseCursor, nature AstNodeNature) error {
-	debug(AST_ROLNE, "PARSC", cursor)
+	debug(cursor, "PARSC")
 	createAndBecomeChild(cursor, AST_ROLNE, nature)
 	return nil
 }
 
 func childRolneItemDoneReadyForNextItem(cursor *parseCursor) error {
-	debug(AST_ROLNE, "CDRFNI", cursor)
+	debug(cursor, "CDRFNI")
 	return parseAstRolne(cursor)
 }
 
 func finishAstRolne(cursor *parseCursor) error {
-	debug(AST_ROLNE, "FAR", cursor)
+	debug(cursor, "FAR")
 	starting := cursor.currentNode.Name
 	ending := cursor.src.Content
 	if helpers.OperatorsMatch(starting, ending) {
 		err := finishAstNode(cursor)
-		debug(AST_ROLNE, "FAR-end", cursor)
+		debug(cursor, "FAR")
 		return err
 	}
-	return fmt.Errorf("[PARSE_ROLNE_FAR] unable to match '%s' with '%s' on line %d column %d", starting, ending, cursor.src.SourceLine, cursor.src.SourceOffset)
+	return parseError(cursor, "FAR", fmt.Sprintf("unable to match '%s' with '%s'", starting, ending))
 }

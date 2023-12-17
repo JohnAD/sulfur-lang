@@ -6,7 +6,7 @@ import (
 )
 
 func parseAstRolneItemType(cursor *parseCursor) error {
-	debug(AST_ROLNE_ITEM_TYPE, "MAIN", cursor)
+	debug(cursor, "MAIN")
 	switch cursor.src.TokenType {
 	case lexer.TT_STANDING_SYMBOL:
 		if cursor.src.Content == "=" {
@@ -28,13 +28,13 @@ func parseAstRolneItemType(cursor *parseCursor) error {
 
 func parseAstRolneItemTypeStart(cursor *parseCursor) error {
 	// when this is called, we should be currently pointing to the AST_ROLNE_ITEM_NAME
-	debug(AST_ROLNE_ITEM_VALUE, "PARITS", cursor)
+	debug(cursor, "PARITS")
 	_ = finishAstNode(cursor)                    // finish and point to AST_ROLNE_ITEM
 	return gotoChild(cursor, ROLEITEM_TYPECHILD) // now point to AST_ROLNE_ITEM_TYPE
 }
 
 func parseAstRolneItemTypeAssignType(cursor *parseCursor, nature AstNodeNature) error {
-	debug(AST_ROLNE_ITEM_TYPE, "PARITAV-start", cursor)
+	debug(cursor, "PARITAV")
 	if cursor.currentNode.Nature != ASTN_NULL {
 		return childParseAstRolneItemFinish(cursor)
 	}

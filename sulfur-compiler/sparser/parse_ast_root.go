@@ -21,5 +21,5 @@ func parseAstRoot(cursor *parseCursor) error {
 		//case lexer.TT_WHITESPACE:
 		//case lexer.TT_LINE:
 	}
-	return parseError(cursor, "[AST_ROOT_MAIN] unhandled parse")
+	return parseError(cursor, "MAIN", "unhandled parse")
 }

@@ -29,13 +29,13 @@ func parseAstRolneItem(cursor *parseCursor) error {
 }
 
 func parseAstRolneItemStart(cursor *parseCursor) error {
-	debug(AST_ROLNE_ITEM, "PARIS-start", cursor)
+	debug(cursor, "PARIS")
 	createAndBecomeEmptyChild(cursor, AST_ROLNE_ITEM, ASTN_NOTHING) // create/become R-ITEM
 	addChild(cursor, AST_ROLNE_ITEM_NAME, ASTN_NULL, "")            // add yet-unknown name
 	addChild(cursor, AST_ROLNE_ITEM_TYPE, ASTN_NULL, "")            // add yet-unknown type
 	addChild(cursor, AST_ROLNE_ITEM_VALUE, ASTN_NULL, "")           // add yet-unknown value
 	_ = gotoChild(cursor, ROLEITEM_NAMECHILD)                       // become name
-	debug(AST_ROLNE_ITEM, "PARIS-end", cursor)
+	debug(cursor, "PARIS")
 	return parseAstRolneItemNameStart(cursor)
 }
 
@@ -43,7 +43,7 @@ func childCloseRolneItemWithJustValue(cursor *parseCursor) {
 	// bling unnamed value is found, so the rolne item is now done.
 	// ^ I cannot believe you made such a simple spelling mistake. You call yourself a software developer? Shame.
 	// this should only be called from AST_ROLNE_ITEM_NAME
-	debug(AST_ROLNE_ITEM, "CCRIWJV-start", cursor)
+	debug(cursor, "CCRIWJV")
 	formerName := cursor.currentNode.Name
 	formerSrc := cursor.currentNode.src
 	formerNature := cursor.currentNode.Nature
@@ -57,26 +57,26 @@ func childCloseRolneItemWithJustValue(cursor *parseCursor) {
 	cursor.currentNode.Children[ROLEITEM_VALUECHILD].src = formerSrc
 	cursor.currentNode.Children[ROLEITEM_VALUECHILD].Nature = formerNature
 	cursor.currentNode.Children[ROLEITEM_VALUECHILD].Children = formerChildren
-	debug(AST_ROLNE_ITEM, "CCRIWJV-end", cursor)
+	debug(cursor, "CCRIWJV")
 }
 
 func childParseAstRolneItemFinish(cursor *parseCursor) error {
 	// only be called from AST_ROLNE_ITEM_NAME, AST_ROLNE_ITEM_TYPE, or AST_ROLNE_ITEM_VALUE
-	debug(AST_ROLNE_ITEM, "CPARIF-start", cursor)
+	debug(cursor, "CPARIF")
 
 	if cursor.currentNode.Kind == AST_ROLNE_ITEM_NAME {
 		childCloseRolneItemWithJustValue(cursor) // re-arrange and point to here
 	} else {
 		_ = finishAstNode(cursor) // just point to here
 	}
-	debug(AST_ROLNE_ITEM, "CPARIF-end1", cursor)
+	debug(cursor, "CPARIF")
 	_ = finishAstNode(cursor) // point to parent AST_ROLNE
-	debug(AST_ROLNE_ITEM, "CPARIF-end2", cursor)
+	debug(cursor, "CPARIF")
 	return childRolneItemDoneReadyForNextItem(cursor) // have the parent handle the new token
 }
 
 func parseAstRolneItemMoveNameToChild(cursor *parseCursor) {
-	debug(AST_ROLNE_ITEM, "PARIMNTC", cursor)
+	debug(cursor, "PARIMNTC")
 	formerName := cursor.currentNode.Children[ROLEITEM_NAMECHILD].Name
 	formerSrc := cursor.currentNode.Children[ROLEITEM_NAMECHILD].src
 	formerNature := cursor.currentNode.Children[ROLEITEM_NAMECHILD].Nature

@@ -6,7 +6,7 @@ import (
 )
 
 func parseAstOrderedBindingChild(cursor *parseCursor) error {
-	debug(AST_ORDERED_BINDING_CHILD, "MAIN", cursor)
+	debug(cursor, "MAIN")
 	switch cursor.src.TokenType {
 	//case lexer.TT_STANDING_SYMBOL:
 	//case lexer.TT_OPEN_SYMBOL:

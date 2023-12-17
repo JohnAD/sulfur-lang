@@ -18,7 +18,7 @@ type parseTest struct {
 var parseTests = []parseTest{
 	parseTest{
 		"simple five parts", helpers.Dedent(`
-			a b c d e
+			) a b c d e
 	`), helpers.Dedent(`
 			type: ROOT
 			nature: _

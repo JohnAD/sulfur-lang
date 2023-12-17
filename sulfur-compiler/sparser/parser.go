@@ -106,7 +106,7 @@ func finishAstNode(cursor *parseCursor) error {
 }
 
 func openSymbolHandlingForNewChild(cursor *parseCursor) error {
-	debugGeneric("OSHFNC", cursor)
+	debug(cursor, "OSHFNC")
 	if cursor.src.Content == "{" {
 		return parseAstRolneStartChild(cursor, ASTN_NULL)
 	}
@@ -122,7 +122,7 @@ func openSymbolHandlingForNewChild(cursor *parseCursor) error {
 	return fmt.Errorf("[PARSE_GENERIC_OSHFNC] unable to determine what '%s' is on line %d column %d", cursor.src.Content, cursor.src.SourceLine, cursor.src.SourceOffset)
 }
 func openSymbolHandlingInPlace(cursor *parseCursor) error {
-	debugGeneric("OSHIP", cursor)
+	debug(cursor, "OSHIP")
 	if cursor.src.Content == "{" {
 		return parseAstRolneStart(cursor, ASTN_NULL)
 	}
@@ -160,7 +160,7 @@ func becomeLastChildMakePreviousChildAChildThenBecomeChild(cursor *parseCursor, 
 	//            a[ b[ d, e, g[ f ] ] ]       where "g" is the current location
 	//
 	// used for infix style things. So that a\b becomes `\`[a, b]
-	debugGeneric("BLCMPCACTBC", cursor)
+	debug(cursor, "BLCMPCACTBC")
 	err, previousLastChild := popChild(cursor)
 	if err == nil {
 		addChild(cursor, previousLastChild.Kind, nature, name)

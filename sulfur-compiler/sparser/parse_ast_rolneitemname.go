@@ -6,7 +6,7 @@ import (
 )
 
 func parseAstRolneItemName(cursor *parseCursor) error {
-	debug(AST_ROLNE_ITEM_NAME, "MAIN", cursor)
+	debug(cursor, "MAIN")
 	switch cursor.src.TokenType {
 	case lexer.TT_STANDING_SYMBOL:
 		if cursor.src.Content == "=" {
@@ -37,7 +37,7 @@ func parseAstRolneItemName(cursor *parseCursor) error {
 
 func parseAstRolneItemNameStart(cursor *parseCursor) error {
 	// when this is called, we should ALREADY be pointing to the name node
-	debug(AST_ROLNE_ITEM_NAME, "PARINS", cursor)
+	debug(cursor, "PARINS")
 	return parseAstRolneItemName(cursor)
 }
 
