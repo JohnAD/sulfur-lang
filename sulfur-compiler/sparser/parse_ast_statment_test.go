@@ -73,11 +73,15 @@ var parseTests = []parseTest{
 							  nature: _
 							  name: ""
 							  children:
-								- type: TYPE
+								- type: R-I-NAME
+								  nature: _
+								  name: ""
+								  children: []
+								- type: R-I-TYPE
 								  nature: '?'
 								  name: ""
 								  children: []
-								- type: VALUE
+								- type: R-I-VALUE
 								  nature: IDENT
 								  name: d
 								  children: []
@@ -85,11 +89,15 @@ var parseTests = []parseTest{
 							  nature: _
 							  name: ""
 							  children:
-								- type: TYPE
+								- type: R-I-NAME
+								  nature: _
+								  name: ""
+								  children: []
+								- type: R-I-TYPE
 								  nature: '?'
 								  name: ""
 								  children: []
-								- type: VALUE
+								- type: R-I-VALUE
 								  nature: IDENT
 								  name: e
 								  children: []

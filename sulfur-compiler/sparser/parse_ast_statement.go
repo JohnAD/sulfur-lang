@@ -9,38 +9,38 @@ import (
 // A STATEMENT is a node with no Name and a default nature of null by default.
 // All the content of a statement is in the children.
 
-func parseAstStatement(cursor *parseCursor, token lexer.Token) error {
+func parseAstStatement(cursor *parseCursor) error {
 	debug(AST_STATEMENT, "PAS", cursor)
-	switch token.TokenType {
+	switch cursor.src.TokenType {
 	case lexer.TT_STANDING_SYMBOL:
-		return interpretInlineTokenDuringStatement(cursor, token)
+		return interpretInlineTokenDuringStatement(cursor)
 	case lexer.TT_OPEN_SYMBOL:
-		return openSymbolHandlingForNewChild(cursor, token)
+		return openSymbolHandlingForNewChild(cursor)
 	//case lexer.TT_CLOSE_SYMBOL:
 	case lexer.TT_OPEN_BIND_SYMBOL:
-		return openSymbolHandlingForLastChild(cursor, token)
+		return openSymbolHandlingForLastChild(cursor)
 	case lexer.TT_BINDING_SYMBOL:
-		return binderHandlingForLastChild(cursor, token)
+		return binderHandlingForLastChild(cursor)
 	case lexer.TT_IDENT:
-		return interpretInlineTokenDuringStatement(cursor, token)
+		return interpretInlineTokenDuringStatement(cursor)
 	case lexer.TT_STR_LIT:
-		return interpretInlineTokenDuringStatement(cursor, token)
+		return interpretInlineTokenDuringStatement(cursor)
 	case lexer.TT_NUMSTR_LIT:
-		return interpretInlineTokenDuringStatement(cursor, token)
+		return interpretInlineTokenDuringStatement(cursor)
 	//case lexer.TT_SYNTAX_ERROR:
 	//case lexer.TT_COMMENT:
 	//case lexer.TT_WHITESPACE:
 	case lexer.TT_LINE:
-		return finishStatement(cursor, token)
+		return finishStatement(cursor)
 	}
-	return fmt.Errorf("unhandled AST_STATEMENT parse of %v", token)
+	return fmt.Errorf("unhandled AST_STATEMENT parse of %v", cursor.src)
 }
 
-func parseAstStatementStartChild(cursor *parseCursor, token lexer.Token) error {
-	nature := interpretInitialStatementNature(token)
-	createAndBecomeChild(cursor, AST_STATEMENT, nature, "")
+func parseAstStatementStartChild(cursor *parseCursor) error {
+	nature := interpretInitialStatementNature(cursor.src)
+	createAndBecomeEmptyChild(cursor, AST_STATEMENT, nature)
 	// make one call to main proc to interpret the first child
-	return parseAstStatement(cursor, token)
+	return parseAstStatement(cursor)
 }
 
 func interpretInitialStatementNature(token lexer.Token) AstNodeNature {
@@ -57,13 +57,13 @@ func interpretInitialStatementNature(token lexer.Token) AstNodeNature {
 	return ASTN_NULL
 }
 
-func interpretInlineTokenDuringStatement(cursor *parseCursor, token lexer.Token) error {
+func interpretInlineTokenDuringStatement(cursor *parseCursor) error {
 	debug(AST_STATEMENT, "IITDS", cursor)
 	nature := ASTN_IDENTIFIER
-	name := token.Content
-	switch token.TokenType {
+	name := cursor.src.Content
+	switch cursor.src.TokenType {
 	case lexer.TT_STANDING_SYMBOL:
-		if helpers.Contains([]string{"#!", "#@"}, token.Content) {
+		if helpers.Contains([]string{"#!", "#@"}, cursor.src.Content) {
 			nature = ASTN_KEYWORD
 		} else {
 			nature = ASTN_INFIX_OPERATOR
@@ -75,12 +75,12 @@ func interpretInlineTokenDuringStatement(cursor *parseCursor, token lexer.Token)
 	case lexer.TT_NUMSTR_LIT:
 		nature = ASTN_NUMSTR
 	default:
-		return fmt.Errorf("[PARSE_STMT_IITDS] unable to determine what '%s' is on line %d column %d", token.Content, token.SourceLine, token.SourceOffset)
+		return fmt.Errorf("[PARSE_STMT_IITDS] unable to determine what '%s' is on line %d column %d", cursor.src.Content, cursor.src.SourceLine, cursor.src.SourceOffset)
 	}
 	addChild(cursor, AST_STATEMENT_ITEM, nature, name)
 	return nil
 }
 
-func finishStatement(cursor *parseCursor, token lexer.Token) error {
+func finishStatement(cursor *parseCursor) error {
 	return finishAstNode(cursor)
 }

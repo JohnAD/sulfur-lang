@@ -2,7 +2,6 @@ package sparser
 
 import (
 	"fmt"
-	"sulfur-compiler/lexer"
 )
 
 const debugParse = false
@@ -19,8 +18,12 @@ func debugGeneric(location string, cursor *parseCursor) {
 	}
 }
 
-func debugNext(cursor *parseCursor, token lexer.Token) {
+func debugNext(cursor *parseCursor) {
 	if debugParse {
-		fmt.Printf("== %s token '%s' ==\n", cursor.currentNode.Kind, token.Content)
+		fmt.Printf("== %s token '%s' ==\n", cursor.currentNode.Kind, cursor.src.Content)
 	}
+}
+
+func parseError(cursor *parseCursor, msg string) error {
+	return fmt.Errorf("at token `%s` at line %d col %d: %s", cursor.src.Content, cursor.src.SourceLine, cursor.src.SourceOffset, msg)
 }

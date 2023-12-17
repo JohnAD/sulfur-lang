@@ -21,22 +21,22 @@ const ROLEITEM_VALUECHILD = 2
 //   the ROLNE_ITEM itself holds the name as it's name; a name is either an identifier or a string
 //   on creation, the NAME, TYPE and VALUE children are created pre-emptively and the current pointer moves to the name.
 
-func parseAstRolneItem(cursor *parseCursor, token lexer.Token) error {
+func parseAstRolneItem(cursor *parseCursor) error {
 	// if we somehow manage to be in this state, then we are "between" rolne items
 	//   on entry we add children and point to the AST_ROLNE_ITEM_NAME child
 	//   on exit we should pop back up to parent AST_ROLNE
-	return fmt.Errorf("unhandled AST_ROLNE_ITEM parse of %v", token)
+	return fmt.Errorf("unhandled AST_ROLNE_ITEM parse of %v", cursor.src)
 }
 
-func parseAstRolneItemStart(cursor *parseCursor, token lexer.Token) error {
+func parseAstRolneItemStart(cursor *parseCursor) error {
 	debug(AST_ROLNE_ITEM, "PARIS-start", cursor)
-	createAndBecomeChild(cursor, AST_ROLNE_ITEM, ASTN_NOTHING, "") // create/become R-ITEM
-	addChild(cursor, AST_ROLNE_ITEM_NAME, ASTN_NULL, "")           // add yet-unknown name
-	addChild(cursor, AST_ROLNE_ITEM_TYPE, ASTN_NULL, "")           // add yet-unknown type
-	addChild(cursor, AST_ROLNE_ITEM_VALUE, ASTN_NULL, "")          // add yet-unknown value
-	_ = gotoChild(cursor, ROLEITEM_NAMECHILD)                      // become name
+	createAndBecomeEmptyChild(cursor, AST_ROLNE_ITEM, ASTN_NOTHING) // create/become R-ITEM
+	addChild(cursor, AST_ROLNE_ITEM_NAME, ASTN_NULL, "")            // add yet-unknown name
+	addChild(cursor, AST_ROLNE_ITEM_TYPE, ASTN_NULL, "")            // add yet-unknown type
+	addChild(cursor, AST_ROLNE_ITEM_VALUE, ASTN_NULL, "")           // add yet-unknown value
+	_ = gotoChild(cursor, ROLEITEM_NAMECHILD)                       // become name
 	debug(AST_ROLNE_ITEM, "PARIS-end", cursor)
-	return parseAstRolneItemNameStart(cursor, token)
+	return parseAstRolneItemNameStart(cursor)
 }
 
 func childCloseRolneItemWithJustValue(cursor *parseCursor) {
@@ -60,7 +60,7 @@ func childCloseRolneItemWithJustValue(cursor *parseCursor) {
 	debug(AST_ROLNE_ITEM, "CCRIWJV-end", cursor)
 }
 
-func childParseAstRolneItemFinish(cursor *parseCursor, token lexer.Token) error {
+func childParseAstRolneItemFinish(cursor *parseCursor) error {
 	// only be called from AST_ROLNE_ITEM_NAME, AST_ROLNE_ITEM_TYPE, or AST_ROLNE_ITEM_VALUE
 	debug(AST_ROLNE_ITEM, "CPARIF-start", cursor)
 
@@ -72,7 +72,7 @@ func childParseAstRolneItemFinish(cursor *parseCursor, token lexer.Token) error 
 	debug(AST_ROLNE_ITEM, "CPARIF-end1", cursor)
 	_ = finishAstNode(cursor) // point to parent AST_ROLNE
 	debug(AST_ROLNE_ITEM, "CPARIF-end2", cursor)
-	return childRolneItemDoneReadyForNextItem(cursor, token) // have the parent handle the new token
+	return childRolneItemDoneReadyForNextItem(cursor) // have the parent handle the new token
 }
 
 func parseAstRolneItemMoveNameToChild(cursor *parseCursor) {

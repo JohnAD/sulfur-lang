@@ -5,18 +5,18 @@ import (
 	"sulfur-compiler/lexer"
 )
 
-func parseAstMapBlock(cursor *parseCursor, token lexer.Token) error {
-	switch token.TokenType {
+func parseAstMapBlock(cursor *parseCursor) error {
+	switch cursor.src.TokenType {
 	//case lexer.TT_STANDING_SYMBOL:
 	//case lexer.TT_OPEN_SYMBOL:
-	//	return openSymbolHandlingForNewChild(cursor, token)
+	//	return openSymbolHandlingForNewChild(cursor)
 	case lexer.TT_CLOSE_SYMBOL:
-		return finishAstMapBlock(cursor, token)
+		return finishAstMapBlock(cursor)
 	//case lexer.TT_OPEN_BIND_SYMBOL:
 	//case lexer.TT_BINDING_SYMBOL:
-	//	return binderHandlingForLastChild(cursor, token)
+	//	return binderHandlingForLastChild(cursor)
 	case lexer.TT_IDENT:
-		return parseAstMapBlockItemStart(cursor, token)
+		return parseAstMapBlockItemStart(cursor)
 	//case lexer.TT_STR_LIT:
 	//case lexer.TT_NUMSTR_LIT:
 	//case lexer.TT_SYNTAX_ERROR:
@@ -26,22 +26,22 @@ func parseAstMapBlock(cursor *parseCursor, token lexer.Token) error {
 	case lexer.TT_LINE:
 		return nil
 	}
-	return fmt.Errorf("unhandled AST_MAPBLOCK parse of %v", token)
+	return fmt.Errorf("unhandled AST_MAPBLOCK parse of %v", cursor.src)
 }
 
-func parseAstMapBlockStart(cursor *parseCursor, token lexer.Token) error {
-	createAndBecomeChild(cursor, AST_MAPBLOCK, ASTN_GROUPING, token.Content)
+func parseAstMapBlockStart(cursor *parseCursor) error {
+	createAndBecomeChild(cursor, AST_MAPBLOCK, ASTN_GROUPING)
 	return nil
 }
 
-//func parseAstMapBlockAddItem(cursor *parseCursor, token lexer.Token) error {
+//func parseAstMapBlockAddItem(cursor *parseCursor) error {
 //	//addChild(cursor, AST_MAPBLOCK_ITEM, ASTN_KEYWORD, token.Content)
 //	//return nil
 //}
 
-func finishAstMapBlock(cursor *parseCursor, token lexer.Token) error {
-	if token.Content == "}}" {
+func finishAstMapBlock(cursor *parseCursor) error {
+	if cursor.src.Content == "}}" {
 		return finishAstNode(cursor)
 	}
-	return fmt.Errorf("[PARSE_MAPBLOCK_FAMB] unable to determine what '%s' is on line %d column %d", token.Content, token.SourceLine, token.SourceOffset)
+	return fmt.Errorf("[PARSE_MAPBLOCK_FAMB] unable to determine what '%s' is on line %d column %d", cursor.src.Content, cursor.src.SourceLine, cursor.src.SourceOffset)
 }

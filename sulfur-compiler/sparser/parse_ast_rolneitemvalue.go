@@ -5,25 +5,25 @@ import (
 	"sulfur-compiler/lexer"
 )
 
-func parseAstRolneItemValue(cursor *parseCursor, token lexer.Token) error {
+func parseAstRolneItemValue(cursor *parseCursor) error {
 	debug(AST_ROLNE_ITEM_VALUE, "MAIN", cursor)
-	switch token.TokenType {
+	switch cursor.src.TokenType {
 	case lexer.TT_STANDING_SYMBOL:
-		if token.Content == "," {
-			return childParseAstRolneItemFinish(cursor, token)
+		if cursor.src.Content == "," {
+			return childParseAstRolneItemFinish(cursor)
 		}
 	case lexer.TT_BINDING_SYMBOL:
-		return binderHandlingInPlace(cursor, token)
+		return binderHandlingInPlace(cursor)
 	case lexer.TT_CLOSE_SYMBOL:
-		return childParseAstRolneItemFinish(cursor, token) // a closing "}" etc found
+		return childParseAstRolneItemFinish(cursor) // a closing "}" etc found
 	case lexer.TT_IDENT:
-		return parseAstRolneItemNameAssignValue(cursor, token, ASTN_IDENTIFIER)
+		return parseAstRolneItemNameAssignValue(cursor, ASTN_IDENTIFIER)
 	case lexer.TT_STR_LIT:
-		return parseAstRolneItemNameAssignValue(cursor, token, ASTN_STRLIT)
+		return parseAstRolneItemNameAssignValue(cursor, ASTN_STRLIT)
 	case lexer.TT_LINE:
-		return childParseAstRolneItemFinish(cursor, token)
+		return childParseAstRolneItemFinish(cursor)
 	}
-	return fmt.Errorf("unhandled AST_ROLNE_ITEM_VALUE parse of %v", token)
+	return fmt.Errorf("unhandled AST_ROLNE_ITEM_VALUE parse of %v", cursor.src)
 }
 
 func parseAstRolneItemValueStartViaEqualSign(cursor *parseCursor) error {
@@ -33,22 +33,22 @@ func parseAstRolneItemValueStartViaEqualSign(cursor *parseCursor) error {
 	return gotoChild(cursor, ROLEITEM_VALUECHILD)
 }
 
-func parseAstRolneItemValueStartViaBinding(cursor *parseCursor, token lexer.Token) error {
+func parseAstRolneItemValueStartViaBinding(cursor *parseCursor) error {
 	// this should only be called from AST_ROLNE_ITEM_NAME
 	debug(AST_ROLNE_ITEM_VALUE, "PARIVSVB", cursor)
 	_ = finishAstNode(cursor) // finish pointing to AST_ROLNE_ITEM_*
 	parseAstRolneItemMoveNameToChild(cursor)
 	_ = gotoChild(cursor, ROLEITEM_VALUECHILD) // point to AST_ROLNE_ITEM_VALUE
-	return binderHandlingInPlace(cursor, token)
+	return binderHandlingInPlace(cursor)
 }
 
-func parseAstRolneItemNameAssignValue(cursor *parseCursor, token lexer.Token, nature AstNodeNature) error {
+func parseAstRolneItemNameAssignValue(cursor *parseCursor, nature AstNodeNature) error {
 	debug(AST_ROLNE_ITEM_VALUE, "PARINAV", cursor)
 	if cursor.currentNode.Nature != ASTN_NULL {
-		return childParseAstRolneItemFinish(cursor, token)
+		return childParseAstRolneItemFinish(cursor)
 	}
-	cursor.currentNode.Name = token.Content
-	cursor.currentNode.src = token
+	cursor.currentNode.Name = cursor.src.Content
+	cursor.currentNode.src = cursor.src
 	cursor.currentNode.Nature = nature
 	return nil
 }

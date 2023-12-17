@@ -5,25 +5,25 @@ import (
 	"sulfur-compiler/lexer"
 )
 
-func parseAstRolneItemType(cursor *parseCursor, token lexer.Token) error {
+func parseAstRolneItemType(cursor *parseCursor) error {
 	debug(AST_ROLNE_ITEM_TYPE, "MAIN", cursor)
-	switch token.TokenType {
+	switch cursor.src.TokenType {
 	case lexer.TT_STANDING_SYMBOL:
-		if token.Content == "=" {
+		if cursor.src.Content == "=" {
 			return parseAstRolneItemValueStartViaEqualSign(cursor)
-		} else if token.Content == "," {
-			return childParseAstRolneItemFinish(cursor, token)
+		} else if cursor.src.Content == "," {
+			return childParseAstRolneItemFinish(cursor)
 		}
 	case lexer.TT_CLOSE_SYMBOL:
-		return childParseAstRolneItemFinish(cursor, token) // a closing "}" etc. found
+		return childParseAstRolneItemFinish(cursor) // a closing "}" etc. found
 	case lexer.TT_IDENT:
-		return parseAstRolneItemTypeAssignType(cursor, token, ASTN_IDENTIFIER)
+		return parseAstRolneItemTypeAssignType(cursor, ASTN_IDENTIFIER)
 	case lexer.TT_STR_LIT:
-		return parseAstRolneItemTypeAssignType(cursor, token, ASTN_STRLIT)
+		return parseAstRolneItemTypeAssignType(cursor, ASTN_STRLIT)
 	case lexer.TT_LINE:
-		return childParseAstRolneItemFinish(cursor, token)
+		return childParseAstRolneItemFinish(cursor)
 	}
-	return fmt.Errorf("unhandled AST_ROLNE_ITEM_VALUE parse of %v", token)
+	return fmt.Errorf("unhandled AST_ROLNE_ITEM_VALUE parse of %v", cursor.src)
 }
 
 func parseAstRolneItemTypeStart(cursor *parseCursor) error {
@@ -33,13 +33,13 @@ func parseAstRolneItemTypeStart(cursor *parseCursor) error {
 	return gotoChild(cursor, ROLEITEM_TYPECHILD) // now point to AST_ROLNE_ITEM_TYPE
 }
 
-func parseAstRolneItemTypeAssignType(cursor *parseCursor, token lexer.Token, nature AstNodeNature) error {
+func parseAstRolneItemTypeAssignType(cursor *parseCursor, nature AstNodeNature) error {
 	debug(AST_ROLNE_ITEM_TYPE, "PARITAV-start", cursor)
 	if cursor.currentNode.Nature != ASTN_NULL {
-		return childParseAstRolneItemFinish(cursor, token)
+		return childParseAstRolneItemFinish(cursor)
 	}
-	cursor.currentNode.Name = token.Content
-	cursor.currentNode.src = token
+	cursor.currentNode.Name = cursor.src.Content
+	cursor.currentNode.src = cursor.src
 	cursor.currentNode.Nature = nature
 	return nil
 }

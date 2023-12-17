@@ -36,8 +36,14 @@ func moveToLastChild(cursor *parseCursor) error {
 	return err
 }
 
-func createAndBecomeChild(cursor *parseCursor, ant AstNodeType, nature AstNodeNature, name string) {
-	newNode := AstNode{Kind: ant, Nature: nature, Name: name, src: cursor.src}
+func createAndBecomeChild(cursor *parseCursor, ant AstNodeType, nature AstNodeNature) {
+	newNode := AstNode{Kind: ant, Nature: nature, Name: cursor.src.Content, src: cursor.src}
+	addChildAstPointer(cursor, &newNode)
+	_ = moveToLastChild(cursor) // cannot error out because we just added a child
+}
+
+func createAndBecomeEmptyChild(cursor *parseCursor, ant AstNodeType, nature AstNodeNature) {
+	newNode := AstNode{Kind: ant, Nature: nature, Name: "", src: lexer.Token{}}
 	addChildAstPointer(cursor, &newNode)
 	_ = moveToLastChild(cursor) // cannot error out because we just added a child
 }
@@ -74,7 +80,7 @@ func gotoChild(cursor *parseCursor, index int) error {
 	return nil
 }
 
-func setChild(cursor *parseCursor, index int, ant AstNodeType, nature AstNodeNature, name string, token lexer.Token) error {
+func setChild(cursor *parseCursor, index int, ant AstNodeType, nature AstNodeNature) error {
 	lastIndex := len(cursor.currentNode.Children) - 1
 	if index > lastIndex {
 		return fmt.Errorf("[PARSER SC} setting a child (%d) that does not exist", index)
@@ -82,8 +88,8 @@ func setChild(cursor *parseCursor, index int, ant AstNodeType, nature AstNodeNat
 	childPtr := cursor.currentNode.Children[index]
 	childPtr.Kind = ant
 	childPtr.Nature = nature
-	childPtr.Name = name
-	childPtr.src = token
+	childPtr.Name = cursor.src.Content
+	childPtr.src = cursor.src
 	return nil
 }
 
@@ -99,40 +105,40 @@ func finishAstNode(cursor *parseCursor) error {
 	return nil
 }
 
-func openSymbolHandlingForNewChild(cursor *parseCursor, token lexer.Token) error {
+func openSymbolHandlingForNewChild(cursor *parseCursor) error {
 	debugGeneric("OSHFNC", cursor)
-	if token.Content == "{" {
-		return parseAstRolneStartChild(cursor, token, ASTN_NULL)
+	if cursor.src.Content == "{" {
+		return parseAstRolneStartChild(cursor, ASTN_NULL)
 	}
-	if token.Content == "(" {
-		return parseAstRolneStartChild(cursor, token, ASTN_NULL)
+	if cursor.src.Content == "(" {
+		return parseAstRolneStartChild(cursor, ASTN_NULL)
 	}
-	if token.Content == "{{" {
-		return parseAstMapBlockStart(cursor, token)
+	if cursor.src.Content == "{{" {
+		return parseAstMapBlockStart(cursor)
 	}
-	if token.Content == "[[" {
-		return parseAstBlockStartChild(cursor, token, ASTN_GROUPING)
+	if cursor.src.Content == "[[" {
+		return parseAstBlockStartChild(cursor, ASTN_GROUPING)
 	}
-	return fmt.Errorf("[PARSE_GENERIC_OSHFNC] unable to determine what '%s' is on line %d column %d", token.Content, token.SourceLine, token.SourceOffset)
+	return fmt.Errorf("[PARSE_GENERIC_OSHFNC] unable to determine what '%s' is on line %d column %d", cursor.src.Content, cursor.src.SourceLine, cursor.src.SourceOffset)
 }
-func openSymbolHandlingInPlace(cursor *parseCursor, token lexer.Token) error {
+func openSymbolHandlingInPlace(cursor *parseCursor) error {
 	debugGeneric("OSHIP", cursor)
-	if token.Content == "{" {
-		return parseAstRolneStart(cursor, token, ASTN_NULL)
+	if cursor.src.Content == "{" {
+		return parseAstRolneStart(cursor, ASTN_NULL)
 	}
-	if token.Content == "[[" {
-		return parseAstBlockStart(cursor, token, ASTN_NULL)
+	if cursor.src.Content == "[[" {
+		return parseAstBlockStart(cursor, ASTN_NULL)
 	}
-	if token.Content == "(" {
-		return parseAstRolneStart(cursor, token, ASTN_NULL)
+	if cursor.src.Content == "(" {
+		return parseAstRolneStart(cursor, ASTN_NULL)
 	}
 	//if token.Content == "{{" {
-	//	return parseAstMapBlockStart(cursor, token)
+	//	return parseAstMapBlockStart(cursor)
 	//}
-	return fmt.Errorf("[PARSE_GENERIC_OSHIP] unable to determine what '%s' is on line %d column %d", token.Content, token.SourceLine, token.SourceOffset)
+	return fmt.Errorf("[PARSE_GENERIC_OSHIP] unable to determine what '%s' is on line %d column %d", cursor.src.Content, cursor.src.SourceLine, cursor.src.SourceOffset)
 }
 
-func openSymbolHandlingForLastChild(cursor *parseCursor, token lexer.Token) error {
+func openSymbolHandlingForLastChild(cursor *parseCursor) error {
 	lastIndex := len(cursor.currentNode.Children) - 1
 	if lastIndex == -1 {
 		return fmt.Errorf("[PARSER_GENERIC_OSHFLC} using a child when the list is empty")
@@ -141,10 +147,10 @@ func openSymbolHandlingForLastChild(cursor *parseCursor, token lexer.Token) erro
 	if err != nil {
 		return fmt.Errorf("[PARSE_GENERIC_OSHFLC] error: %v", err)
 	}
-	if token.Content == "(" {
-		return parseAstRolneStartChild(cursor, token, ASTN_ROLNE_ARGUMENTS)
+	if cursor.src.Content == "(" {
+		return parseAstRolneStartChild(cursor, ASTN_ROLNE_ARGUMENTS)
 	}
-	return fmt.Errorf("[PARSE_GENERIC_OSHFLC] unable to determine what '%s' is on line %d column %d", token.Content, token.SourceLine, token.SourceOffset)
+	return fmt.Errorf("[PARSE_GENERIC_OSHFLC] unable to determine what '%s' is on line %d column %d", cursor.src.Content, cursor.src.SourceLine, cursor.src.SourceOffset)
 }
 
 func becomeLastChildMakePreviousChildAChildThenBecomeChild(cursor *parseCursor, nature AstNodeNature, name string) error {
@@ -182,39 +188,39 @@ func swapSelfMakingPreviousAChild(cursor *parseCursor, ant AstNodeType, nature A
 }
 
 func parse(cursor *parseCursor, token lexer.Token) error {
-	debugNext(cursor, token)
+	debugNext(cursor)
 	cursor.src = token
 	switch cursor.currentNode.Kind {
 	case AST_ROOT:
-		return parseAstRoot(cursor, token)
+		return parseAstRoot(cursor)
 	case AST_ROUTINE:
 	case AST_STATEMENT:
-		return parseAstStatement(cursor, token)
+		return parseAstStatement(cursor)
 	case AST_STATEMENT_ITEM:
-		return parseAstStatementItem(cursor, token)
+		return parseAstStatementItem(cursor)
 	case AST_ORDERED_BINDING:
-		return parseAstOrderedBinding(cursor, token)
+		return parseAstOrderedBinding(cursor)
 	case AST_ORDERED_BINDING_CHILD:
-		return parseAstOrderedBindingChild(cursor, token)
+		return parseAstOrderedBindingChild(cursor)
 	case AST_EXPRESSION:
 	case AST_LITERAL:
 	case AST_IDENTIFIER:
 	case AST_ROLNE:
-		return parseAstRolne(cursor, token)
+		return parseAstRolne(cursor)
 	case AST_ROLNE_ITEM:
-		return parseAstRolneItem(cursor, token)
+		return parseAstRolneItem(cursor)
 	case AST_ROLNE_ITEM_NAME:
-		return parseAstRolneItemName(cursor, token)
+		return parseAstRolneItemName(cursor)
 	case AST_ROLNE_ITEM_TYPE:
-		return parseAstRolneItemType(cursor, token)
+		return parseAstRolneItemType(cursor)
 	case AST_ROLNE_ITEM_VALUE:
-		return parseAstRolneItemValue(cursor, token)
+		return parseAstRolneItemValue(cursor)
 	case AST_BLOCK:
-		return parseAstBlock(cursor, token)
+		return parseAstBlock(cursor)
 	case AST_MAPBLOCK:
-		return parseAstMapBlock(cursor, token)
+		return parseAstMapBlock(cursor)
 	case AST_MAPBLOCK_ITEM:
-		return parseAstMapBlockItem(cursor, token)
+		return parseAstMapBlockItem(cursor)
 	case AST_ERROR:
 	default:
 		return fmt.Errorf("unhandled parse of %v on token %v", cursor.currentNode.Kind, token)

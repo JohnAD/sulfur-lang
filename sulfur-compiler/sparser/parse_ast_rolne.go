@@ -22,55 +22,55 @@ import (
 //      required = true
 //    #}
 
-func parseAstRolne(cursor *parseCursor, token lexer.Token) error {
+func parseAstRolne(cursor *parseCursor) error {
 	debug(AST_ROLNE, "MAIN", cursor)
-	switch token.TokenType {
+	switch cursor.src.TokenType {
 	case lexer.TT_STANDING_SYMBOL:
-		if token.Content == "," {
+		if cursor.src.Content == "," {
 			return nil // ignore commas between items
 		}
 	//case lexer.TT_OPEN_SYMBOL:
 	case lexer.TT_CLOSE_SYMBOL:
-		return finishAstRolne(cursor, token)
+		return finishAstRolne(cursor)
 	case lexer.TT_IDENT:
-		return parseAstRolneItemStart(cursor, token)
+		return parseAstRolneItemStart(cursor)
 	case lexer.TT_STR_LIT:
-		return parseAstRolneItemStart(cursor, token)
+		return parseAstRolneItemStart(cursor)
 	case lexer.TT_LINE:
 		return nil // just ignore EOL when in a ROLNE (but not inside a ROLNE ITEM)
 	}
-	return fmt.Errorf("unhandled AST_ROLNE parse of %v", token)
+	return fmt.Errorf("unhandled AST_ROLNE parse of %v", cursor.src)
 }
 
-func parseAstRolneStart(cursor *parseCursor, token lexer.Token, nature AstNodeNature) error {
+func parseAstRolneStart(cursor *parseCursor, nature AstNodeNature) error {
 	debug(AST_ROLNE, "PARS", cursor)
 	selfPtr := cursor.currentNode
 	selfPtr.Kind = AST_ROLNE
 	selfPtr.Nature = nature
-	selfPtr.Name = token.Content
-	selfPtr.src = token
+	selfPtr.Name = cursor.src.Content
+	selfPtr.src = cursor.src
 	return nil
 }
 
-func parseAstRolneStartChild(cursor *parseCursor, token lexer.Token, nature AstNodeNature) error {
+func parseAstRolneStartChild(cursor *parseCursor, nature AstNodeNature) error {
 	debug(AST_ROLNE, "PARSC", cursor)
-	createAndBecomeChild(cursor, AST_ROLNE, nature, token.Content)
+	createAndBecomeChild(cursor, AST_ROLNE, nature)
 	return nil
 }
 
-func childRolneItemDoneReadyForNextItem(cursor *parseCursor, token lexer.Token) error {
+func childRolneItemDoneReadyForNextItem(cursor *parseCursor) error {
 	debug(AST_ROLNE, "CDRFNI", cursor)
-	return parseAstRolne(cursor, token)
+	return parseAstRolne(cursor)
 }
 
-func finishAstRolne(cursor *parseCursor, token lexer.Token) error {
+func finishAstRolne(cursor *parseCursor) error {
 	debug(AST_ROLNE, "FAR", cursor)
 	starting := cursor.currentNode.Name
-	ending := token.Content
+	ending := cursor.src.Content
 	if helpers.OperatorsMatch(starting, ending) {
 		err := finishAstNode(cursor)
 		debug(AST_ROLNE, "FAR-end", cursor)
 		return err
 	}
-	return fmt.Errorf("[PARSE_ROLNE_FAR] unable to match '%s' with '%s' on line %d column %d", starting, ending, token.SourceLine, token.SourceOffset)
+	return fmt.Errorf("[PARSE_ROLNE_FAR] unable to match '%s' with '%s' on line %d column %d", starting, ending, cursor.src.SourceLine, cursor.src.SourceOffset)
 }
