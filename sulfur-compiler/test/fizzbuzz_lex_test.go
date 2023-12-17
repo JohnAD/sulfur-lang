@@ -18,12 +18,10 @@ func TestFizzBuzzLexingMain(t *testing.T) {
 	targetYamlFileLocation := cc.StagingDir + "/" + context.LEXING_PREFIX_EN + "/file-0000.token.yaml"
 	expectedYaml, err := os.ReadFile("fizzbuzz_lex_test.main.yaml")
 	expectedYamlStr := string(expectedYaml)
-
 	//
 	// act
 	//
 	err = compiler.Compiler(cc)
-
 	//
 	// assert
 	//

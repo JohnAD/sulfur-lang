@@ -30,7 +30,7 @@ func parseAstBlock(cursor *parseCursor, token lexer.Token) error {
 }
 
 func parseAstBlockStartChild(cursor *parseCursor, token lexer.Token, nature AstNodeNature) error {
-	createAndBecomeChild(cursor, AST_BLOCK, nature, token.Content, false)
+	createAndBecomeChild(cursor, AST_BLOCK, nature, token.Content)
 	return nil
 }
 
@@ -39,6 +39,7 @@ func parseAstBlockStart(cursor *parseCursor, token lexer.Token, nature AstNodeNa
 	selfPtr.Kind = AST_BLOCK
 	selfPtr.Nature = nature
 	selfPtr.Name = token.Content
+	selfPtr.src = token
 	return nil
 }
 

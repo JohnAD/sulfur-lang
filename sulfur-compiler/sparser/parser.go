@@ -8,6 +8,7 @@ import (
 
 type parseCursor struct {
 	depth       int
+	src         lexer.Token
 	currentNode *AstNode
 	pointerPath []*AstNode
 }
@@ -16,8 +17,8 @@ func addChildAstPointer(cursor *parseCursor, ast *AstNode) {
 	cursor.currentNode.Children = append(cursor.currentNode.Children, ast)
 }
 
-func addChild(cursor *parseCursor, ant AstNodeType, nature AstNodeNature, name string, bound bool) {
-	newNode := AstNode{Kind: ant, bound: bound, Nature: nature, Name: name}
+func addChild(cursor *parseCursor, ant AstNodeType, nature AstNodeNature, name string) {
+	newNode := AstNode{Kind: ant, Nature: nature, Name: name, src: cursor.src}
 	addChildAstPointer(cursor, &newNode)
 }
 
@@ -35,14 +36,14 @@ func moveToLastChild(cursor *parseCursor) error {
 	return err
 }
 
-func createAndBecomeChild(cursor *parseCursor, ant AstNodeType, nature AstNodeNature, name string, bound bool) {
-	newNode := AstNode{Kind: ant, bound: bound, Nature: nature, Name: name}
+func createAndBecomeChild(cursor *parseCursor, ant AstNodeType, nature AstNodeNature, name string) {
+	newNode := AstNode{Kind: ant, Nature: nature, Name: name, src: cursor.src}
 	addChildAstPointer(cursor, &newNode)
 	_ = moveToLastChild(cursor) // cannot error out because we just added a child
 }
 
-func createIndependentChildAndPoint(cursor *parseCursor, nature AstNodeNature, name string, bound bool) {
-	newNode := AstNode{Kind: cursor.currentNode.Kind, bound: bound, Nature: nature, Name: name}
+func createIndependentChildAndPoint(cursor *parseCursor, nature AstNodeNature, name string) {
+	newNode := AstNode{Kind: cursor.currentNode.Kind, Nature: nature, Name: name, src: cursor.src}
 	addChildAstPointer(cursor, &newNode)
 	_ = moveToLastChild(cursor) // cannot error out because we just added a child
 }
@@ -73,7 +74,7 @@ func gotoChild(cursor *parseCursor, index int) error {
 	return nil
 }
 
-func setChild(cursor *parseCursor, index int, ant AstNodeType, nature AstNodeNature, name string) error {
+func setChild(cursor *parseCursor, index int, ant AstNodeType, nature AstNodeNature, name string, token lexer.Token) error {
 	lastIndex := len(cursor.currentNode.Children) - 1
 	if index > lastIndex {
 		return fmt.Errorf("[PARSER SC} setting a child (%d) that does not exist", index)
@@ -82,6 +83,7 @@ func setChild(cursor *parseCursor, index int, ant AstNodeType, nature AstNodeNat
 	childPtr.Kind = ant
 	childPtr.Nature = nature
 	childPtr.Name = name
+	childPtr.src = token
 	return nil
 }
 
@@ -100,10 +102,10 @@ func finishAstNode(cursor *parseCursor) error {
 func openSymbolHandlingForNewChild(cursor *parseCursor, token lexer.Token) error {
 	debugGeneric("OSHFNC", cursor)
 	if token.Content == "{" {
-		return parseAstRolneStartChild(cursor, token, ASTN_NULL, true)
+		return parseAstRolneStartChild(cursor, token, ASTN_NULL)
 	}
 	if token.Content == "(" {
-		return parseAstRolneStartChild(cursor, token, ASTN_NULL, true)
+		return parseAstRolneStartChild(cursor, token, ASTN_NULL)
 	}
 	if token.Content == "{{" {
 		return parseAstMapBlockStart(cursor, token)
@@ -130,7 +132,7 @@ func openSymbolHandlingInPlace(cursor *parseCursor, token lexer.Token) error {
 	return fmt.Errorf("[PARSE_GENERIC_OSHIP] unable to determine what '%s' is on line %d column %d", token.Content, token.SourceLine, token.SourceOffset)
 }
 
-func openSymbolHandlingForLastChild(cursor *parseCursor, token lexer.Token, bound bool) error {
+func openSymbolHandlingForLastChild(cursor *parseCursor, token lexer.Token) error {
 	lastIndex := len(cursor.currentNode.Children) - 1
 	if lastIndex == -1 {
 		return fmt.Errorf("[PARSER_GENERIC_OSHFLC} using a child when the list is empty")
@@ -140,12 +142,12 @@ func openSymbolHandlingForLastChild(cursor *parseCursor, token lexer.Token, boun
 		return fmt.Errorf("[PARSE_GENERIC_OSHFLC] error: %v", err)
 	}
 	if token.Content == "(" {
-		return parseAstRolneStartChild(cursor, token, ASTN_ROLNE_ARGUMENTS, bound)
+		return parseAstRolneStartChild(cursor, token, ASTN_ROLNE_ARGUMENTS)
 	}
 	return fmt.Errorf("[PARSE_GENERIC_OSHFLC] unable to determine what '%s' is on line %d column %d", token.Content, token.SourceLine, token.SourceOffset)
 }
 
-func becomeLastChildMakePreviousChildAChildThenBecomeChild(cursor *parseCursor, nature AstNodeNature, name string, bound bool) error {
+func becomeLastChildMakePreviousChildAChildThenBecomeChild(cursor *parseCursor, nature AstNodeNature, name string) error {
 	// before:
 	//            a[ b[ d, e, f ] ]            where "b" is the current location
 	// after calling with g:
@@ -155,7 +157,7 @@ func becomeLastChildMakePreviousChildAChildThenBecomeChild(cursor *parseCursor, 
 	debugGeneric("BLCMPCACTBC", cursor)
 	err, previousLastChild := popChild(cursor)
 	if err == nil {
-		addChild(cursor, previousLastChild.Kind, nature, name, bound)
+		addChild(cursor, previousLastChild.Kind, nature, name)
 		_ = moveToLastChild(cursor) // cannot error out because we just added a child
 		addChildAstPointer(cursor, previousLastChild)
 	}
@@ -170,15 +172,18 @@ func swapSelfMakingPreviousAChild(cursor *parseCursor, ant AstNodeType, nature A
 	currentKind := cursor.currentNode.Kind
 	currentNature := cursor.currentNode.Nature
 	currentName := cursor.currentNode.Name
-	addChild(cursor, currentKind, currentNature, currentName, false)
+	currentSrc := cursor.currentNode.src
+	addChild(cursor, currentKind, currentNature, currentName)
 	cursor.currentNode.Kind = ant
 	cursor.currentNode.Nature = nature
 	cursor.currentNode.Name = name
+	cursor.currentNode.src = currentSrc
 	return nil
 }
 
 func parse(cursor *parseCursor, token lexer.Token) error {
 	debugNext(cursor, token)
+	cursor.src = token
 	switch cursor.currentNode.Kind {
 	case AST_ROOT:
 		return parseAstRoot(cursor, token)

@@ -3,1062 +3,910 @@
   source-line: 1
   source-column: 1
   content: '#!'
-  post-bound: false
   indent-depth: 0
 - token-type: IDENT
   source-file-id: 0
   source-line: 1
   source-column: 4
   content: sulfur
-  post-bound: false
   indent-depth: 0
 - token-type: NUMSTR_LIT
   source-file-id: 0
   source-line: 1
   source-column: 11
   content: "0.1"
-  post-bound: false
   indent-depth: 0
 - token-type: IDENT
   source-file-id: 0
   source-line: 1
   source-column: 15
   content: app
-  post-bound: false
   indent-depth: 0
 - token-type: IDENT
   source-file-id: 0
   source-line: 1
   source-column: 19
   content: en
-  post-bound: false
   indent-depth: 0
 - token-type: LINE
   source-file-id: 0
   source-line: 1
   source-column: 21
   content: ""
-  post-bound: false
   indent-depth: 0
 - token-type: STANDING_SYMBOL
   source-file-id: 0
   source-line: 2
   source-column: 1
   content: '#@'
-  post-bound: false
   indent-depth: 0
 - token-type: IDENT
   source-file-id: 0
   source-line: 2
   source-column: 4
   content: std
-  post-bound: true
   indent-depth: 0
 - token-type: BINDING_SYMBOL
   source-file-id: 0
   source-line: 2
   source-column: 7
   content: \
-  post-bound: false
   indent-depth: 0
 - token-type: IDENT
   source-file-id: 0
   source-line: 2
   source-column: 8
   content: clib
-  post-bound: false
   indent-depth: 0
 - token-type: IDENT
   source-file-id: 0
   source-line: 2
   source-column: 13
   content: as
-  post-bound: false
   indent-depth: 0
 - token-type: IDENT
   source-file-id: 0
   source-line: 2
   source-column: 16
   content: clib
-  post-bound: false
   indent-depth: 0
 - token-type: LINE
   source-file-id: 0
   source-line: 2
   source-column: 20
   content: ""
-  post-bound: false
   indent-depth: 0
 - token-type: IDENT
   source-file-id: 0
   source-line: 4
   source-column: 1
   content: using
-  post-bound: false
   indent-depth: 0
 - token-type: IDENT
   source-file-id: 0
   source-line: 4
   source-column: 7
   content: std
-  post-bound: true
   indent-depth: 0
 - token-type: BINDING_SYMBOL
   source-file-id: 0
   source-line: 4
   source-column: 10
   content: \
-  post-bound: false
   indent-depth: 0
 - token-type: IDENT
   source-file-id: 0
   source-line: 4
   source-column: 11
   content: numerics
-  post-bound: false
   indent-depth: 0
 - token-type: IDENT
   source-file-id: 0
   source-line: 4
   source-column: 20
   content: import
-  post-bound: false
   indent-depth: 0
 - token-type: OPEN_SYMBOL
   source-file-id: 0
   source-line: 4
   source-column: 27
   content: '{'
-  post-bound: false
   indent-depth: 0
 - token-type: LINE
   source-file-id: 0
   source-line: 4
   source-column: 28
   content: ""
-  post-bound: false
   indent-depth: 1
 - token-type: IDENT
   source-file-id: 0
   source-line: 5
   source-column: 3
   content: Int
-  post-bound: false
   indent-depth: 0
 - token-type: STANDING_SYMBOL
   source-file-id: 0
   source-line: 5
   source-column: 7
   content: =
-  post-bound: false
   indent-depth: 0
 - token-type: IDENT
   source-file-id: 0
   source-line: 5
   source-column: 9
   content: Int32
-  post-bound: false
   indent-depth: 0
 - token-type: LINE
   source-file-id: 0
   source-line: 5
   source-column: 14
   content: ""
-  post-bound: false
   indent-depth: 0
 - token-type: CLOSE_SYMBOL
   source-file-id: 0
   source-line: 6
   source-column: 1
   content: '}'
-  post-bound: false
   indent-depth: 0
 - token-type: LINE
   source-file-id: 0
   source-line: 6
   source-column: 2
   content: ""
-  post-bound: false
   indent-depth: 0
 - token-type: IDENT
   source-file-id: 0
   source-line: 7
   source-column: 1
   content: using
-  post-bound: false
   indent-depth: 0
 - token-type: IDENT
   source-file-id: 0
   source-line: 7
   source-column: 7
   content: std
-  post-bound: true
   indent-depth: 0
 - token-type: BINDING_SYMBOL
   source-file-id: 0
   source-line: 7
   source-column: 10
   content: \
-  post-bound: false
   indent-depth: 0
 - token-type: IDENT
   source-file-id: 0
   source-line: 7
   source-column: 11
   content: arrays
-  post-bound: false
   indent-depth: 0
 - token-type: IDENT
   source-file-id: 0
   source-line: 7
   source-column: 18
   content: import
-  post-bound: false
   indent-depth: 0
 - token-type: OPEN_SYMBOL
   source-file-id: 0
   source-line: 7
   source-column: 25
   content: '{'
-  post-bound: false
   indent-depth: 0
 - token-type: LINE
   source-file-id: 0
   source-line: 7
   source-column: 26
   content: ""
-  post-bound: false
   indent-depth: 1
 - token-type: IDENT
   source-file-id: 0
   source-line: 8
   source-column: 3
   content: range_inclusive
-  post-bound: false
   indent-depth: 0
 - token-type: LINE
   source-file-id: 0
   source-line: 8
   source-column: 18
   content: ""
-  post-bound: false
   indent-depth: 0
 - token-type: CLOSE_SYMBOL
   source-file-id: 0
   source-line: 9
   source-column: 1
   content: '}'
-  post-bound: false
   indent-depth: 0
 - token-type: LINE
   source-file-id: 0
   source-line: 9
   source-column: 2
   content: ""
-  post-bound: false
   indent-depth: 0
 - token-type: IDENT
   source-file-id: 0
   source-line: 12
   source-column: 1
   content: proc
-  post-bound: false
   indent-depth: 0
 - token-type: IDENT
   source-file-id: 0
   source-line: 12
   source-column: 6
   content: main
-  post-bound: false
   indent-depth: 0
 - token-type: OPEN_SYMBOL
   source-file-id: 0
   source-line: 12
   source-column: 11
   content: '{{'
-  post-bound: false
   indent-depth: 0
 - token-type: LINE
   source-file-id: 0
   source-line: 12
   source-column: 13
   content: ""
-  post-bound: false
   indent-depth: 1
 - token-type: IDENT
   source-file-id: 0
   source-line: 13
   source-column: 3
   content: doc
-  post-bound: false
   indent-depth: 0
 - token-type: STR_LIT
   source-file-id: 0
   source-line: 13
   source-column: 7
   content: the traditional fizz buzz example app
-  post-bound: false
   indent-depth: 0
 - token-type: LINE
   source-file-id: 0
   source-line: 13
   source-column: 47
   content: ""
-  post-bound: false
   indent-depth: 1
 - token-type: IDENT
   source-file-id: 0
   source-line: 14
   source-column: 3
   content: parameters
-  post-bound: false
   indent-depth: 0
 - token-type: OPEN_SYMBOL
   source-file-id: 0
   source-line: 14
   source-column: 14
   content: '{'
-  post-bound: false
   indent-depth: 0
 - token-type: LINE
   source-file-id: 0
   source-line: 14
   source-column: 15
   content: ""
-  post-bound: false
   indent-depth: 2
 - token-type: IDENT
   source-file-id: 0
   source-line: 15
   source-column: 5
   content: argv
-  post-bound: true
   indent-depth: 0
 - token-type: BINDING_SYMBOL
   source-file-id: 0
   source-line: 15
   source-column: 9
   content: '::'
-  post-bound: false
   indent-depth: 0
 - token-type: IDENT
   source-file-id: 0
   source-line: 15
   source-column: 11
   content: StringArray
-  post-bound: false
   indent-depth: 0
 - token-type: LINE
   source-file-id: 0
   source-line: 15
   source-column: 22
   content: ""
-  post-bound: false
   indent-depth: 1
 - token-type: CLOSE_SYMBOL
   source-file-id: 0
   source-line: 16
   source-column: 3
   content: '}'
-  post-bound: false
   indent-depth: 0
 - token-type: LINE
   source-file-id: 0
   source-line: 16
   source-column: 4
   content: ""
-  post-bound: false
   indent-depth: 1
 - token-type: IDENT
   source-file-id: 0
   source-line: 17
   source-column: 3
   content: returns
-  post-bound: false
   indent-depth: 0
 - token-type: OPEN_SYMBOL
   source-file-id: 0
   source-line: 17
   source-column: 11
   content: '{'
-  post-bound: false
   indent-depth: 0
 - token-type: LINE
   source-file-id: 0
   source-line: 17
   source-column: 12
   content: ""
-  post-bound: false
   indent-depth: 2
 - token-type: IDENT
   source-file-id: 0
   source-line: 18
   source-column: 5
   content: exit_code
-  post-bound: true
   indent-depth: 0
 - token-type: BINDING_SYMBOL
   source-file-id: 0
   source-line: 18
   source-column: 14
   content: '::'
-  post-bound: false
   indent-depth: 0
 - token-type: IDENT
   source-file-id: 0
   source-line: 18
   source-column: 16
   content: Int
-  post-bound: false
   indent-depth: 0
 - token-type: STANDING_SYMBOL
   source-file-id: 0
   source-line: 18
   source-column: 20
   content: =
-  post-bound: false
   indent-depth: 0
 - token-type: IDENT
   source-file-id: 0
   source-line: 18
   source-column: 22
   content: clib
-  post-bound: true
   indent-depth: 0
 - token-type: BINDING_SYMBOL
   source-file-id: 0
   source-line: 18
   source-column: 26
   content: \
-  post-bound: false
   indent-depth: 0
 - token-type: IDENT
   source-file-id: 0
   source-line: 18
   source-column: 27
   content: GOODEXIT
-  post-bound: false
   indent-depth: 0
 - token-type: LINE
   source-file-id: 0
   source-line: 18
   source-column: 35
   content: ""
-  post-bound: false
   indent-depth: 1
 - token-type: CLOSE_SYMBOL
   source-file-id: 0
   source-line: 19
   source-column: 3
   content: '}'
-  post-bound: false
   indent-depth: 0
 - token-type: LINE
   source-file-id: 0
   source-line: 19
   source-column: 4
   content: ""
-  post-bound: false
   indent-depth: 1
 - token-type: IDENT
   source-file-id: 0
   source-line: 20
   source-column: 3
   content: body
-  post-bound: false
   indent-depth: 0
 - token-type: OPEN_SYMBOL
   source-file-id: 0
   source-line: 20
   source-column: 8
   content: '[['
-  post-bound: false
   indent-depth: 0
 - token-type: LINE
   source-file-id: 0
   source-line: 20
   source-column: 10
   content: ""
-  post-bound: false
   indent-depth: 2
 - token-type: IDENT
   source-file-id: 0
   source-line: 21
   source-column: 5
   content: for_each
-  post-bound: false
   indent-depth: 0
 - token-type: IDENT
   source-file-id: 0
   source-line: 21
   source-column: 14
   content: i
-  post-bound: false
   indent-depth: 0
 - token-type: IDENT
   source-file-id: 0
   source-line: 21
   source-column: 16
   content: in
-  post-bound: false
   indent-depth: 0
 - token-type: IDENT
   source-file-id: 0
   source-line: 21
   source-column: 19
   content: range_inclusive
-  post-bound: true
   indent-depth: 0
 - token-type: BINDING_SYMBOL
   source-file-id: 0
   source-line: 21
   source-column: 34
   content: '::'
-  post-bound: false
   indent-depth: 0
 - token-type: IDENT
   source-file-id: 0
   source-line: 21
   source-column: 36
   content: Int
-  post-bound: true
   indent-depth: 0
 - token-type: OPEN_BIND_SYMBOL
   source-file-id: 0
   source-line: 21
   source-column: 39
   content: (
-  post-bound: false
   indent-depth: 0
 - token-type: NUMSTR_LIT
   source-file-id: 0
   source-line: 21
   source-column: 41
   content: 1,
-  post-bound: false
   indent-depth: 0
 - token-type: NUMSTR_LIT
   source-file-id: 0
   source-line: 21
   source-column: 44
   content: "20"
-  post-bound: false
   indent-depth: 0
 - token-type: CLOSE_SYMBOL
   source-file-id: 0
   source-line: 21
   source-column: 47
   content: )
-  post-bound: false
   indent-depth: 0
 - token-type: OPEN_SYMBOL
   source-file-id: 0
   source-line: 21
   source-column: 49
   content: '[['
-  post-bound: false
   indent-depth: 0
 - token-type: LINE
   source-file-id: 0
   source-line: 21
   source-column: 51
   content: ""
-  post-bound: false
   indent-depth: 3
 - token-type: IDENT
   source-file-id: 0
   source-line: 22
   source-column: 7
   content: if
-  post-bound: false
   indent-depth: 0
 - token-type: OPEN_SYMBOL
   source-file-id: 0
   source-line: 22
   source-column: 10
   content: (
-  post-bound: false
   indent-depth: 0
 - token-type: IDENT
   source-file-id: 0
   source-line: 22
   source-column: 12
   content: i
-  post-bound: false
   indent-depth: 0
 - token-type: STANDING_SYMBOL
   source-file-id: 0
   source-line: 22
   source-column: 14
   content: '%'
-  post-bound: false
   indent-depth: 0
 - token-type: NUMSTR_LIT
   source-file-id: 0
   source-line: 22
   source-column: 16
   content: "15"
-  post-bound: false
   indent-depth: 0
 - token-type: STANDING_SYMBOL
   source-file-id: 0
   source-line: 22
   source-column: 19
   content: ==
-  post-bound: false
   indent-depth: 0
 - token-type: NUMSTR_LIT
   source-file-id: 0
   source-line: 22
   source-column: 22
   content: "0"
-  post-bound: false
   indent-depth: 0
 - token-type: CLOSE_SYMBOL
   source-file-id: 0
   source-line: 22
   source-column: 24
   content: )
-  post-bound: false
   indent-depth: 0
 - token-type: OPEN_SYMBOL
   source-file-id: 0
   source-line: 22
   source-column: 26
   content: '[['
-  post-bound: false
   indent-depth: 0
 - token-type: LINE
   source-file-id: 0
   source-line: 22
   source-column: 28
   content: ""
-  post-bound: false
   indent-depth: 4
 - token-type: IDENT
   source-file-id: 0
   source-line: 23
   source-column: 9
   content: clib
-  post-bound: true
   indent-depth: 0
 - token-type: BINDING_SYMBOL
   source-file-id: 0
   source-line: 23
   source-column: 13
   content: \
-  post-bound: false
   indent-depth: 0
 - token-type: IDENT
   source-file-id: 0
   source-line: 23
   source-column: 14
   content: printf
-  post-bound: true
   indent-depth: 0
 - token-type: OPEN_BIND_SYMBOL
   source-file-id: 0
   source-line: 23
   source-column: 20
   content: (
-  post-bound: false
   indent-depth: 0
 - token-type: STR_LIT
   source-file-id: 0
   source-line: 23
   source-column: 22
   content: FizzBuzz
-  post-bound: false
   indent-depth: 0
 - token-type: CLOSE_SYMBOL
   source-file-id: 0
   source-line: 23
   source-column: 33
   content: )
-  post-bound: false
   indent-depth: 0
 - token-type: LINE
   source-file-id: 0
   source-line: 23
   source-column: 34
   content: ""
-  post-bound: false
   indent-depth: 3
 - token-type: CLOSE_SYMBOL
   source-file-id: 0
   source-line: 24
   source-column: 7
   content: ']]'
-  post-bound: false
   indent-depth: 0
 - token-type: IDENT
   source-file-id: 0
   source-line: 24
   source-column: 10
   content: elif
-  post-bound: false
   indent-depth: 0
 - token-type: OPEN_SYMBOL
   source-file-id: 0
   source-line: 24
   source-column: 15
   content: (
-  post-bound: false
   indent-depth: 0
 - token-type: IDENT
   source-file-id: 0
   source-line: 24
   source-column: 17
   content: i
-  post-bound: false
   indent-depth: 0
 - token-type: STANDING_SYMBOL
   source-file-id: 0
   source-line: 24
   source-column: 19
   content: '%'
-  post-bound: false
   indent-depth: 0
 - token-type: NUMSTR_LIT
   source-file-id: 0
   source-line: 24
   source-column: 21
   content: "3"
-  post-bound: false
   indent-depth: 0
 - token-type: STANDING_SYMBOL
   source-file-id: 0
   source-line: 24
   source-column: 23
   content: ==
-  post-bound: false
   indent-depth: 0
 - token-type: NUMSTR_LIT
   source-file-id: 0
   source-line: 24
   source-column: 26
   content: "0"
-  post-bound: false
   indent-depth: 0
 - token-type: CLOSE_SYMBOL
   source-file-id: 0
   source-line: 24
   source-column: 28
   content: )
-  post-bound: false
   indent-depth: 0
 - token-type: OPEN_SYMBOL
   source-file-id: 0
   source-line: 24
   source-column: 30
   content: '[['
-  post-bound: false
   indent-depth: 0
 - token-type: LINE
   source-file-id: 0
   source-line: 24
   source-column: 32
   content: ""
-  post-bound: false
   indent-depth: 4
 - token-type: IDENT
   source-file-id: 0
   source-line: 25
   source-column: 9
   content: clib
-  post-bound: true
   indent-depth: 0
 - token-type: BINDING_SYMBOL
   source-file-id: 0
   source-line: 25
   source-column: 13
   content: \
-  post-bound: false
   indent-depth: 0
 - token-type: IDENT
   source-file-id: 0
   source-line: 25
   source-column: 14
   content: printf
-  post-bound: true
   indent-depth: 0
 - token-type: OPEN_BIND_SYMBOL
   source-file-id: 0
   source-line: 25
   source-column: 20
   content: (
-  post-bound: false
   indent-depth: 0
 - token-type: STR_LIT
   source-file-id: 0
   source-line: 25
   source-column: 22
   content: Fizz
-  post-bound: false
   indent-depth: 0
 - token-type: CLOSE_SYMBOL
   source-file-id: 0
   source-line: 25
   source-column: 29
   content: )
-  post-bound: false
   indent-depth: 0
 - token-type: LINE
   source-file-id: 0
   source-line: 25
   source-column: 30
   content: ""
-  post-bound: false
   indent-depth: 3
 - token-type: CLOSE_SYMBOL
   source-file-id: 0
   source-line: 26
   source-column: 7
   content: ']]'
-  post-bound: false
   indent-depth: 0
 - token-type: IDENT
   source-file-id: 0
   source-line: 26
   source-column: 10
   content: elif
-  post-bound: false
   indent-depth: 0
 - token-type: OPEN_SYMBOL
   source-file-id: 0
   source-line: 26
   source-column: 15
   content: (
-  post-bound: false
   indent-depth: 0
 - token-type: IDENT
   source-file-id: 0
   source-line: 26
   source-column: 17
   content: i
-  post-bound: false
   indent-depth: 0
 - token-type: STANDING_SYMBOL
   source-file-id: 0
   source-line: 26
   source-column: 19
   content: '%'
-  post-bound: false
   indent-depth: 0
 - token-type: NUMSTR_LIT
   source-file-id: 0
   source-line: 26
   source-column: 21
   content: "5"
-  post-bound: false
   indent-depth: 0
 - token-type: STANDING_SYMBOL
   source-file-id: 0
   source-line: 26
   source-column: 23
   content: ==
-  post-bound: false
   indent-depth: 0
 - token-type: NUMSTR_LIT
   source-file-id: 0
   source-line: 26
   source-column: 26
   content: "0"
-  post-bound: false
   indent-depth: 0
 - token-type: CLOSE_SYMBOL
   source-file-id: 0
   source-line: 26
   source-column: 28
   content: )
-  post-bound: false
   indent-depth: 0
 - token-type: OPEN_SYMBOL
   source-file-id: 0
   source-line: 26
   source-column: 30
   content: '[['
-  post-bound: false
   indent-depth: 0
 - token-type: LINE
   source-file-id: 0
   source-line: 26
   source-column: 32
   content: ""
-  post-bound: false
   indent-depth: 4
 - token-type: IDENT
   source-file-id: 0
   source-line: 27
   source-column: 9
   content: clib
-  post-bound: true
   indent-depth: 0
 - token-type: BINDING_SYMBOL
   source-file-id: 0
   source-line: 27
   source-column: 13
   content: \
-  post-bound: false
   indent-depth: 0
 - token-type: IDENT
   source-file-id: 0
   source-line: 27
   source-column: 14
   content: printf
-  post-bound: true
   indent-depth: 0
 - token-type: OPEN_BIND_SYMBOL
   source-file-id: 0
   source-line: 27
   source-column: 20
   content: (
-  post-bound: false
   indent-depth: 0
 - token-type: STR_LIT
   source-file-id: 0
   source-line: 27
   source-column: 22
   content: Buzz
-  post-bound: false
   indent-depth: 0
 - token-type: CLOSE_SYMBOL
   source-file-id: 0
   source-line: 27
   source-column: 29
   content: )
-  post-bound: false
   indent-depth: 0
 - token-type: LINE
   source-file-id: 0
   source-line: 27
   source-column: 30
   content: ""
-  post-bound: false
   indent-depth: 3
 - token-type: CLOSE_SYMBOL
   source-file-id: 0
   source-line: 28
   source-column: 7
   content: ']]'
-  post-bound: false
   indent-depth: 0
 - token-type: IDENT
   source-file-id: 0
   source-line: 28
   source-column: 10
   content: else
-  post-bound: false
   indent-depth: 0
 - token-type: OPEN_SYMBOL
   source-file-id: 0
   source-line: 28
   source-column: 15
   content: '[['
-  post-bound: false
   indent-depth: 0
 - token-type: LINE
   source-file-id: 0
   source-line: 28
   source-column: 17
   content: ""
-  post-bound: false
   indent-depth: 4
 - token-type: IDENT
   source-file-id: 0
   source-line: 29
   source-column: 9
   content: clib
-  post-bound: true
   indent-depth: 0
 - token-type: BINDING_SYMBOL
   source-file-id: 0
   source-line: 29
   source-column: 13
   content: \
-  post-bound: false
   indent-depth: 0
 - token-type: IDENT
   source-file-id: 0
   source-line: 29
   source-column: 14
   content: printf
-  post-bound: true
   indent-depth: 0
 - token-type: OPEN_BIND_SYMBOL
   source-file-id: 0
   source-line: 29
   source-column: 20
   content: (
-  post-bound: false
   indent-depth: 0
 - token-type: IDENT
   source-file-id: 0
   source-line: 29
   source-column: 22
   content: i
-  post-bound: false
   indent-depth: 0
 - token-type: CLOSE_SYMBOL
   source-file-id: 0
   source-line: 29
   source-column: 24
   content: )
-  post-bound: false
   indent-depth: 0
 - token-type: LINE
   source-file-id: 0
   source-line: 29
   source-column: 25
   content: ""
-  post-bound: false
   indent-depth: 3
 - token-type: CLOSE_SYMBOL
   source-file-id: 0
   source-line: 30
   source-column: 7
   content: ']]'
-  post-bound: false
   indent-depth: 0
 - token-type: LINE
   source-file-id: 0
   source-line: 30
   source-column: 9
   content: ""
-  post-bound: false
   indent-depth: 2
 - token-type: CLOSE_SYMBOL
   source-file-id: 0
   source-line: 31
   source-column: 5
   content: ']]'
-  post-bound: false
   indent-depth: 0
 - token-type: LINE
   source-file-id: 0
   source-line: 31
   source-column: 7
   content: ""
-  post-bound: false
   indent-depth: 1
 - token-type: CLOSE_SYMBOL
   source-file-id: 0
   source-line: 32
   source-column: 3
   content: ']]'
-  post-bound: false
   indent-depth: 0
 - token-type: LINE
   source-file-id: 0
   source-line: 32
   source-column: 5
   content: ""
-  post-bound: false
   indent-depth: 0
 - token-type: CLOSE_SYMBOL
   source-file-id: 0
   source-line: 33
   source-column: 1
   content: '}}'
-  post-bound: false
   indent-depth: 0

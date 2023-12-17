@@ -23,10 +23,11 @@ func binderHandlingForLastChild(cursor *parseCursor, token lexer.Token) error {
 func binderHandlingInPlace(cursor *parseCursor, token lexer.Token) error {
 	debug(AST_ORDERED_BINDING, "BHIP", cursor)
 	s := cursor.currentNode
-	addChild(cursor, AST_ORDERED_BINDING_CHILD, s.Nature, s.Name, false)
+	addChild(cursor, AST_ORDERED_BINDING_CHILD, s.Nature, s.Name)
 	// "keep" the Kind as AST_ORDERED_BINDING (the parent) is never actually invoked
 	cursor.currentNode.Nature = ASTN_META_BINDING
 	cursor.currentNode.Name = token.Content
-	addChild(cursor, AST_ORDERED_BINDING_CHILD, ASTN_NULL, "", false)
+	cursor.currentNode.src = token
+	addChild(cursor, AST_ORDERED_BINDING_CHILD, ASTN_NULL, "")
 	return gotoChild(cursor, 1)
 }

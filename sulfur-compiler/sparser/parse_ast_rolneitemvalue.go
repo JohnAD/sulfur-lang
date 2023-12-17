@@ -48,6 +48,7 @@ func parseAstRolneItemNameAssignValue(cursor *parseCursor, token lexer.Token, na
 		return childParseAstRolneItemFinish(cursor, token)
 	}
 	cursor.currentNode.Name = token.Content
+	cursor.currentNode.src = token
 	cursor.currentNode.Nature = nature
 	return nil
 }

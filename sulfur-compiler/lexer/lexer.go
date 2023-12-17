@@ -26,7 +26,6 @@ func NewToken(plex *Lexer, init TokenType) Token {
 		SourceLine:   plex.currentLine,
 		SourceOffset: plex.currentOffset,
 		Content:      "",
-		PostBound:    false,
 	}
 	return t
 }
@@ -38,7 +37,6 @@ func NewTokenWithRune(plex *Lexer, init TokenType, ch rune) Token {
 		SourceLine:   plex.currentLine,
 		SourceOffset: plex.currentOffset,
 		Content:      string(ch),
-		PostBound:    false,
 	}
 	return t
 }
@@ -214,22 +212,22 @@ func lexIdentBegin(plex *Lexer, ch rune) {
 func lexIdent(plex *Lexer, ch rune) {
 	switch plex.runeCategory {
 	case RC_WHITESPACE:
-		lexIdentEnd(plex, false)
+		lexIdentEnd(plex)
 		lexWhitespaceBegin(plex, 0)
 	case RC_LETTER:
 		plex.currentToken.Content = plex.currentToken.Content + string(ch)
 	case RC_NUMBER:
 		plex.currentToken.Content = plex.currentToken.Content + string(ch)
 	case RC_PUNCTUATION:
-		lexIdentEnd(plex, true)
+		lexIdentEnd(plex)
 		lexBindingSymbolBegin(plex, ch)
 	case RC_OPEN_PUNCTUATION:
-		lexIdentEnd(plex, true)
+		lexIdentEnd(plex)
 		lexOpenBindSymbolBegin(plex, ch)
 	case RC_CLOSE_PUNCTUATION:
 		lexSyntaxErrorSwitch(plex, ch, "TBD CLOSE P")
 	case RC_LINE_END:
-		lexIdentEnd(plex, false)
+		lexIdentEnd(plex)
 		lexIndentLineBegin(plex, ch)
 	case RC_QUOTE:
 		lexSyntaxErrorSwitch(plex, ch, "TBD QUOTE")
@@ -237,8 +235,7 @@ func lexIdent(plex *Lexer, ch rune) {
 		lexSyntaxErrorSwitch(plex, ch, "forbidden rune")
 	}
 }
-func lexIdentEnd(plex *Lexer, postBound bool) {
-	plex.currentToken.PostBound = postBound
+func lexIdentEnd(plex *Lexer) {
 	plex.tokenList = append(plex.tokenList, plex.currentToken)
 }
 

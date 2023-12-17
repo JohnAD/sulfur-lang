@@ -2,6 +2,7 @@ package sparser
 
 import (
 	"fmt"
+	"sulfur-compiler/lexer"
 )
 
 type AstNodeType int
@@ -137,9 +138,9 @@ func (ann AstNodeNature) MarshalYAML() (interface{}, error) {
 
 type AstNode struct {
 	Kind     AstNodeType   `yaml:"type"`
-	bound    bool          `yaml:"bound"`
 	Nature   AstNodeNature `yaml:"nature"`
 	Name     string        `yaml:"name"`
+	src      lexer.Token   `yaml:"token"` // lowercase for now, keeps the YAML shorter
 	Children []*AstNode    `yaml:"children"`
 }
 

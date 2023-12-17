@@ -18,7 +18,7 @@ func parseAstStatement(cursor *parseCursor, token lexer.Token) error {
 		return openSymbolHandlingForNewChild(cursor, token)
 	//case lexer.TT_CLOSE_SYMBOL:
 	case lexer.TT_OPEN_BIND_SYMBOL:
-		return openSymbolHandlingForLastChild(cursor, token, true)
+		return openSymbolHandlingForLastChild(cursor, token)
 	case lexer.TT_BINDING_SYMBOL:
 		return binderHandlingForLastChild(cursor, token)
 	case lexer.TT_IDENT:
@@ -38,7 +38,7 @@ func parseAstStatement(cursor *parseCursor, token lexer.Token) error {
 
 func parseAstStatementStartChild(cursor *parseCursor, token lexer.Token) error {
 	nature := interpretInitialStatementNature(token)
-	createAndBecomeChild(cursor, AST_STATEMENT, nature, "", false)
+	createAndBecomeChild(cursor, AST_STATEMENT, nature, "")
 	// make one call to main proc to interpret the first child
 	return parseAstStatement(cursor, token)
 }
@@ -77,7 +77,7 @@ func interpretInlineTokenDuringStatement(cursor *parseCursor, token lexer.Token)
 	default:
 		return fmt.Errorf("[PARSE_STMT_IITDS] unable to determine what '%s' is on line %d column %d", token.Content, token.SourceLine, token.SourceOffset)
 	}
-	addChild(cursor, AST_STATEMENT_ITEM, nature, name, false)
+	addChild(cursor, AST_STATEMENT_ITEM, nature, name)
 	return nil
 }
 

@@ -48,12 +48,13 @@ func parseAstRolneStart(cursor *parseCursor, token lexer.Token, nature AstNodeNa
 	selfPtr.Kind = AST_ROLNE
 	selfPtr.Nature = nature
 	selfPtr.Name = token.Content
+	selfPtr.src = token
 	return nil
 }
 
-func parseAstRolneStartChild(cursor *parseCursor, token lexer.Token, nature AstNodeNature, bound bool) error {
+func parseAstRolneStartChild(cursor *parseCursor, token lexer.Token, nature AstNodeNature) error {
 	debug(AST_ROLNE, "PARSC", cursor)
-	createAndBecomeChild(cursor, AST_ROLNE, nature, token.Content, bound)
+	createAndBecomeChild(cursor, AST_ROLNE, nature, token.Content)
 	return nil
 }
 
