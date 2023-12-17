@@ -36,10 +36,12 @@ func parseAstRolne(cursor *parseCursor) error {
 		return parseAstRolneItemStart(cursor)
 	case lexer.TT_STR_LIT:
 		return parseAstRolneItemStart(cursor)
+	case lexer.TT_NUMSTR_LIT:
+		return parseAstRolneItemStart(cursor)
 	case lexer.TT_LINE:
 		return nil // just ignore EOL when in a ROLNE (but not inside a ROLNE ITEM)
 	}
-	return fmt.Errorf("unhandled AST_ROLNE parse of %v", cursor.src)
+	return parseError(cursor, "MAIN", "unhandled parse")
 }
 
 func parseAstRolneStart(cursor *parseCursor, nature AstNodeNature) error {

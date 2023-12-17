@@ -9,7 +9,7 @@ func parseAstMapBlock(cursor *parseCursor) error {
 	switch cursor.src.TokenType {
 	//case lexer.TT_STANDING_SYMBOL:
 	//case lexer.TT_OPEN_SYMBOL:
-	//	return openSymbolHandlingForNewChild(cursor)
+	//	return openBindSymbolHandlingForNewChild(cursor)
 	case lexer.TT_CLOSE_SYMBOL:
 		return finishAstMapBlock(cursor)
 	//case lexer.TT_OPEN_BIND_SYMBOL:

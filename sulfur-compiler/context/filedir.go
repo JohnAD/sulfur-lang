@@ -6,6 +6,7 @@ import (
 )
 
 const LEXING_PREFIX_EN = "00_Lexing"
+const PARSING_PREFIX_EN = "01_Parsing"
 
 func CleanStagingDir(cc *CompilerContext) error {
 	stagingPath := buildStagePath(cc, "")
@@ -15,15 +16,6 @@ func CleanStagingDir(cc *CompilerContext) error {
 	}
 	err = os.Mkdir(stagingPath, 0750)
 	return err
-}
-
-func CreateLexParseRoundDir(cc *CompilerContext) error {
-	err := os.Mkdir(GetLexParseRoundPath(cc), 0750)
-	return err
-}
-func GetLexParseRoundPath(cc *CompilerContext) string {
-	lexParseRoundPath := buildStagePath(cc, LEXING_PREFIX_EN)
-	return lexParseRoundPath
 }
 
 func buildStagePath(cc *CompilerContext, stage string) string {
@@ -56,4 +48,31 @@ func deleteDirectoryIfExists(path string) error {
 		}
 	}
 	return os.Remove(path)
+}
+
+//
+// LEXER RESULTS
+//
+
+func CreateLexResultDir(cc *CompilerContext) error {
+	path := GetLexResultPath(cc)
+	err := os.Mkdir(path, 0750)
+	return err
+}
+func GetLexResultPath(cc *CompilerContext) string {
+	lexRoundPath := buildStagePath(cc, LEXING_PREFIX_EN)
+	return lexRoundPath
+}
+
+//
+// PARSER RESULTS
+//
+
+func CreateParseResultDir(cc *CompilerContext) error {
+	err := os.Mkdir(GetParseResultPath(cc), 0750)
+	return err
+}
+func GetParseResultPath(cc *CompilerContext) string {
+	parseRoundPath := buildStagePath(cc, PARSING_PREFIX_EN)
+	return parseRoundPath
 }

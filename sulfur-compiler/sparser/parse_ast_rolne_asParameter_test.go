@@ -90,6 +90,7 @@ var parseRolneParameterTests = []parseTest{
 
 func TestRolneParameterParsing(t *testing.T) {
 	cc := context.NewCompilerContext("main")
+	cc.WriteToDisk = false
 	for _, test := range parseRolneParameterTests {
 		err, tokens := lexer.LexString(test.source)
 		if err != nil {

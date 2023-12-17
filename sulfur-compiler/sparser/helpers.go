@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-const debugParse = false
+const debugParse = true
 
 func debug(cursor *parseCursor, procRole string) {
 	if debugParse {
@@ -52,5 +52,5 @@ func parseError(cursor *parseCursor, procRole string, msg string) error {
 	} else {
 		refName = fmt.Sprintf("-:%s:-", procRole)
 	}
-	return fmt.Errorf("[%s] token `%s` at line %d col %d: %s", refName, cursor.src.Content, cursor.src.SourceLine, cursor.src.SourceOffset, msg)
+	return fmt.Errorf("[%s] token `%s`(%s) at line %d col %d: %s", refName, cursor.src.Content, cursor.src.TokenType, cursor.src.SourceLine, cursor.src.SourceOffset, msg)
 }

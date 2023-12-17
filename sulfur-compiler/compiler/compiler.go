@@ -14,7 +14,11 @@ func Compiler(cc context.CompilerContext) error {
 	if err != nil {
 		return err
 	}
-	err = context.CreateLexParseRoundDir(&cc)
+	err = context.CreateLexResultDir(&cc)
+	if err != nil {
+		return err
+	}
+	err = context.CreateParseResultDir(&cc)
 	if err != nil {
 		return err
 	}

@@ -18,7 +18,7 @@ type parseTest struct {
 var parseTests = []parseTest{
 	parseTest{
 		"simple five parts", helpers.Dedent(`
-			) a b c d e
+			a b c d e
 	`), helpers.Dedent(`
 			type: ROOT
 			nature: _
@@ -106,6 +106,7 @@ var parseTests = []parseTest{
 
 func TestStatementParsing(t *testing.T) {
 	cc := context.NewCompilerContext("main")
+	cc.WriteToDisk = false
 	for _, test := range parseTests {
 		err, tokens := lexer.LexString(test.source)
 		if err != nil {

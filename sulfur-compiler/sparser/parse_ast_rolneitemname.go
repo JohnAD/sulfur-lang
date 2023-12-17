@@ -1,7 +1,6 @@
 package sparser
 
 import (
-	"fmt"
 	"sulfur-compiler/lexer"
 )
 
@@ -15,7 +14,7 @@ func parseAstRolneItemName(cursor *parseCursor) error {
 			return childParseAstRolneItemFinish(cursor)
 		}
 	case lexer.TT_OPEN_BIND_SYMBOL:
-		return openSymbolHandlingForNewChild(cursor)
+		return openBindSymbolHandlingForNewChild(cursor)
 	case lexer.TT_BINDING_SYMBOL:
 		// any form of binding says "this isn't a name" since names CANNOT be non-simple per language rules
 		if cursor.src.Content == "::" {
@@ -29,10 +28,12 @@ func parseAstRolneItemName(cursor *parseCursor) error {
 		return parseAstRolneItemNameAssignName(cursor, cursor.src, ASTN_IDENTIFIER)
 	case lexer.TT_STR_LIT:
 		return parseAstRolneItemNameAssignName(cursor, cursor.src, ASTN_STRLIT)
+	case lexer.TT_NUMSTR_LIT:
+		return parseAstRolneItemNameAssignName(cursor, cursor.src, ASTN_NUMSTR)
 	case lexer.TT_LINE:
 		return childParseAstRolneItemFinish(cursor)
 	}
-	return fmt.Errorf("unhandled AST_ROLNE_ITEM_NAME parse of %v", cursor.src)
+	return parseError(cursor, "MAIN", "unhandled parse")
 }
 
 func parseAstRolneItemNameStart(cursor *parseCursor) error {

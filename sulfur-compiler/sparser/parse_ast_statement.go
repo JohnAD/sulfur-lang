@@ -16,7 +16,6 @@ func parseAstStatement(cursor *parseCursor) error {
 		return interpretInlineTokenDuringStatement(cursor)
 	case lexer.TT_OPEN_SYMBOL:
 		return openSymbolHandlingForNewChild(cursor)
-	//case lexer.TT_CLOSE_SYMBOL:
 	case lexer.TT_OPEN_BIND_SYMBOL:
 		return openSymbolHandlingForLastChild(cursor)
 	case lexer.TT_BINDING_SYMBOL:
@@ -27,9 +26,6 @@ func parseAstStatement(cursor *parseCursor) error {
 		return interpretInlineTokenDuringStatement(cursor)
 	case lexer.TT_NUMSTR_LIT:
 		return interpretInlineTokenDuringStatement(cursor)
-	//case lexer.TT_SYNTAX_ERROR:
-	//case lexer.TT_COMMENT:
-	//case lexer.TT_WHITESPACE:
 	case lexer.TT_LINE:
 		return finishStatement(cursor)
 	}

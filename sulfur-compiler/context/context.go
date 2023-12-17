@@ -6,22 +6,22 @@ type FileDetail struct {
 }
 
 type CompilerContext struct {
-	RootDir       string
-	Target        string
-	StagingDir    string
-	Files         []FileDetail
-	StopPoint     string
-	SaveLexedFlag bool
+	RootDir     string
+	Target      string
+	StagingDir  string
+	Files       []FileDetail
+	StopPoint   string
+	WriteToDisk bool
 }
 
 func NewCompilerContext(mainTarget string) CompilerContext {
 	cc := CompilerContext{
-		RootDir:       ".",
-		Target:        mainTarget,
-		StagingDir:    "_build",
-		Files:         []FileDetail{},
-		StopPoint:     "",
-		SaveLexedFlag: true,
+		RootDir:     ".",
+		Target:      mainTarget,
+		StagingDir:  "_build",
+		Files:       []FileDetail{},
+		StopPoint:   "",
+		WriteToDisk: true, // set to false by unit tests
 	}
 	return cc
 }

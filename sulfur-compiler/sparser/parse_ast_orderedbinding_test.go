@@ -74,6 +74,7 @@ var parseOrderedBindingTests = []parseTest{
 
 func TestOrderedBindingParsing(t *testing.T) {
 	cc := context.NewCompilerContext("main")
+	cc.WriteToDisk = false
 	for _, test := range parseOrderedBindingTests {
 		err, tokens := lexer.LexString(test.source)
 		if err != nil {

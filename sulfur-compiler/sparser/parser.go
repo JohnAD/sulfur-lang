@@ -2,6 +2,8 @@ package sparser
 
 import (
 	"fmt"
+	"gopkg.in/yaml.v2"
+	"os"
 	"sulfur-compiler/context"
 	"sulfur-compiler/lexer"
 )
@@ -52,6 +54,12 @@ func createIndependentChildAndPoint(cursor *parseCursor, nature AstNodeNature, n
 	newNode := AstNode{Kind: cursor.currentNode.Kind, Nature: nature, Name: name, src: cursor.src}
 	addChildAstPointer(cursor, &newNode)
 	_ = moveToLastChild(cursor) // cannot error out because we just added a child
+}
+
+func applyNameNatureToSelf(cursor *parseCursor, nature AstNodeNature) {
+	cursor.currentNode.Name = cursor.src.Content
+	cursor.currentNode.src = cursor.src
+	cursor.currentNode.Nature = nature
 }
 
 func popChild(cursor *parseCursor) (error, *AstNode) {
@@ -105,13 +113,30 @@ func finishAstNode(cursor *parseCursor) error {
 	return nil
 }
 
+func openBindSymbolHandlingForNewChild(cursor *parseCursor) error {
+	debug(cursor, "OBSHFNC")
+	//if cursor.src.Content == "{" {
+	//	return parseAstRolneStartChild(cursor, ASTN_NULL)
+	//}
+	if cursor.src.Content == "(" {
+		return parseAstRolneStartChild(cursor, ASTN_NULL)
+	}
+	//if cursor.src.Content == "{{" {
+	//	return parseAstMapBlockStart(cursor)
+	//}
+	//if cursor.src.Content == "[[" {
+	//	return parseAstBlockStartChild(cursor, ASTN_GROUPING)
+	//}
+	return parseError(cursor, "OBSHFNC", fmt.Sprintf("unable to determine what '%s' is", cursor.src.Content))
+}
+
 func openSymbolHandlingForNewChild(cursor *parseCursor) error {
 	debug(cursor, "OSHFNC")
 	if cursor.src.Content == "{" {
 		return parseAstRolneStartChild(cursor, ASTN_NULL)
 	}
 	if cursor.src.Content == "(" {
-		return parseAstRolneStartChild(cursor, ASTN_NULL)
+		return parseAstExpressionStartChild(cursor)
 	}
 	if cursor.src.Content == "{{" {
 		return parseAstMapBlockStart(cursor)
@@ -119,8 +144,9 @@ func openSymbolHandlingForNewChild(cursor *parseCursor) error {
 	if cursor.src.Content == "[[" {
 		return parseAstBlockStartChild(cursor, ASTN_GROUPING)
 	}
-	return fmt.Errorf("[PARSE_GENERIC_OSHFNC] unable to determine what '%s' is on line %d column %d", cursor.src.Content, cursor.src.SourceLine, cursor.src.SourceOffset)
+	return parseError(cursor, "OSHFNC", "unable to determine")
 }
+
 func openSymbolHandlingInPlace(cursor *parseCursor) error {
 	debug(cursor, "OSHIP")
 	if cursor.src.Content == "{" {
@@ -132,9 +158,6 @@ func openSymbolHandlingInPlace(cursor *parseCursor) error {
 	if cursor.src.Content == "(" {
 		return parseAstRolneStart(cursor, ASTN_NULL)
 	}
-	//if token.Content == "{{" {
-	//	return parseAstMapBlockStart(cursor)
-	//}
 	return fmt.Errorf("[PARSE_GENERIC_OSHIP] unable to determine what '%s' is on line %d column %d", cursor.src.Content, cursor.src.SourceLine, cursor.src.SourceOffset)
 }
 
@@ -203,6 +226,9 @@ func parse(cursor *parseCursor, token lexer.Token) error {
 	case AST_ORDERED_BINDING_CHILD:
 		return parseAstOrderedBindingChild(cursor)
 	case AST_EXPRESSION:
+		return parseAstExpression(cursor)
+	case AST_EXPRESSION_ITEM:
+		return parseAstExpressionItem(cursor)
 	case AST_LITERAL:
 	case AST_IDENTIFIER:
 	case AST_ROLNE:
@@ -244,7 +270,15 @@ func ParseTokensToAst(cc *context.CompilerContext, tokens []lexer.Token) (error,
 			return err, root
 		}
 	}
-	//fmt.Println("CURSOR: ")
-	//fmt.Printf("%v", cursor)
+	yamlData, err := yaml.Marshal(&root)
+	if err != nil {
+		return err, root
+	}
+	if cc.WriteToDisk {
+		fileId := 0 // TODO: handling file numbers later
+		outPath := context.GetParseResultPath(cc)
+		yamlFilePath := outPath + "/" + fmt.Sprintf("file-%04d.ast.yaml", fileId)
+		err = os.WriteFile(yamlFilePath, yamlData, 0644)
+	}
 	return err, root
 }

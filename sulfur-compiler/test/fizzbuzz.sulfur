@@ -18,7 +18,7 @@ proc main {{
     exit_code::Int = clib\GOODEXIT
   }
   body [[
-    for_each i in range_inclusive::Int( 1, 20 ) [[
+    for_each i in range_inclusive::Int( 1 , 20 ) [[
       if ( i % 15 == 0 ) [[
         clib\printf( "FizzBuzz" )
       ]] elif ( i % 3 == 0 ) [[

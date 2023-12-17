@@ -518,13 +518,13 @@ func LexFile(cc *context.CompilerContext, target string) (error, []Token) {
 			break
 		}
 	}
-	if cc.SaveLexedFlag {
+	if cc.WriteToDisk {
 		listCopy := plex.tokenList
 		yamlData, err := yaml.Marshal(&listCopy)
 		if err != nil {
 			return err, nil
 		}
-		outPath := context.GetLexParseRoundPath(cc)
+		outPath := context.GetLexResultPath(cc)
 		yamlFilePath := outPath + "/" + fmt.Sprintf("file-%04d.token.yaml", fileId)
 		err = os.WriteFile(yamlFilePath, yamlData, 0644)
 		if err != nil {
