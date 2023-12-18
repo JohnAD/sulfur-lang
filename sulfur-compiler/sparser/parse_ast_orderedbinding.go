@@ -21,12 +21,8 @@ func binderHandlingForLastChild(cursor *parseCursor) error {
 
 func binderHandlingInPlace(cursor *parseCursor) error {
 	debug(cursor, "BHIP")
-	s := cursor.currentNode
-	addChild(cursor, AST_ORDERED_BINDING_CHILD, s.Nature, s.Name)
-	// "keep" the Kind as AST_ORDERED_BINDING (the parent) is never actually invoked
-	cursor.currentNode.Nature = ASTN_META_BINDING
-	cursor.currentNode.Name = cursor.src.Content
-	cursor.currentNode.src = cursor.src
-	addChild(cursor, AST_ORDERED_BINDING_CHILD, ASTN_NULL, "")
-	return gotoChild(cursor, 1)
+	addChildWithCopyOfCurrent(cursor, AST_ORDERED_BINDING_CHILD) // child #1
+	addNullChild(cursor, AST_ORDERED_BINDING_CHILD)              // child #2
+	applyNameNatureToSelf(cursor, ASTN_META_BINDING)
+	return gotoChild(cursor, 1) // goto child #2
 }

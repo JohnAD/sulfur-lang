@@ -31,9 +31,9 @@ func parseAstRolneItem(cursor *parseCursor) error {
 func parseAstRolneItemStart(cursor *parseCursor) error {
 	debug(cursor, "PARIS")
 	createAndBecomeEmptyChild(cursor, AST_ROLNE_ITEM, ASTN_NOTHING) // create/become R-ITEM
-	addChild(cursor, AST_ROLNE_ITEM_NAME, ASTN_NULL, "")            // add yet-unknown name
-	addChild(cursor, AST_ROLNE_ITEM_TYPE, ASTN_NULL, "")            // add yet-unknown type
-	addChild(cursor, AST_ROLNE_ITEM_VALUE, ASTN_NULL, "")           // add yet-unknown value
+	addNullChild(cursor, AST_ROLNE_ITEM_NAME)                       // add yet-unknown name
+	addNullChild(cursor, AST_ROLNE_ITEM_TYPE)                       // add yet-unknown type
+	addNullChild(cursor, AST_ROLNE_ITEM_VALUE)                      // add yet-unknown value
 	_ = gotoChild(cursor, ROLEITEM_NAMECHILD)                       // become name
 	debug(cursor, "PARIS")
 	return parseAstRolneItemNameStart(cursor)

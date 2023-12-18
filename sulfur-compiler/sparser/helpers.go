@@ -26,7 +26,7 @@ func debug(cursor *parseCursor, procRole string) {
 		} else {
 			refName = fmt.Sprintf("-:%s:-", procRole)
 		}
-		fmt.Printf("[DEBUG %s] %s against %s `%s`\n", refName, cursor.currentNode.Kind, cursor.currentNode.src.TokenType, cursor.currentNode.src.Content)
+		fmt.Printf("[DEBUG %s] %s against %s `%s`\n", refName, cursor.currentNode.Kind, cursor.src.TokenType, cursor.src.Content)
 	}
 }
 

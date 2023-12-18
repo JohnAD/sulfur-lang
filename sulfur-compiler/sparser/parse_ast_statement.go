@@ -56,7 +56,6 @@ func interpretInitialStatementNature(token lexer.Token) AstNodeNature {
 func interpretInlineTokenDuringStatement(cursor *parseCursor) error {
 	debug(cursor, "IITDS")
 	nature := ASTN_IDENTIFIER
-	name := cursor.src.Content
 	switch cursor.src.TokenType {
 	case lexer.TT_STANDING_SYMBOL:
 		if helpers.Contains([]string{"#!", "#@"}, cursor.src.Content) {
@@ -73,7 +72,7 @@ func interpretInlineTokenDuringStatement(cursor *parseCursor) error {
 	default:
 		return fmt.Errorf("[PARSE_STMT_IITDS] unable to determine what '%s' is on line %d column %d", cursor.src.Content, cursor.src.SourceLine, cursor.src.SourceOffset)
 	}
-	addChild(cursor, AST_STATEMENT_ITEM, nature, name)
+	addChild(cursor, AST_STATEMENT_ITEM, nature)
 	return nil
 }
 

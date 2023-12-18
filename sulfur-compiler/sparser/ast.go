@@ -28,6 +28,8 @@ const (
 	AST_MAPBLOCK
 	AST_MAPBLOCK_ITEM
 	AST_INFIX
+	AST_INFIX_LEFT
+	AST_INFIX_RIGHT
 	AST_ERROR
 )
 
@@ -67,6 +69,10 @@ func (ant AstNodeType) String() string {
 		return "TARGET"
 	case AST_INFIX:
 		return "INFIX"
+	case AST_INFIX_LEFT:
+		return "INFIX-L"
+	case AST_INFIX_RIGHT:
+		return "INFIX-R"
 	case AST_BLOCK:
 		return "BLOCK"
 	case AST_MAPBLOCK:

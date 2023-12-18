@@ -19,8 +19,23 @@ func addChildAstPointer(cursor *parseCursor, ast *AstNode) {
 	cursor.currentNode.Children = append(cursor.currentNode.Children, ast)
 }
 
-func addChild(cursor *parseCursor, ant AstNodeType, nature AstNodeNature, name string) {
-	newNode := AstNode{Kind: ant, Nature: nature, Name: name, src: cursor.src}
+func addChildWithCopyOfCurrent(cursor *parseCursor, newKind AstNodeType) {
+	newNode := AstNode{
+		Kind:   newKind,
+		Nature: cursor.currentNode.Nature,
+		Name:   cursor.currentNode.Name,
+		src:    cursor.currentNode.src,
+	}
+	cursor.currentNode.Children = append(cursor.currentNode.Children, &newNode)
+}
+
+func addChild(cursor *parseCursor, ant AstNodeType, nature AstNodeNature) {
+	newNode := AstNode{Kind: ant, Nature: nature, Name: cursor.src.Content, src: cursor.src}
+	addChildAstPointer(cursor, &newNode)
+}
+
+func addNullChild(cursor *parseCursor, ant AstNodeType) {
+	newNode := AstNode{Kind: ant, Nature: ASTN_NULL, Name: "", src: lexer.Token{}}
 	addChildAstPointer(cursor, &newNode)
 }
 
@@ -176,40 +191,6 @@ func openSymbolHandlingForLastChild(cursor *parseCursor) error {
 	return fmt.Errorf("[PARSE_GENERIC_OSHFLC] unable to determine what '%s' is on line %d column %d", cursor.src.Content, cursor.src.SourceLine, cursor.src.SourceOffset)
 }
 
-func becomeLastChildMakePreviousChildAChildThenBecomeChild(cursor *parseCursor, nature AstNodeNature, name string) error {
-	// before:
-	//            a[ b[ d, e, f ] ]            where "b" is the current location
-	// after calling with g:
-	//            a[ b[ d, e, g[ f ] ] ]       where "g" is the current location
-	//
-	// used for infix style things. So that a\b becomes `\`[a, b]
-	debug(cursor, "BLCMPCACTBC")
-	err, previousLastChild := popChild(cursor)
-	if err == nil {
-		addChild(cursor, previousLastChild.Kind, nature, name)
-		_ = moveToLastChild(cursor) // cannot error out because we just added a child
-		addChildAstPointer(cursor, previousLastChild)
-	}
-	return err
-}
-
-func swapSelfMakingPreviousAChild(cursor *parseCursor, ant AstNodeType, nature AstNodeNature, name string) error {
-	// before:
-	//            a[ b[] ]            where "b" is the current location
-	// after calling with g
-	//            a[ g[ b ] ]         where "g" is the current location
-	currentKind := cursor.currentNode.Kind
-	currentNature := cursor.currentNode.Nature
-	currentName := cursor.currentNode.Name
-	currentSrc := cursor.currentNode.src
-	addChild(cursor, currentKind, currentNature, currentName)
-	cursor.currentNode.Kind = ant
-	cursor.currentNode.Nature = nature
-	cursor.currentNode.Name = name
-	cursor.currentNode.src = currentSrc
-	return nil
-}
-
 func parse(cursor *parseCursor, token lexer.Token) error {
 	debugNext(cursor)
 	cursor.src = token
@@ -247,6 +228,10 @@ func parse(cursor *parseCursor, token lexer.Token) error {
 		return parseAstMapBlock(cursor)
 	case AST_MAPBLOCK_ITEM:
 		return parseAstMapBlockItem(cursor)
+	case AST_INFIX:
+		return parseAstInfix(cursor)
+	case AST_INFIX_RIGHT:
+		return parseAstInfixRight(cursor)
 	case AST_ERROR:
 	default:
 		return fmt.Errorf("unhandled parse of %v on token %v", cursor.currentNode.Kind, token)

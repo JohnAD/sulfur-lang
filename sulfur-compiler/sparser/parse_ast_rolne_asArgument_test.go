@@ -2,6 +2,7 @@ package sparser
 
 import (
 	"fmt"
+	"github.com/stretchr/testify/assert"
 	"gopkg.in/yaml.v3"
 	"sulfur-compiler/context"
 	"sulfur-compiler/helpers"
@@ -360,6 +361,7 @@ var parseRolneArgumentTests = []parseTest{
 
 func TestRolneArgumentParsing(t *testing.T) {
 	cc := context.NewCompilerContext("main")
+	cc.WriteToDisk = false
 	for _, test := range parseRolneArgumentTests {
 		err, tokens := lexer.LexString(test.source)
 		if err != nil {
@@ -375,8 +377,6 @@ func TestRolneArgumentParsing(t *testing.T) {
 			fmt.Println()
 			t.Errorf(">>>> on test `%s`, error: %v", test.desc, err)
 		}
-		if rootYaml != test.expectedYaml {
-			t.Errorf(">>>> on test `%s`, GOT:\n%s<<<EOF\n\nEXPECTED:\n%s<<<EOF", test.desc, rootYaml, test.expectedYaml)
-		}
+		assert.Equal(t, test.expectedYaml, rootYaml)
 	}
 }

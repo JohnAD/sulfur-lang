@@ -38,7 +38,7 @@ func parseAstMapBlockItem(cursor *parseCursor) error {
 
 func parseAstMapBlockItemStart(cursor *parseCursor) error {
 	createAndBecomeChild(cursor, AST_MAPBLOCK_ITEM, ASTN_IDENTIFIER)
-	addChild(cursor, AST_TARGET, ASTN_NULL, "")
+	addNullChild(cursor, AST_TARGET)
 	return nil
 }
 
