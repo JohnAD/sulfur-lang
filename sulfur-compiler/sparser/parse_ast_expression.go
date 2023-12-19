@@ -5,10 +5,79 @@ import (
 	"sulfur-compiler/helpers"
 )
 
-// An EXPRESSION is a node with no Name and a single EXPRESSION_ITEM child that contains
-// the result of the expression.
+// An EXPRESSION is a node with no Name and a series of EXPRESSION_ITEM children in the order of expression.
+// The expression is NOT evaluated in any way as SPARSER does not handle order-of-operation
+// https://en.wikipedia.org/wiki/Order_of_operations
+// Further grouping by parens and the like can create expressions under expressions.
 //
-// This parental node contains the "opening" token of the expression (if there is one.) For example, "(".
+// This parental node contains the "opening" token of the expression (IF there is one.) For example, "(".
+//
+// example:
+//
+//         ( 1 + 2 * 3)
+//
+//     becomes:
+//
+//         EXPRESSION("(") -> [
+//           EXPRESSION-ITEM(1)
+//           EXPRESSION-ITEM(+)
+//           EXPRESSION-ITEM(2)
+//           EXPRESSION-ITEM(*)
+//           EXPRESSION-ITEM(3)
+//         ]
+//
+// another:
+//
+//         ( ( 1 + 2 ) * 3)
+//
+//     becomes:
+//
+//         EXPRESSION("(") -> [
+//           EXPRESSION("(") -> [
+//             EXPRESSION-ITEM(1)
+//             EXPRESSION-ITEM(+)
+//             EXPRESSION-ITEM(2)
+//           ]
+//           EXPRESSION-ITEM(*)
+//           EXPRESSION-ITEM(3)
+//         ]
+//
+// example:
+//
+//         if ( 1 == 3 ) then
+//
+//     becomes
+//
+//         STATEMENT() -> [
+//            IDENT(if)
+//            EXPRESSION("(") -> [
+//              EXPRESSION-ITEM(1)
+//              EXPRESSION-ITEM(==)
+//              EXPRESSION-ITEM(3)
+//            ]
+//            IDENT(then)
+
+//
+// FOR NOW, expressions require the parens (). But later, the parse will be expanded to not require it:
+//
+// example:
+//
+//         if 1 == 3 then
+//
+//     becomes
+//
+//         STATEMENT() -> [
+//            IDENT(if)
+//            EXPRESSION() -> [
+//              EXPRESSION-ITEM(1)
+//              EXPRESSION-ITEM(==)
+//              EXPRESSION-ITEM(3)
+//            ]
+//            IDENT(then)
+//
+// this works by having the parser detect the STANDING OP (==) and trigger the expression with the previous (1).
+// the expression would continue to build until the <non-op> <op> <non-op> <op> ... pattern is broken.
+//
 
 func parseAstExpression(cursor *parseCursor) error {
 	debug(cursor, "MAIN")

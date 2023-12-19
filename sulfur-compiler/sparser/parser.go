@@ -77,19 +77,19 @@ func applyNameNatureToSelf(cursor *parseCursor, nature AstNodeNature) {
 	cursor.currentNode.Nature = nature
 }
 
-func popChild(cursor *parseCursor) (error, *AstNode) {
-	// remove last child and return it
-	var err error
-	var ast *AstNode
-	childLen := len(cursor.currentNode.Children)
-	if childLen == 0 {
-		err = fmt.Errorf("[PARSER PC} attempting to remove a child node when array is empty")
-	} else {
-		ast = cursor.currentNode.Children[childLen-1]
-		cursor.currentNode.Children = cursor.currentNode.Children[:childLen-1]
-	}
-	return err, ast
-}
+//func popChild(cursor *parseCursor) (error, *AstNode) {
+//	// remove last child and return it
+//	var err error
+//	var ast *AstNode
+//	childLen := len(cursor.currentNode.Children)
+//	if childLen == 0 {
+//		err = fmt.Errorf("[PARSER PC} attempting to remove a child node when array is empty")
+//	} else {
+//		ast = cursor.currentNode.Children[childLen-1]
+//		cursor.currentNode.Children = cursor.currentNode.Children[:childLen-1]
+//	}
+//	return err, ast
+//}
 
 func gotoChild(cursor *parseCursor, index int) error {
 	// start pointing to one of the already-existing children
@@ -228,10 +228,10 @@ func parse(cursor *parseCursor, token lexer.Token) error {
 		return parseAstMapBlock(cursor)
 	case AST_MAPBLOCK_ITEM:
 		return parseAstMapBlockItem(cursor)
-	case AST_INFIX:
-		return parseAstInfix(cursor)
-	case AST_INFIX_RIGHT:
-		return parseAstInfixRight(cursor)
+	//case AST_INFIX:
+	//	return parseAstInfix(cursor)
+	//case AST_INFIX_RIGHT:
+	//	return parseAstInfixRight(cursor)
 	case AST_ERROR:
 	default:
 		return fmt.Errorf("unhandled parse of %v on token %v", cursor.currentNode.Kind, token)

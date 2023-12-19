@@ -31,7 +31,7 @@ var parseExpressionTests = []parseTest{
 					  nature: INFIX-OP
 					  name: =
 					  children: []
-					- type: EXP
+					- type: EXPR
 					  nature: BINDING
 					  name: (
 					  children:
@@ -61,22 +61,22 @@ var parseExpressionTests = []parseTest{
 					  nature: INFIX-OP
 					  name: =
 					  children: []
-					- type: EXP
+					- type: EXPR
 					  nature: BINDING
 					  name: (
 					  children:
 						- type: E-ITEM
+						  nature: NUMSTR
+						  name: "1"
+						  children: []
+						- type: E-ITEM
 						  nature: INFIX-OP
 						  name: +
-						  children:
-							- type: INFIX-L
-							  nature: NUMSTR
-							  name: "1"
-							  children: []
-							- type: INFIX-R
-							  nature: NUMSTR
-							  name: "2"
-							  children: []
+						  children: []
+						- type: E-ITEM
+						  nature: NUMSTR
+						  name: "2"
+						  children: []
 		`),
 	}, {
 		"expression with lightly extended op",
@@ -99,22 +99,30 @@ var parseExpressionTests = []parseTest{
 					  nature: INFIX-OP
 					  name: =
 					  children: []
-					- type: EXP
+					- type: EXPR
 					  nature: BINDING
 					  name: (
 					  children:
 						- type: E-ITEM
+						  nature: NUMSTR
+						  name: "1"
+						  children: []
+						- type: E-ITEM
 						  nature: INFIX-OP
 						  name: +
-						  children:
-							- type: INFIX-L
-							  nature: NUMSTR
-							  name: "1"
-							  children: []
-							- type: INFIX-R
-							  nature: NUMSTR
-							  name: "2"
-							  children: []
+						  children: []
+						- type: E-ITEM
+						  nature: NUMSTR
+						  name: "2"
+						  children: []
+						- type: E-ITEM
+						  nature: INFIX-OP
+						  name: ==
+						  children: []
+						- type: E-ITEM
+						  nature: NUMSTR
+						  name: "3"
+						  children: []
 		`),
 	},
 }

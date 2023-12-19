@@ -27,9 +27,6 @@ const (
 	AST_BLOCK
 	AST_MAPBLOCK
 	AST_MAPBLOCK_ITEM
-	AST_INFIX
-	AST_INFIX_LEFT
-	AST_INFIX_RIGHT
 	AST_ERROR
 )
 
@@ -48,7 +45,7 @@ func (ant AstNodeType) String() string {
 	case AST_ORDERED_BINDING_CHILD:
 		return "BINDING-CHILD"
 	case AST_EXPRESSION:
-		return "EXP"
+		return "EXPR"
 	case AST_EXPRESSION_ITEM:
 		return "E-ITEM"
 	case AST_LITERAL:
@@ -67,12 +64,6 @@ func (ant AstNodeType) String() string {
 		return "R-I-VALUE"
 	case AST_TARGET:
 		return "TARGET"
-	case AST_INFIX:
-		return "INFIX"
-	case AST_INFIX_LEFT:
-		return "INFIX-L"
-	case AST_INFIX_RIGHT:
-		return "INFIX-R"
 	case AST_BLOCK:
 		return "BLOCK"
 	case AST_MAPBLOCK:

@@ -2,7 +2,8 @@ package sparser
 
 import "sulfur-compiler/lexer"
 
-// An EXPRESSION-ITEM is a single node under an EXPRESSION that contains the "result" of the expression
+// An EXPRESSION-ITEM is a single node under an EXPRESSION
+// see EXPRESSION for more detail
 
 func parseAstExpressionItem(cursor *parseCursor) error {
 	debug(cursor, "MAIN")
@@ -10,10 +11,18 @@ func parseAstExpressionItem(cursor *parseCursor) error {
 		return parseAstExpressionItemApplyInitialToken(cursor)
 	} else {
 		switch cursor.src.TokenType {
+		case lexer.TT_IDENT:
+			return parseAstExpressionItemBecomeNextChild(cursor, ASTN_IDENTIFIER)
+		case lexer.TT_NUMSTR_LIT:
+			return parseAstExpressionItemBecomeNextChild(cursor, ASTN_NUMSTR)
+		case lexer.TT_STR_LIT:
+			return parseAstExpressionItemBecomeNextChild(cursor, ASTN_STRLIT)
 		case lexer.TT_STANDING_SYMBOL:
-			return parseAstInfixStartInPlace(cursor)
+			return parseAstExpressionItemBecomeNextChild(cursor, ASTN_INFIX_OPERATOR)
 		case lexer.TT_CLOSE_SYMBOL:
-			return finishAstExpressionItem(cursor)
+			return parseAstExpressionItemFinish(cursor)
+		default:
+			return parseError(cursor, "MAIN", "unhandled token type")
 		}
 	}
 	return parseError(cursor, "MAIN", "unhandled parse")
@@ -35,7 +44,18 @@ func parseAstExpressionItemApplyInitialToken(cursor *parseCursor) error {
 	return parseError(cursor, "PAEIAIT", "unhandled parse")
 }
 
-func finishAstExpressionItem(cursor *parseCursor) error {
+func parseAstExpressionItemBecomeNextChild(cursor *parseCursor, nature AstNodeNature) error {
+	debug(cursor, "PAEIBNC")
+	err := finishAstNode(cursor)
+	if err != nil {
+		return err
+	}
+	createAndBecomeChild(cursor, AST_EXPRESSION_ITEM, nature)
+	return nil
+}
+
+func parseAstExpressionItemFinish(cursor *parseCursor) error {
+	debug(cursor, "PAEIF")
 	err := finishAstNode(cursor)
 	if err != nil {
 		return err
