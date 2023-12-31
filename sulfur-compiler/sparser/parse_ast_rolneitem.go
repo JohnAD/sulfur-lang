@@ -44,17 +44,14 @@ func childCloseRolneItemWithJustValue(cursor *parseCursor) {
 	// ^ I cannot believe you made such a simple spelling mistake. You call yourself a software developer? Shame.
 	// this should only be called from AST_ROLNE_ITEM_NAME
 	debug(cursor, "CCRIWJV")
-	formerName := cursor.currentNode.Name
-	formerSrc := cursor.currentNode.src
+	formerSrc := cursor.currentNode.Src
 	formerNature := cursor.currentNode.Nature
 	formerChildren := cursor.currentNode.Children
 	cursor.currentNode.Nature = ASTN_NOTHING
-	cursor.currentNode.Name = ""
-	cursor.currentNode.src = lexer.Token{}
+	cursor.currentNode.Src = lexer.Token{}
 	cursor.currentNode.Children = []*AstNode{}
 	_ = finishAstNode(cursor) // close child and point to here
-	cursor.currentNode.Children[ROLEITEM_VALUECHILD].Name = formerName
-	cursor.currentNode.Children[ROLEITEM_VALUECHILD].src = formerSrc
+	cursor.currentNode.Children[ROLEITEM_VALUECHILD].Src = formerSrc
 	cursor.currentNode.Children[ROLEITEM_VALUECHILD].Nature = formerNature
 	cursor.currentNode.Children[ROLEITEM_VALUECHILD].Children = formerChildren
 	debug(cursor, "CCRIWJV")
@@ -77,16 +74,13 @@ func childParseAstRolneItemFinish(cursor *parseCursor) error {
 
 func parseAstRolneItemMoveNameToChild(cursor *parseCursor) {
 	debug(cursor, "PARIMNTC")
-	formerName := cursor.currentNode.Children[ROLEITEM_NAMECHILD].Name
-	formerSrc := cursor.currentNode.Children[ROLEITEM_NAMECHILD].src
+	formerSrc := cursor.currentNode.Children[ROLEITEM_NAMECHILD].Src
 	formerNature := cursor.currentNode.Children[ROLEITEM_NAMECHILD].Nature
 	formerChildren := cursor.currentNode.Children[ROLEITEM_NAMECHILD].Children
-	cursor.currentNode.Children[ROLEITEM_VALUECHILD].Name = formerName
-	cursor.currentNode.Children[ROLEITEM_VALUECHILD].src = formerSrc
+	cursor.currentNode.Children[ROLEITEM_VALUECHILD].Src = formerSrc
 	cursor.currentNode.Children[ROLEITEM_VALUECHILD].Nature = formerNature
 	cursor.currentNode.Children[ROLEITEM_VALUECHILD].Children = formerChildren
-	cursor.currentNode.Children[ROLEITEM_NAMECHILD].Name = ""
-	cursor.currentNode.Children[ROLEITEM_NAMECHILD].src = lexer.Token{}
+	cursor.currentNode.Children[ROLEITEM_NAMECHILD].Src = lexer.Token{}
 	cursor.currentNode.Children[ROLEITEM_NAMECHILD].Nature = ASTN_NOTHING
 	cursor.currentNode.Children[ROLEITEM_NAMECHILD].Children = []*AstNode{}
 }

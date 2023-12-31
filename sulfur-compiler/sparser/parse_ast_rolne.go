@@ -49,8 +49,7 @@ func parseAstRolneStart(cursor *parseCursor, nature AstNodeNature) error {
 	selfPtr := cursor.currentNode
 	selfPtr.Kind = AST_ROLNE
 	selfPtr.Nature = nature
-	selfPtr.Name = cursor.src.Content
-	selfPtr.src = cursor.src
+	selfPtr.Src = cursor.src
 	return nil
 }
 
@@ -67,7 +66,7 @@ func childRolneItemDoneReadyForNextItem(cursor *parseCursor) error {
 
 func finishAstRolne(cursor *parseCursor) error {
 	debug(cursor, "FAR")
-	starting := cursor.currentNode.Name
+	starting := cursor.currentNode.Src.Content
 	ending := cursor.src.Content
 	if helpers.OperatorsMatch(starting, ending) {
 		err := finishAstNode(cursor)

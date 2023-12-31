@@ -44,7 +44,7 @@ func parseAstMapBlockItemStart(cursor *parseCursor) error {
 
 func finishAstMapBlockItem(cursor *parseCursor) error {
 	if cursor.currentNode.Nature == ASTN_NULL {
-		return fmt.Errorf("[PARSE_MAPBLOCKITEM_FAMBI] identifier '%s' found, but no matching target; line %d column %d", cursor.currentNode.Name, cursor.src.SourceLine, cursor.src.SourceOffset)
+		return fmt.Errorf("[PARSE_MAPBLOCKITEM_FAMBI] identifier '%s' found, but no matching target; line %d column %d", cursor.currentNode.Src.Content, cursor.src.SourceLine, cursor.src.SourceOffset)
 	}
 	return finishAstNode(cursor)
 }

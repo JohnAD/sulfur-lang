@@ -38,8 +38,7 @@ func parseAstRolneItemTypeAssignType(cursor *parseCursor, nature AstNodeNature) 
 	if cursor.currentNode.Nature != ASTN_NULL {
 		return childParseAstRolneItemFinish(cursor)
 	}
-	cursor.currentNode.Name = cursor.src.Content
-	cursor.currentNode.src = cursor.src
+	cursor.currentNode.Src = cursor.src
 	cursor.currentNode.Nature = nature
 	return nil
 }

@@ -12,6 +12,7 @@ type CompilerContext struct {
 	Files       []FileDetail
 	StopPoint   string
 	WriteToDisk bool
+	ShortYAML   bool
 }
 
 func NewCompilerContext(mainTarget string) CompilerContext {
@@ -22,6 +23,7 @@ func NewCompilerContext(mainTarget string) CompilerContext {
 		Files:       []FileDetail{},
 		StopPoint:   "",
 		WriteToDisk: true, // set to false by unit tests
+		ShortYAML:   false,
 	}
 	return cc
 }

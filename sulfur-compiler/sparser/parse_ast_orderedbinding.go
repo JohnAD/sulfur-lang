@@ -4,6 +4,27 @@ import (
 	"fmt"
 )
 
+// A BINDING is a node with no Name or Token and an ordered series of B-ITEM children in the order of the binding.
+//
+// example:
+//
+//         a\b\c.d
+//
+//     becomes:
+//
+//         BINDING() -> [
+//           B-ITEM(a)
+//           B-ITEM(\)
+//           B-ITEM(b)
+//           B-ITEM(\)
+//           B-ITEM(c)
+//           B-ITEM(.)
+//           B-ITEM(d)
+//         ]
+//
+// At this stage "resolving" these bindings is not possible yet as we don't see the cross-refs of libraries and such.
+// TODO: change expression to actually do what the above says
+
 func parseAstOrderedBinding(cursor *parseCursor) error {
 	debug(cursor, "MAIN")
 	// this state should NEVER be called. If it is called, something has gone very wrong.

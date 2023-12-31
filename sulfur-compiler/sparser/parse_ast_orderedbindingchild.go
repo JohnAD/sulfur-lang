@@ -27,8 +27,7 @@ func parseAstOrderedBindingChild(cursor *parseCursor) error {
 }
 
 func finishAstOrderedBindingChild(cursor *parseCursor, token lexer.Token, nature AstNodeNature) error {
-	cursor.currentNode.Name = token.Content
-	cursor.currentNode.src = token
+	cursor.currentNode.Src = token
 	cursor.currentNode.Nature = nature
 	return finishAstNode(cursor)
 }

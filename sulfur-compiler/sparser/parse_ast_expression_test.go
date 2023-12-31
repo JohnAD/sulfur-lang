@@ -15,114 +15,99 @@ var parseExpressionTests = []parseTest{
 		helpers.Dedent(`
 			x = ( 1 )
 		`), helpers.Dedent(`
-			type: ROOT
+			kind: ROOT
 			nature: _
 			name: ""
 			children:
-				- type: STATEMENT
+				- kind: STATEMENT
 				  nature: '?'
 				  name: ""
 				  children:
-					- type: S-ITEM
+					- kind: S-ITEM
 					  nature: IDENT
 					  name: x
-					  children: []
-					- type: S-ITEM
+					- kind: S-ITEM
 					  nature: INFIX-OP
 					  name: =
-					  children: []
-					- type: EXPR
+					- kind: EXPR
 					  nature: BINDING
 					  name: (
 					  children:
-						- type: E-ITEM
+						- kind: E-ITEM
 						  nature: NUMSTR
 						  name: "1"
-						  children: []
 		`),
 	}, {
 		"expression with op",
 		helpers.Dedent(`
 			x = ( 1 + 2 )
 		`), helpers.Dedent(`
-			type: ROOT
+			kind: ROOT
 			nature: _
 			name: ""
 			children:
-				- type: STATEMENT
+				- kind: STATEMENT
 				  nature: '?'
 				  name: ""
 				  children:
-					- type: S-ITEM
+					- kind: S-ITEM
 					  nature: IDENT
 					  name: x
-					  children: []
-					- type: S-ITEM
+					- kind: S-ITEM
 					  nature: INFIX-OP
 					  name: =
-					  children: []
-					- type: EXPR
+					- kind: EXPR
 					  nature: BINDING
 					  name: (
 					  children:
-						- type: E-ITEM
+						- kind: E-ITEM
 						  nature: NUMSTR
 						  name: "1"
-						  children: []
-						- type: E-ITEM
+						- kind: E-ITEM
 						  nature: INFIX-OP
 						  name: +
-						  children: []
-						- type: E-ITEM
+						- kind: E-ITEM
 						  nature: NUMSTR
 						  name: "2"
-						  children: []
 		`),
 	}, {
 		"expression with lightly extended op",
 		helpers.Dedent(`
 			x = ( 1 + 2 == 3 )
 		`), helpers.Dedent(`
-			type: ROOT
+			kind: ROOT
 			nature: _
 			name: ""
 			children:
-				- type: STATEMENT
+				- kind: STATEMENT
 				  nature: '?'
 				  name: ""
 				  children:
-					- type: S-ITEM
+					- kind: S-ITEM
 					  nature: IDENT
 					  name: x
-					  children: []
-					- type: S-ITEM
+					- kind: S-ITEM
 					  nature: INFIX-OP
 					  name: =
-					  children: []
-					- type: EXPR
+					- kind: EXPR
 					  nature: BINDING
 					  name: (
 					  children:
-						- type: E-ITEM
+						- kind: E-ITEM
 						  nature: NUMSTR
 						  name: "1"
-						  children: []
-						- type: E-ITEM
+						- kind: E-ITEM
 						  nature: INFIX-OP
 						  name: +
-						  children: []
-						- type: E-ITEM
+						- kind: E-ITEM
 						  nature: NUMSTR
 						  name: "2"
-						  children: []
-						- type: E-ITEM
+						- kind: E-ITEM
 						  nature: INFIX-OP
 						  name: ==
-						  children: []
-						- type: E-ITEM
+						- kind: E-ITEM
 						  nature: NUMSTR
 						  name: "3"
-						  children: []
 		`),
 	},
 }
@@ -130,6 +115,7 @@ var parseExpressionTests = []parseTest{
 func TestExpressionParsing(t *testing.T) {
 	cc := context.NewCompilerContext("main")
 	cc.WriteToDisk = false
+	cc.ShortYAML = true
 	for _, test := range parseExpressionTests {
 		err, tokens := lexer.LexString(test.source)
 		if err != nil {

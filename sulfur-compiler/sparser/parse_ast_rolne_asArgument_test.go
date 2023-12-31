@@ -16,66 +16,57 @@ var parseRolneArgumentTests = []parseTest{
 		helpers.Dedent(`
 				let t = abc( "hello" , x )
 			`), helpers.Dedent(`
-				type: ROOT
+				kind: ROOT
 				nature: _
 				name: ""
 				children:
-					- type: STATEMENT
+					- kind: STATEMENT
 					  nature: '?'
 					  name: ""
 					  children:
-						- type: S-ITEM
+						- kind: S-ITEM
 						  nature: IDENT
 						  name: let
-						  children: []
-						- type: S-ITEM
+						- kind: S-ITEM
 						  nature: IDENT
 						  name: t
-						  children: []
-						- type: S-ITEM
+						- kind: S-ITEM
 						  nature: INFIX-OP
 						  name: =
-						  children: []
-						- type: S-ITEM
+						- kind: S-ITEM
 						  nature: IDENT
 						  name: abc
 						  children:
-							- type: ROLNE
+							- kind: ROLNE
 							  nature: ARGS
 							  name: (
 							  children:
-								- type: R-ITEM
+								- kind: R-ITEM
 								  nature: _
 								  name: ""
 								  children:
-									- type: R-I-NAME
+									- kind: R-I-NAME
 									  nature: _
 									  name: ""
-									  children: []
-									- type: R-I-TYPE
+									- kind: R-I-TYPE
 									  nature: '?'
 									  name: ""
-									  children: []
-									- type: R-I-VALUE
+									- kind: R-I-VALUE
 									  nature: STR-LIT
 									  name: hello
-									  children: []
-								- type: R-ITEM
+								- kind: R-ITEM
 								  nature: _
 								  name: ""
 								  children:
-									- type: R-I-NAME
+									- kind: R-I-NAME
 									  nature: _
 									  name: ""
-									  children: []
-									- type: R-I-TYPE
+									- kind: R-I-TYPE
 									  nature: '?'
 									  name: ""
-									  children: []
-									- type: R-I-VALUE
+									- kind: R-I-VALUE
 									  nature: IDENT
 									  name: x
-									  children: []
 			`),
 	}, {
 		"simple vertical arguments", helpers.Dedent(`
@@ -85,276 +76,240 @@ var parseRolneArgumentTests = []parseTest{
 				)
 			`),
 		helpers.Dedent(`
-				type: ROOT
+				kind: ROOT
 				nature: _
 				name: ""
 				children:
-					- type: STATEMENT
+					- kind: STATEMENT
 					  nature: '?'
 					  name: ""
 					  children:
-						- type: S-ITEM
+						- kind: S-ITEM
 						  nature: IDENT
 						  name: let
-						  children: []
-						- type: S-ITEM
+						- kind: S-ITEM
 						  nature: IDENT
 						  name: t
-						  children: []
-						- type: S-ITEM
+						- kind: S-ITEM
 						  nature: INFIX-OP
 						  name: =
-						  children: []
-						- type: S-ITEM
+						- kind: S-ITEM
 						  nature: IDENT
 						  name: abc
 						  children:
-							- type: ROLNE
+							- kind: ROLNE
 							  nature: ARGS
 							  name: (
 							  children:
-								- type: R-ITEM
+								- kind: R-ITEM
 								  nature: _
 								  name: ""
 								  children:
-									- type: R-I-NAME
+									- kind: R-I-NAME
 									  nature: _
 									  name: ""
-									  children: []
-									- type: R-I-TYPE
+									- kind: R-I-TYPE
 									  nature: '?'
 									  name: ""
-									  children: []
-									- type: R-I-VALUE
+									- kind: R-I-VALUE
 									  nature: STR-LIT
 									  name: hello
-									  children: []
-								- type: R-ITEM
+								- kind: R-ITEM
 								  nature: _
 								  name: ""
 								  children:
-									- type: R-I-NAME
+									- kind: R-I-NAME
 									  nature: _
 									  name: ""
-									  children: []
-									- type: R-I-TYPE
+									- kind: R-I-TYPE
 									  nature: '?'
 									  name: ""
-									  children: []
-									- type: R-I-VALUE
+									- kind: R-I-VALUE
 									  nature: IDENT
 									  name: x
-									  children: []
 			`),
 	}, {
 		"arguments in arguments", helpers.Dedent(`
 				let t = abc( "hello" , xyz( "def" ) )
 			`),
 		helpers.Dedent(`
-				type: ROOT
+				kind: ROOT
 				nature: _
 				name: ""
 				children:
-					- type: STATEMENT
+					- kind: STATEMENT
 					  nature: '?'
 					  name: ""
 					  children:
-						- type: S-ITEM
+						- kind: S-ITEM
 						  nature: IDENT
 						  name: let
-						  children: []
-						- type: S-ITEM
+						- kind: S-ITEM
 						  nature: IDENT
 						  name: t
-						  children: []
-						- type: S-ITEM
+						- kind: S-ITEM
 						  nature: INFIX-OP
 						  name: =
-						  children: []
-						- type: S-ITEM
+						- kind: S-ITEM
 						  nature: IDENT
 						  name: abc
 						  children:
-							- type: ROLNE
+							- kind: ROLNE
 							  nature: ARGS
 							  name: (
 							  children:
-								- type: R-ITEM
+								- kind: R-ITEM
 								  nature: _
 								  name: ""
 								  children:
-									- type: R-I-NAME
+									- kind: R-I-NAME
 									  nature: _
 									  name: ""
-									  children: []
-									- type: R-I-TYPE
+									- kind: R-I-TYPE
 									  nature: '?'
 									  name: ""
-									  children: []
-									- type: R-I-VALUE
+									- kind: R-I-VALUE
 									  nature: STR-LIT
 									  name: hello
-									  children: []
-								- type: R-ITEM
+								- kind: R-ITEM
 								  nature: _
 								  name: ""
 								  children:
-									- type: R-I-NAME
+									- kind: R-I-NAME
 									  nature: _
 									  name: ""
-									  children: []
-									- type: R-I-TYPE
+									- kind: R-I-TYPE
 									  nature: '?'
 									  name: ""
-									  children: []
-									- type: R-I-VALUE
+									- kind: R-I-VALUE
 									  nature: IDENT
 									  name: xyz
 									  children:
-										- type: ROLNE
+										- kind: ROLNE
 										  nature: '?'
 										  name: (
 										  children:
-											- type: R-ITEM
+											- kind: R-ITEM
 											  nature: _
 											  name: ""
 											  children:
-												- type: R-I-NAME
+												- kind: R-I-NAME
 												  nature: _
 												  name: ""
-												  children: []
-												- type: R-I-TYPE
+												- kind: R-I-TYPE
 												  nature: '?'
 												  name: ""
-												  children: []
-												- type: R-I-VALUE
+												- kind: R-I-VALUE
 												  nature: STR-LIT
 												  name: def
-												  children: []
 			`),
 	}, {
 		"named arguments", helpers.Dedent(`
 				let t = abc( bling = "hello" , bam = x )
 			`),
 		helpers.Dedent(`
-				type: ROOT
+				kind: ROOT
 				nature: _
 				name: ""
 				children:
-					- type: STATEMENT
+					- kind: STATEMENT
 					  nature: '?'
 					  name: ""
 					  children:
-						- type: S-ITEM
+						- kind: S-ITEM
 						  nature: IDENT
 						  name: let
-						  children: []
-						- type: S-ITEM
+						- kind: S-ITEM
 						  nature: IDENT
 						  name: t
-						  children: []
-						- type: S-ITEM
+						- kind: S-ITEM
 						  nature: INFIX-OP
 						  name: =
-						  children: []
-						- type: S-ITEM
+						- kind: S-ITEM
 						  nature: IDENT
 						  name: abc
 						  children:
-							- type: ROLNE
+							- kind: ROLNE
 							  nature: ARGS
 							  name: (
 							  children:
-								- type: R-ITEM
+								- kind: R-ITEM
 								  nature: _
 								  name: ""
 								  children:
-									- type: R-I-NAME
+									- kind: R-I-NAME
 									  nature: IDENT
 									  name: bling
-									  children: []
-									- type: R-I-TYPE
+									- kind: R-I-TYPE
 									  nature: '?'
 									  name: ""
-									  children: []
-									- type: R-I-VALUE
+									- kind: R-I-VALUE
 									  nature: STR-LIT
 									  name: hello
-									  children: []
-								- type: R-ITEM
+								- kind: R-ITEM
 								  nature: _
 								  name: ""
 								  children:
-									- type: R-I-NAME
+									- kind: R-I-NAME
 									  nature: IDENT
 									  name: bam
-									  children: []
-									- type: R-I-TYPE
+									- kind: R-I-TYPE
 									  nature: '?'
 									  name: ""
-									  children: []
-									- type: R-I-VALUE
+									- kind: R-I-VALUE
 									  nature: IDENT
 									  name: x
-									  children: []
 			`),
 	}, {
 		"bound argument", helpers.Dedent(`
 				let t = abc( bling.zen )
 			`),
 		helpers.Dedent(`
-			type: ROOT
+			kind: ROOT
 			nature: _
 			name: ""
 			children:
-				- type: STATEMENT
+				- kind: STATEMENT
 				  nature: '?'
 				  name: ""
 				  children:
-					- type: S-ITEM
+					- kind: S-ITEM
 					  nature: IDENT
 					  name: let
-					  children: []
-					- type: S-ITEM
+					- kind: S-ITEM
 					  nature: IDENT
 					  name: t
-					  children: []
-					- type: S-ITEM
+					- kind: S-ITEM
 					  nature: INFIX-OP
 					  name: =
-					  children: []
-					- type: S-ITEM
+					- kind: S-ITEM
 					  nature: IDENT
 					  name: abc
 					  children:
-						- type: ROLNE
+						- kind: ROLNE
 						  nature: ARGS
 						  name: (
 						  children:
-							- type: R-ITEM
+							- kind: R-ITEM
 							  nature: _
 							  name: ""
 							  children:
-								- type: R-I-NAME
+								- kind: R-I-NAME
 								  nature: _
 								  name: ""
-								  children: []
-								- type: R-I-TYPE
+								- kind: R-I-TYPE
 								  nature: '?'
 								  name: ""
-								  children: []
-								- type: R-I-VALUE
+								- kind: R-I-VALUE
 								  nature: BINDING
 								  name: .
 								  children:
-									- type: BINDING-CHILD
+									- kind: B-ITEM
 									  nature: IDENT
 									  name: bling
-									  children: []
-									- type: BINDING-CHILD
+									- kind: B-ITEM
 									  nature: IDENT
 									  name: zen
-									  children: []
 		`),
 	},
 }
@@ -362,6 +317,7 @@ var parseRolneArgumentTests = []parseTest{
 func TestRolneArgumentParsing(t *testing.T) {
 	cc := context.NewCompilerContext("main")
 	cc.WriteToDisk = false
+	cc.ShortYAML = true
 	for _, test := range parseRolneArgumentTests {
 		err, tokens := lexer.LexString(test.source)
 		if err != nil {

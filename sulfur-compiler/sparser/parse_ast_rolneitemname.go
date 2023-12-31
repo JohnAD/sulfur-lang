@@ -47,8 +47,7 @@ func parseAstRolneItemNameAssignName(cursor *parseCursor, token lexer.Token, nat
 		// if a "second name" is found, it means the current item is a value and a new rolne item is starting
 		return childParseAstRolneItemFinish(cursor)
 	}
-	cursor.currentNode.Name = token.Content
-	cursor.currentNode.src = token
+	cursor.currentNode.Src = token
 	cursor.currentNode.Nature = nature
 	return nil
 }

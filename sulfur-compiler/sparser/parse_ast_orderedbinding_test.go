@@ -14,60 +14,54 @@ var parseOrderedBindingTests = []parseTest{
 		helpers.Dedent(`
 			foo.bar next
 		`), helpers.Dedent(`
-			type: ROOT
+			kind: ROOT
 			nature: _
 			name: ""
 			children:
-				- type: STATEMENT
+				- kind: STATEMENT
 				  nature: '?'
 				  name: ""
 				  children:
-					- type: S-ITEM
+					- kind: S-ITEM
 					  nature: BINDING
 					  name: .
 					  children:
-						- type: BINDING-CHILD
+						- kind: B-ITEM
 						  nature: IDENT
 						  name: foo
-						  children: []
-						- type: BINDING-CHILD
+						- kind: B-ITEM
 						  nature: IDENT
 						  name: bar
-						  children: []
-					- type: S-ITEM
+					- kind: S-ITEM
 					  nature: IDENT
 					  name: next
-					  children: []
 			`),
 	}, {
 		"deeper bind", // TODO: next
 		helpers.Dedent(`
-			foo.bar.a.b
+			foo.bar\a.b.c\x.z
 		`), helpers.Dedent(`
-			type: ROOT
+			kind: ROOT
 			nature: _
 			name: ""
 			children:
-				- type: STATEMENT
+				- kind: STATEMENT
 				  nature: '?'
 				  name: ""
 				  children:
-					- type: S-ITEM
+					- kind: S-ITEM
 					  nature: BINDING
 					  name: .
 					  children:
-						- type: BINDING-CHILD
+						- kind: B-ITEM
 						  nature: IDENT
 						  name: foo
-						  children: []
-						- type: BINDING-CHILD
+						- kind: B-ITEM
 						  nature: IDENT
 						  name: bar
-						  children: []
-					- type: S-ITEM
+					- kind: S-ITEM
 					  nature: IDENT
 					  name: next
-					  children: []
 			`),
 	},
 }
@@ -75,6 +69,7 @@ var parseOrderedBindingTests = []parseTest{
 func TestOrderedBindingParsing(t *testing.T) {
 	cc := context.NewCompilerContext("main")
 	cc.WriteToDisk = false
+	cc.ShortYAML = true
 	for _, test := range parseOrderedBindingTests {
 		err, tokens := lexer.LexString(test.source)
 		if err != nil {

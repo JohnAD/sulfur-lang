@@ -49,14 +49,16 @@ import (
 //     becomes
 //
 //         STATEMENT() -> [
-//            IDENT(if)
-//            EXPRESSION("(") -> [
-//              EXPRESSION-ITEM(1)
-//              EXPRESSION-ITEM(==)
-//              EXPRESSION-ITEM(3)
+//            S-ITEM(if)
+//            S-ITEM() -> [
+//              EXPRESSION("(") -> [
+//                EXPRESSION-ITEM(1)
+//                EXPRESSION-ITEM(==)
+//                EXPRESSION-ITEM(3)
+//              ]
 //            ]
-//            IDENT(then)
-
+//            S-ITEM(then)
+//
 //
 // FOR NOW, expressions require the parens (). But later, the parse will be expanded to not require it:
 //
@@ -67,13 +69,15 @@ import (
 //     becomes
 //
 //         STATEMENT() -> [
-//            IDENT(if)
-//            EXPRESSION() -> [
-//              EXPRESSION-ITEM(1)
-//              EXPRESSION-ITEM(==)
-//              EXPRESSION-ITEM(3)
+//            S-ITEM(if)
+//            S-ITEM() -> [
+//              EXPRESSION() -> [
+//                EXPRESSION-ITEM(1)
+//                EXPRESSION-ITEM(==)
+//                EXPRESSION-ITEM(3)
+//              ]
 //            ]
-//            IDENT(then)
+//            S-ITEM(then)
 //
 // this works by having the parser detect the STANDING OP (==) and trigger the expression with the previous (1).
 // the expression would continue to build until the <non-op> <op> <non-op> <op> ... pattern is broken.
@@ -95,7 +99,7 @@ func parseAstExpressionStartChild(cursor *parseCursor) error {
 
 func finishAstExpression(cursor *parseCursor) error {
 	debug(cursor, "FAI")
-	starting := cursor.currentNode.Name
+	starting := cursor.currentNode.Src.Content
 	ending := cursor.src.Content
 	if helpers.OperatorsMatch(starting, ending) {
 		err := finishAstNode(cursor)

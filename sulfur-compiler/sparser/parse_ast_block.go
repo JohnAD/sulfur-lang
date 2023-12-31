@@ -38,8 +38,7 @@ func parseAstBlockStart(cursor *parseCursor, nature AstNodeNature) error {
 	selfPtr := cursor.currentNode
 	selfPtr.Kind = AST_BLOCK
 	selfPtr.Nature = nature
-	selfPtr.Name = cursor.src.Content
-	selfPtr.src = cursor.src
+	selfPtr.Src = cursor.src
 	return nil
 }
 

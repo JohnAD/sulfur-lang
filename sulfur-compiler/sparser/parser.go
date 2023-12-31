@@ -13,6 +13,7 @@ type parseCursor struct {
 	src         lexer.Token
 	currentNode *AstNode
 	pointerPath []*AstNode
+	cc          context.CompilerContext
 }
 
 func addChildAstPointer(cursor *parseCursor, ast *AstNode) {
@@ -21,21 +22,21 @@ func addChildAstPointer(cursor *parseCursor, ast *AstNode) {
 
 func addChildWithCopyOfCurrent(cursor *parseCursor, newKind AstNodeType) {
 	newNode := AstNode{
-		Kind:   newKind,
-		Nature: cursor.currentNode.Nature,
-		Name:   cursor.currentNode.Name,
-		src:    cursor.currentNode.src,
+		Kind:      newKind,
+		Nature:    cursor.currentNode.Nature,
+		Src:       cursor.currentNode.Src,
+		shortYAML: cursor.cc.ShortYAML,
 	}
 	cursor.currentNode.Children = append(cursor.currentNode.Children, &newNode)
 }
 
 func addChild(cursor *parseCursor, ant AstNodeType, nature AstNodeNature) {
-	newNode := AstNode{Kind: ant, Nature: nature, Name: cursor.src.Content, src: cursor.src}
+	newNode := AstNode{Kind: ant, Nature: nature, Src: cursor.src, shortYAML: cursor.cc.ShortYAML}
 	addChildAstPointer(cursor, &newNode)
 }
 
 func addNullChild(cursor *parseCursor, ant AstNodeType) {
-	newNode := AstNode{Kind: ant, Nature: ASTN_NULL, Name: "", src: lexer.Token{}}
+	newNode := AstNode{Kind: ant, Nature: ASTN_NULL, Src: lexer.Token{}, shortYAML: cursor.cc.ShortYAML}
 	addChildAstPointer(cursor, &newNode)
 }
 
@@ -54,42 +55,27 @@ func moveToLastChild(cursor *parseCursor) error {
 }
 
 func createAndBecomeChild(cursor *parseCursor, ant AstNodeType, nature AstNodeNature) {
-	newNode := AstNode{Kind: ant, Nature: nature, Name: cursor.src.Content, src: cursor.src}
+	newNode := AstNode{Kind: ant, Nature: nature, Src: cursor.src, shortYAML: cursor.cc.ShortYAML}
 	addChildAstPointer(cursor, &newNode)
 	_ = moveToLastChild(cursor) // cannot error out because we just added a child
 }
 
 func createAndBecomeEmptyChild(cursor *parseCursor, ant AstNodeType, nature AstNodeNature) {
-	newNode := AstNode{Kind: ant, Nature: nature, Name: "", src: lexer.Token{}}
+	newNode := AstNode{Kind: ant, Nature: nature, Src: lexer.Token{}, shortYAML: cursor.cc.ShortYAML}
 	addChildAstPointer(cursor, &newNode)
 	_ = moveToLastChild(cursor) // cannot error out because we just added a child
 }
 
-func createIndependentChildAndPoint(cursor *parseCursor, nature AstNodeNature, name string) {
-	newNode := AstNode{Kind: cursor.currentNode.Kind, Nature: nature, Name: name, src: cursor.src}
+func createIndependentChildAndPoint(cursor *parseCursor, nature AstNodeNature) {
+	newNode := AstNode{Kind: cursor.currentNode.Kind, Nature: nature, Src: cursor.src, shortYAML: cursor.cc.ShortYAML}
 	addChildAstPointer(cursor, &newNode)
 	_ = moveToLastChild(cursor) // cannot error out because we just added a child
 }
 
 func applyNameNatureToSelf(cursor *parseCursor, nature AstNodeNature) {
-	cursor.currentNode.Name = cursor.src.Content
-	cursor.currentNode.src = cursor.src
+	cursor.currentNode.Src = cursor.src
 	cursor.currentNode.Nature = nature
 }
-
-//func popChild(cursor *parseCursor) (error, *AstNode) {
-//	// remove last child and return it
-//	var err error
-//	var ast *AstNode
-//	childLen := len(cursor.currentNode.Children)
-//	if childLen == 0 {
-//		err = fmt.Errorf("[PARSER PC} attempting to remove a child node when array is empty")
-//	} else {
-//		ast = cursor.currentNode.Children[childLen-1]
-//		cursor.currentNode.Children = cursor.currentNode.Children[:childLen-1]
-//	}
-//	return err, ast
-//}
 
 func gotoChild(cursor *parseCursor, index int) error {
 	// start pointing to one of the already-existing children
@@ -111,8 +97,7 @@ func setChild(cursor *parseCursor, index int, ant AstNodeType, nature AstNodeNat
 	childPtr := cursor.currentNode.Children[index]
 	childPtr.Kind = ant
 	childPtr.Nature = nature
-	childPtr.Name = cursor.src.Content
-	childPtr.src = cursor.src
+	childPtr.Src = cursor.src
 	return nil
 }
 
@@ -130,16 +115,16 @@ func finishAstNode(cursor *parseCursor) error {
 
 func openBindSymbolHandlingForNewChild(cursor *parseCursor) error {
 	debug(cursor, "OBSHFNC")
-	//if cursor.src.Content == "{" {
+	//if cursor.Src.Content == "{" {
 	//	return parseAstRolneStartChild(cursor, ASTN_NULL)
 	//}
 	if cursor.src.Content == "(" {
 		return parseAstRolneStartChild(cursor, ASTN_NULL)
 	}
-	//if cursor.src.Content == "{{" {
+	//if cursor.Src.Content == "{{" {
 	//	return parseAstMapBlockStart(cursor)
 	//}
-	//if cursor.src.Content == "[[" {
+	//if cursor.Src.Content == "[[" {
 	//	return parseAstBlockStartChild(cursor, ASTN_GROUPING)
 	//}
 	return parseError(cursor, "OBSHFNC", fmt.Sprintf("unable to determine what '%s' is", cursor.src.Content))
@@ -244,8 +229,9 @@ func ParseTokensToAst(cc *context.CompilerContext, tokens []lexer.Token) (error,
 	cursor := parseCursor{
 		depth:       0,
 		pointerPath: []*AstNode{},
+		cc:          *cc,
 	}
-	root := AstNode{}
+	root := AstNode{shortYAML: cursor.cc.ShortYAML}
 	cursor.currentNode = &root
 	for _, token := range tokens {
 		err = parse(&cursor, token)

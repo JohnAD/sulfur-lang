@@ -7,7 +7,74 @@ import (
 )
 
 // A STATEMENT is a node with no Name and a default nature of null by default.
-// All the content of a statement is in the children.
+// All the content of a statement is in the children who are ALL S-ITEM nodes, some with children of their own.
+//
+// example:
+//
+//         if ( 1 == 3 ) [[
+//           clib\print( "equal" )
+//         ]] else [[
+//           clib\print( "not equal" )
+//         ]]
+//
+//     becomes a statement with 5 items (only ast and token's content shown)
+//
+//         STATEMENT() -> [
+//           S-ITEM(if)                                // #1
+//           S-ITEM() -> [                             // #2
+//             EXPRESSION("(") -> [
+//               EXPRESSION-ITEM(1)
+//               EXPRESSION-ITEM(==)
+//               EXPRESSION-ITEM(3)
+//             ]
+//           ]
+//           S-ITEM() -> [                             // #3
+//             BLOCK("[[") -> [
+//               STATEMENT() -> [
+//                 S-ITEM() -> [
+//                   BINDING() -> [
+//                     B-ITEM(clib)
+//                     B-ITEM("\")
+//                     B-ITEM(print) -> [
+//                       ROLNE("(") -> [
+//                         R-ITEM() -> [
+//                           R-ITEM-NAME()
+//                           R-ITEM-TYPE()
+//                           R-ITEM-VALUE(equal)
+//                         ]
+//                       ]
+//                     ]
+//                   ]
+//                 ]
+//               ]
+//             ]
+//           ]
+//           S-ITEM(else)                              // #4
+//           S-ITEM() -> [                             // #5
+//             BLOCK("[[") -> [
+//               STATEMENT() -> [
+//                 S-ITEM() -> [
+//                   BINDING() -> [
+//                     B-ITEM(clib)
+//                     B-ITEM("\")
+//                     B-ITEM(print) -> [
+//                       ROLNE("(") -> [
+//                         R-ITEM() -> [
+//                           R-ITEM-NAME()
+//                           R-ITEM-TYPE()
+//                           R-ITEM-VALUE("not equal")
+//                         ]
+//                       ]
+//                     ]
+//                   ]
+//                 ]
+//               ]
+//             ]
+//           ]
+//         ]
+//
+//
+// TODO: add the above as a unit test
 
 func parseAstStatement(cursor *parseCursor) error {
 	debug(cursor, "MAIN")

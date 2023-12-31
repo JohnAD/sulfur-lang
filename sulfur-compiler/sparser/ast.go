@@ -43,7 +43,7 @@ func (ant AstNodeType) String() string {
 	case AST_ORDERED_BINDING:
 		return "BINDING"
 	case AST_ORDERED_BINDING_CHILD:
-		return "BINDING-CHILD"
+		return "B-ITEM"
 	case AST_EXPRESSION:
 		return "EXPR"
 	case AST_EXPRESSION_ITEM:
@@ -136,17 +136,47 @@ func (ann AstNodeNature) MarshalYAML() (interface{}, error) {
 	return ann.String(), nil
 }
 
+// AstNode : think of the AST (Kind) as the "parsing control" for the parser. The "Nature" (ASTN) is the "judgement"
+//
+//	of parser.
 type AstNode struct {
-	Kind     AstNodeType   `yaml:"type"`
-	Nature   AstNodeNature `yaml:"nature"`
-	Name     string        `yaml:"name"`
-	src      lexer.Token   `yaml:"token"` // lowercase for now, keeps the YAML shorter
-	Children []*AstNode    `yaml:"children"`
+	Kind      AstNodeType   `yaml:"kind"`
+	Nature    AstNodeNature `yaml:"nature"`
+	Src       lexer.Token   `yaml:"token"`
+	Children  []*AstNode    `yaml:"children"`
+	shortYAML bool          // only set true for testing and internal debugging
 }
 
 func (an AstNode) String() string {
 	if len(an.Children) > 0 {
-		return fmt.Sprintf("AST(%s.%s.`%s` %v)", an.Kind, an.Nature, an.Name, an.Children)
+		return fmt.Sprintf("AST(%s.%s.`%s` %v)", an.Kind, an.Nature, an.Src.Content, an.Children)
 	}
-	return fmt.Sprintf("AST(%s.%s.`%s`)", an.Kind, an.Nature, an.Name)
+	return fmt.Sprintf("AST(%s.%s.`%s`)", an.Kind, an.Nature, an.Src.Content)
+}
+
+func (an AstNode) MarshalYAML() (interface{}, error) {
+	if an.shortYAML {
+		return &struct {
+			Kind     AstNodeType   `yaml:"kind"`
+			Nature   AstNodeNature `yaml:"nature"`
+			Name     string        `yaml:"name"`
+			Children []*AstNode    `yaml:"children,omitempty"`
+		}{
+			Kind:     an.Kind,
+			Nature:   an.Nature,
+			Name:     an.Src.Content,
+			Children: an.Children,
+		}, nil
+	}
+	return &struct {
+		Kind     AstNodeType   `yaml:"kind"`
+		Nature   AstNodeNature `yaml:"nature"`
+		Src      lexer.Token   `yaml:"token"`
+		Children []*AstNode    `yaml:"children,omitempty"`
+	}{
+		Kind:     an.Kind,
+		Nature:   an.Nature,
+		Src:      an.Src,
+		Children: an.Children,
+	}, nil
 }
